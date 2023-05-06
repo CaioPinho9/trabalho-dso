@@ -6,7 +6,7 @@ class ControllerClasse:
     def __init__(self):
         self.__classe = []
 
-    def cadastrar_classe(self, classe):
+    def cadastrar_classe(self, classe: Classe):
         """
         Cadastra uma nova classe na lista de classes.
 
@@ -30,7 +30,7 @@ class ControllerClasse:
 
         return True
 
-    def remover_classe(self, nome):
+    def remover_classe(self, nome: str):
         """
         Remove uma classe da lista de classes.
 
@@ -51,7 +51,7 @@ class ControllerClasse:
 
         return True
 
-    def get_classe(self, nome):
+    def get_classe(self, nome: str):
         """
         Obtém uma classe da lista de classes.
 

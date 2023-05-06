@@ -1,5 +1,5 @@
 class Poder:
-    def __init__(self, nome, acerto, dano, mana_gasta, alvos, ataque_cura):
+    def __init__(self, nome: str, acerto: float, dano: float, mana_gasta: int, alvos: int, ataque_cura: bool):
         self.__nome = nome
         self.__acerto = acerto,
         self.__dano = dano

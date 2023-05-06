@@ -6,7 +6,7 @@ class ControllerPoder:
     def __init__(self):
         self.__poderes = []
 
-    def cadastrar_poder(self, poder):
+    def cadastrar_poder(self, poder: Poder):
         """
         Cadastra um novo objeto Poder na lista de poderes.
 
@@ -30,7 +30,7 @@ class ControllerPoder:
 
         return True
 
-    def remover_poder(self, nome):
+    def remover_poder(self, nome: str):
         """
         Remove um objeto Poder da lista de poderes.
 
@@ -51,7 +51,7 @@ class ControllerPoder:
 
         return True
 
-    def get_poder(self, nome):
+    def get_poder(self, nome: str):
         """
         Obtém um objeto Poder da lista de poderes.
 

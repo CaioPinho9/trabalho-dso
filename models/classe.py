@@ -1,11 +1,10 @@
 class Classe:
-    def __init__(self, nome, vida, velocidade, defesa, mana):
+    def __init__(self, nome: str, vida: float, velocidade: int, defesa: float, mana: int):
         self.__nome = nome
         self.__vida = vida
         self.__velocidade = velocidade
         self.__defesa = defesa
         self.__mana = mana
-
 
     @property
     def nome(self):
