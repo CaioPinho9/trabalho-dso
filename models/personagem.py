@@ -1,3 +1,4 @@
+import random
 from abc import ABC
 
 from models.classe import Classe
@@ -57,8 +58,26 @@ class Personagem(ABC):
         for index, poder in enumerate(self.__poderes):
             if poder.nome == nome:
                 self.poderes.pop(index)
+                return True
         else:
             return False
 
-        return True
+    def calcular_poder(self, poder):
+        if not isinstance(poder, Poder):
+            raise TypeError("ataque deve ser um Poder")
+
+        rolagem_jogador = random.randint(1, 20)
+        resultado_acerto = rolagem_jogador + poder.acerto
+
+        dano = 0
+        # Verifica se o ataque acertou ou falhou
+        if resultado_acerto >= 15:
+            # Calcula o dano
+            dano_minimo = round(poder.dano * 0.5)
+            dano_maximo = round(poder.dano * 1.5)
+            dano = int(random.randint(dano_minimo, dano_maximo))
+
+        return dano, resultado_acerto
+
+
 
