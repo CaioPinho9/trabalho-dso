@@ -1,6 +1,7 @@
 import pytest
 from models.poder import Poder
 
+
 def test_criar_poder():
     poder = Poder('Fireball', 80, 120, 20, 1, True)
     assert poder.nome == 'Fireball'
@@ -9,6 +10,7 @@ def test_criar_poder():
     assert poder.mana_gasta == 20
     assert poder.alvos == 1
     assert poder.ataque_cura
+
 
 def test_criar_poder_invalido():
     with pytest.raises(TypeError):

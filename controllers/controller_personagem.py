@@ -1,6 +1,7 @@
+import random
 from abc import ABC, abstractmethod
-from random import random
 
+from models.classe import Classe
 from models.poder import Poder
 
 
@@ -9,12 +10,41 @@ class ControllerPersonagem(ABC):
         self.__personagens = []
 
     @abstractmethod
-    def cadastrar_personagem(self, nome, nivel, poderes):
+    def cadastrar_personagem(self, nome: str, classe: Classe, nivel: int):
         pass
 
-    @abstractmethod
-    def remover_personagem(self, nome):
-        pass
+    def remover_personagem(self, nome: str):
+        if not isinstance(nome, str):
+            raise TypeError("nome deve ser um uma string")
+
+        for index, personagem in enumerate(self.__personagens):
+            if personagem.nome == nome:
+                self.__personagens.pop(index)
+                return True
+        else:
+            return False
+
+    def adicionar_poder_personagem(self, nome_personagem: str, poder: Poder):
+        if not isinstance(nome_personagem, str):
+            raise TypeError("nome deve ser um uma string")
+
+        for index, personagem in enumerate(self.__personagens):
+            if personagem.nome == nome_personagem:
+                self.__personagens[index].adicionar_poder(poder)
+                return True
+        else:
+            return False
+
+    def remover_poder_personagem(self, nome_personagem: str, nome_poder: str):
+        if not isinstance(nome_personagem, str):
+            raise TypeError("nome deve ser um uma string")
+
+        for index, personagem in enumerate(self.__personagens):
+            if personagem.nome == nome_personagem:
+                self.__personagens[index].remover_poder(nome_poder)
+                return True
+        else:
+            return False
 
     @property
     def personagens(self):
@@ -35,10 +65,20 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    def calcular_ataque(self, poder: Poder):
+    @staticmethod
+    def calcular_poder(poder):
         if not isinstance(poder, Poder):
-            raise TypeError("O ataque deve ser um poder")
+            raise TypeError("ataque deve ser um Poder")
 
-        random_number = random.randint(1, 20)
+        rolagem_jogador = random.randint(1, 20)
+        resultado_acerto = rolagem_jogador + poder.acerto
 
+        dano = 0
+        # Verifica se o ataque acertou ou falhou
+        if resultado_acerto >= 15:
+            # Calcula o dano
+            dano_minimo = round(poder.dano * 0.5)
+            dano_maximo = round(poder.dano * 1.5)
+            dano = int(random.randint(dano_minimo, dano_maximo))
 
+        return dano, resultado_acerto

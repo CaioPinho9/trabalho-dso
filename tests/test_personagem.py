@@ -65,17 +65,3 @@ def test_personagem_remover_poder():
     assert not personagem.remover_poder("invalid_power")
     assert len(personagem.poderes) == 1
 
-
-def test_calcular_poder():
-    # Create a Classe and a Poder
-    classe = Classe("Guerreiro", 100, 10, 10, 50)
-    poder = Poder("Ataque Poderoso", 5, 10, 5, 1, False)
-
-    # Create a Personagem and add the Poder
-    personagem = Personagem("Fulano", classe, 1)
-    personagem.adicionar_poder(poder)
-
-    # Call calcular_poder and check the result
-    dano, acerto = personagem.calcular_poder(poder)
-    assert isinstance(dano, int)
-    assert isinstance(acerto, int)
