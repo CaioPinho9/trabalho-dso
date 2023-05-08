@@ -1,20 +1,20 @@
 class Poder:
-    def __init__(self, nome: str, acerto: float, dano: float, mana_gasta: int, alvos: int, ataque_cura: bool):
+    def __init__(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque_cura: bool):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
-        if not isinstance(acerto, str):
-            raise TypeError("acerto deve ser um float")
-        if not isinstance(dano, str):
-            raise TypeError("dano deve ser um float")
-        if not isinstance(mana_gasta, str):
+        if not isinstance(acerto, int):
+            raise TypeError("acerto deve ser um int")
+        if not isinstance(dano, int):
+            raise TypeError("dano deve ser um str")
+        if not isinstance(mana_gasta, int):
             raise TypeError("mana_gasta deve ser um int")
-        if not isinstance(alvos, str):
+        if not isinstance(alvos, int):
             raise TypeError("alvos deve ser um int")
         if not isinstance(ataque_cura, bool):
             raise TypeError("ataque_cura deve ser um boolean")
 
         self.__nome = nome
-        self.__acerto = acerto,
+        self.__acerto = acerto
         self.__dano = dano
         self.__mana_gasta = mana_gasta
         self.__alvos = alvos

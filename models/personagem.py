@@ -10,7 +10,7 @@ class Personagem(ABC):
             raise TypeError("nome deve ser uma string")
         if not isinstance(classe, Classe):
             raise TypeError("classe deve ser uma Classe")
-        if not isinstance(nivel, Classe):
+        if not isinstance(nivel, int):
             raise TypeError("nivel deve ser um inteiro")
 
         self.__nome = nome
@@ -23,7 +23,9 @@ class Personagem(ABC):
         return self.__nome
 
     @nome.setter
-    def nome(self, nome):
+    def nome(self, nome: str):
+        if not isinstance(nome, str):
+            raise TypeError("nome deve ser uma string")
         self.__nome = nome
 
     @property
@@ -41,20 +43,22 @@ class Personagem(ABC):
     def poderes(self):
         return self.__poderes
 
-    def adicionar_poder(self, poder):
+    def adicionar_poder(self, poder: Poder):
         if not isinstance(poder, Poder):
             raise TypeError("poder deve ser um Poder")
 
         self.__poderes.append(poder)
         return True
 
-    def remover_poder(self, nome):
+    def remover_poder(self, nome: str):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser um uma string")
 
-        for poder, index in self.poderes:
+        for index, poder in enumerate(self.__poderes):
             if poder.nome == nome:
                 self.poderes.pop(index)
+        else:
+            return False
 
         return True
 

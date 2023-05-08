@@ -1,13 +1,13 @@
 class Classe:
-    def __init__(self, nome: str, vida: float, velocidade: int, defesa: float, mana: int):
+    def __init__(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser um str")
-        if not isinstance(vida, float):
-            raise TypeError("vida deve ser um float")
+        if not isinstance(vida, int):
+            raise TypeError("vida deve ser um int")
         if not isinstance(velocidade, int):
             raise TypeError("velocidade deve ser um int")
-        if not isinstance(defesa, float):
-            raise TypeError("defesa deve ser um float")
+        if not isinstance(defesa, int):
+            raise TypeError("defesa deve ser um int")
         if not isinstance(mana, int):
             raise TypeError("mana deve ser um int")
 
