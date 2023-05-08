@@ -1,12 +1,17 @@
 from personagem import Personagem
 from item import Item
+from classe import Classe
 class Jogador(Personagem):
-    def __init__(self, nome, classe, nivel, poderes):
+    def __init__(self, nome: str, classe: Classe, nivel: int):
 
         if not isinstance(nome, str):
             raise TypeError("Nome do jogador deve ser do tipo string")
+        if not isinstance(classe, Classe):
+            raise TypeError("Classe do jogador deve ser do tipo Classe")
+        if not isinstance(nivel, int):
+            raise TypeError("Nivel do jogador deve ser do tipo inteiro")
 
-        super().__init__(nome, classe, nivel, poderes)
+        super().__init__(nome, classe, nivel)
         self.__dano_causado = 0
         self.__dano_recebido = 0
         self.__itens = []
