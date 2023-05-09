@@ -65,6 +65,9 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
+    def personagens_vivos(self):
+        return [personagem for personagem in self.__personagens if personagem.vida_atual > 0]
+
     @staticmethod
     def calcular_poder(poder):
         if not isinstance(poder, Poder):

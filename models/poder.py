@@ -18,6 +18,7 @@ class Poder:
         self.__dano = dano
         self.__mana_gasta = mana_gasta
         self.__alvos = alvos
+        # Ataque == True, cura == False
         self.__ataque_cura = ataque_cura
 
     @property
