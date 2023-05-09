@@ -4,3 +4,15 @@ class DuplicadoException(Exception):
 
 class NaoEncontradoException(Exception):
     pass
+
+
+class CombateAcabou(Exception):
+    pass
+
+
+class VitoriaCombateAcabou(CombateAcabou):
+    pass
+
+
+class DerrotaCombateAcabou(CombateAcabou):
+    pass

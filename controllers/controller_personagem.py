@@ -82,3 +82,13 @@ class ControllerPersonagem(ABC):
             dano = int(random.randint(dano_minimo, dano_maximo))
 
         return dano, resultado_acerto
+
+    @staticmethod
+    def calcular_velocidade(velocidade: int):
+        if not isinstance(velocidade, int):
+            raise TypeError("velocidade deve ser um inteiro")
+
+        rolagem_jogador = random.randint(1, 20)
+        resultado_velocidade = rolagem_jogador + velocidade
+
+        return resultado_velocidade
