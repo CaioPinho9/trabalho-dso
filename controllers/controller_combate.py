@@ -1,3 +1,5 @@
+import random
+
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_personagem import ControllerPersonagem
@@ -5,11 +7,14 @@ from exceptions.exceptions import DuplicadoException, NaoEncontradoException
 from models.combate import Combate
 from models.jogador import Jogador
 from models.personagem import Personagem
+from models.poder import Poder
+from utils.utils import Utils
+from views.view_combate import ViewCombate
 
 
 class ControllerCombate:
 
-    def __init__(self, view_combate, controller_jogador: ControllerJogador, controller_npc: ControllerNpc):
+    def __init__(self, view_combate: ViewCombate, controller_jogador: ControllerJogador, controller_npc: ControllerNpc):
         self.__combates = []
         self.__view_combate = view_combate
         self.__controller_jogador = controller_jogador
@@ -17,14 +22,14 @@ class ControllerCombate:
         self.__combate_atual: Combate = None
 
     def cadastrar_combate(self, combate: Combate):
-        for index, combate_existente in enumerate(self.__combates):
+        for escolha_poder, combate_existente in enumerate(self.__combates):
             if combate_existente.codigo == combate.codigo:
                 raise DuplicadoException("Esse combate já existe")
 
         self.__combates.append(combate)
 
     def iniciar_combate(self, codigo: int):
-        for index, combate_existente in enumerate(self.__combates):
+        for escolha_poder, combate_existente in enumerate(self.__combates):
             if combate_existente.codigo == codigo:
                 self.__combate_atual = combate_existente
 
@@ -41,11 +46,120 @@ class ControllerCombate:
 
             continuar, vitoria = self._testar_personagens_vivos()
 
-    def _turno(self, personagem: Personagem):
-        if isinstance(personagem, Jogador):
-            dano, resultado_acerto, alvos = self.__controller_jogador.turno(personagem, self.__combate_atual.npcs)
+    def _escolher_alvos_aleatorio(self, poder: Poder):
+        if poder.ataque_cura:
+            personagens_vivos = self.__controller_jogador.personagens_vivos()
         else:
-            dano, resultado_acerto, alvos = self.__controller_npc.turno(personagem, self.__combate_atual.jogadores)
+            personagens_vivos = self.__controller_npc.personagens_vivos()
+
+        personagens_alvos = []
+        for _ in range(poder.alvos):
+            # Selecionando um inimigo aleatório que ainda não foi selecionado
+            personagens_disponiveis = list(set(personagens_vivos) - set(personagens_alvos))
+            if not personagens_disponiveis:
+                break
+            personagem_alvo = random.choice(personagens_disponiveis)
+            personagens_alvos.append(personagem_alvo)
+
+        return personagens_alvos
+
+    def _escolher_alvos(self, poder: Poder):
+        if poder.ataque_cura:
+            personagens_vivos = self.__controller_npc.personagens_vivos()
+        else:
+            personagens_vivos = self.__controller_jogador.personagens_vivos()
+
+        personagens_alvos = []
+        for i in range(poder.alvos):
+            # Selecionando um inimigo aleatório que ainda não foi selecionado
+            personagens_disponiveis = list(set(personagens_vivos) - set(personagens_alvos))
+            if not personagens_disponiveis:
+                break
+            opcoes_alvos = [personagem.nome + "[" + index + "]: " +
+                            personagem.vida_atual + "/" + personagem.vida for
+                            personagem, index in personagens_disponiveis]
+
+            mensagem_alvos = "\n-------------------".join(opcoes_alvos)
+
+            if poder.ataque_cura:
+                if poder.alvos == 1:
+                    personagem_alvo = self.__view_combate.escolher_alvo_unico(mensagem_alvos)
+                else:
+                    personagem_alvo = self.__view_combate.escolher_alvo_area(i + 1, poder.alvos, mensagem_alvos)
+            else:
+                personagem_alvo = self.__view_combate.escolher_alvo_unico(mensagem_alvos)
+
+            personagens_alvos.append(personagem_alvo)
+
+        return personagens_alvos
+
+    def _turno(self, personagem: Personagem):
+        item = None
+        poder = None
+
+        if isinstance(personagem, Jogador):
+            # Pedir input enquanto o usuario não enviar uma resposta válida
+            escolha_poder_item = None
+            escolha_poder = None
+
+            continuar = True
+            while continuar:
+                # Jogador escolhe entre usar poder ou item
+                escolha_poder_item = self.__view_combate.escolher_poder_ou_item()
+
+                continuar = Utils.check_inteiro_intervalo(escolha_poder_item, [0, 1])
+                if continuar:
+                    self.__view_combate.escolha_inteiro()
+
+            # Poder[0], Item[1]
+            if escolha_poder_item == 0:
+                # Pedir input enquanto o usuario não enviar uma resposta válida
+                continuar = True
+                while continuar:
+                    opcoes_poderes = self.__controller_jogador.poderes_estatisticas(personagem)
+
+                    poderes_mensagem = "\n-------------------".join(opcoes_poderes)
+
+                    escolha_poder = self.__view_combate.escolher_poder(personagem.nome, poderes_mensagem)
+
+                    continuar = Utils.check_inteiro_intervalo(escolha_poder, [0, len(opcoes_poderes) - 1])
+                    if continuar:
+                        self.__view_combate.escolha_inteiro()
+
+                poder = personagem.poderes[escolha_poder]
+
+                if poder.ataque_cura:
+                    if poder.alvos == 1:
+                        self.__view_combate.poder_escolhido_ataque_unico(poder.nome)
+                    else:
+                        self.__view_combate.poder_escolhido_ataque_area(poder.nome, poder.alvos)
+                else:
+                    self.__view_combate.poder_escolhido_cura_unica(poder.nome)
+
+            elif escolha_poder_item == 1:
+                item = None
+
+        else:
+            poder = random.choice(personagem.poderes)
+
+        if not item:
+            dano, resultado_acerto = ControllerPersonagem.calcular_poder(poder)
+
+            if isinstance(personagem, Jogador):
+                personagens_alvos = self._escolher_alvos(poder)
+            else:
+                personagens_alvos = self._escolher_alvos_aleatorio(poder)
+
+            if not poder.ataque_cura:
+                dano *= -1
+
+            for personagem in personagens_alvos:
+                personagem.mudar_vida_atual(dano)
+        else:
+            # resultado = ControllerPersonagem.calcular_item(poder)
+            pass
+
+        # Todo: Show resultado do turno
 
     def _ordernar_batalha(self):
         jogadores = self.__combate_atual.jogadores

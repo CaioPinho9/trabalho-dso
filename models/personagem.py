@@ -18,6 +18,7 @@ class Personagem(ABC):
         self.__classe = classe
         self.__nivel = nivel
         self.__poderes = []
+        self.__vida_atual = classe.vida
 
     @property
     def nome(self):
@@ -63,3 +64,19 @@ class Personagem(ABC):
             return False
 
 
+@property
+def vida_atual(self):
+    return self.__vida_atual
+
+
+def restaurar_vida_atual(self):
+    self.__vida_atual = self.classe.vida
+
+
+def mudar_vida_atual(self, valor):
+    self.__vida_atual += valor
+
+    if self.__vida_atual > self.__classe.vida:
+        self.__vida_atual = self.__classe.vida
+    elif self.__vida_atual < 0:
+        self.__vida_atual = 0
