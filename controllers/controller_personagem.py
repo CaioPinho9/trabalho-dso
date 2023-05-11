@@ -104,7 +104,6 @@ class ControllerPersonagem(ABC):
             estatistica += "[Ataque]" if poder.ataque_cura else "[Cura]"
             estatistica += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
             estatistica += (
-                    "\nAcerto: " + str(poder.acerto) +
                     "\nDano: " + str(poder.dano) +
                     "\nMana Gasta: " + str(poder.mana_gasta)
             )

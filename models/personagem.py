@@ -63,20 +63,17 @@ class Personagem(ABC):
         else:
             return False
 
+    @property
+    def vida_atual(self):
+        return self.__vida_atual
 
-@property
-def vida_atual(self):
-    return self.__vida_atual
+    def restaurar_vida_atual(self):
+        self.__vida_atual = self.classe.vida
 
+    def mudar_vida_atual(self, valor):
+        self.__vida_atual -= valor
 
-def restaurar_vida_atual(self):
-    self.__vida_atual = self.classe.vida
-
-
-def mudar_vida_atual(self, valor):
-    self.__vida_atual += valor
-
-    if self.__vida_atual > self.__classe.vida:
-        self.__vida_atual = self.__classe.vida
-    elif self.__vida_atual < 0:
-        self.__vida_atual = 0
+        if self.__vida_atual > self.__classe.vida:
+            self.__vida_atual = self.__classe.vida
+        elif self.__vida_atual < 0:
+            self.__vida_atual = 0

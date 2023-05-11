@@ -1,15 +1,12 @@
 class ViewCombate:
-    def __init__(self, controller_combate):
-        self.__controller_combate = controller_combate
-
     def escolher_poder_ou_item(self):
-        return input("Escolha entre usar um poder[1] ou um item[2]:")
+        return input("Escolha entre usar um poder[0] ou um item[1]:")
 
     def escolha_inteiro(self):
         print("Utilize apenas números que estão no intervalo")
 
     def escolher_poder(self, nome_personagem, opcoes_poderes):
-        return input("O personagem " + nome_personagem + " pode usar esses poderes " + opcoes_poderes)
+        return input("O personagem " + nome_personagem + " pode usar esses poderes:\n" + opcoes_poderes)
 
     def poder_escolhido_ataque_area(self, poder_nome, maximo):
         print("O poder " + poder_nome + " pode acertar até " + maximo + " alvos")

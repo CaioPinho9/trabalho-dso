@@ -1,11 +1,12 @@
 from models.jogador import Jogador
 from models.npc import Npc
+from models.personagem import Personagem
 
 
 class Combate():
-    def __init__(self, codigo: str, jogadores: list[Jogador], npcs: list[Npc]):
-        if not isinstance(codigo, str):
-            raise TypeError("Código do combate deve ser do tipo string")
+    def __init__(self, codigo: int, jogadores: list[Jogador], npcs: list[Npc]):
+        if not isinstance(codigo, int):
+            raise TypeError("Código do combate deve ser do tipo inteiro")
         if not isinstance(jogadores, list):
             raise TypeError("Jogadores do combate deve ser do tipo lista")
         if not isinstance(npcs, list):
@@ -84,8 +85,8 @@ class Combate():
     def ordem_de_batalha(self, lista_de_batalha):
         if not isinstance(lista_de_batalha, list):
             raise TypeError("Ordem de batalha deve ser do tipo lista")
-        if not all(isinstance(batalha, Jogador) for batalha in lista_de_batalha):
-            raise TypeError("Ordem de batalha deve ser do tipo Jogador")
+        if not all(isinstance(batalha, Personagem) for batalha in lista_de_batalha):
+            raise TypeError("Ordem de batalha deve ser do tipo Personagem")
         self.__ordem_de_batalha = lista_de_batalha
 
     @vitoria.setter
