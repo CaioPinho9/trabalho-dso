@@ -8,5 +8,5 @@ class Utils:
             if not intervalo[0] <= int(valor) <= intervalo[1]:
                 raise TypeError("Deve ser um dos números da lista")
             return True
-        except TypeError:
+        except Exception:
             return False

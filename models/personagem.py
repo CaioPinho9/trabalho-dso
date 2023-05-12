@@ -1,6 +1,7 @@
 import random
 from abc import ABC
 
+from exceptions.exceptions import ManaInsuficienteException
 from models.classe import Classe
 from models.poder import Poder
 
@@ -19,6 +20,7 @@ class Personagem(ABC):
         self.__nivel = nivel
         self.__poderes = []
         self.__vida_atual = classe.vida
+        self.__mana_atual = classe.mana
 
     @property
     def nome(self):
@@ -77,3 +79,16 @@ class Personagem(ABC):
             self.__vida_atual = self.__classe.vida
         elif self.__vida_atual < 0:
             self.__vida_atual = 0
+
+    @property
+    def mana_atual(self):
+        return self.__mana_atual
+
+    def restaurar_mana_atual(self):
+        self.__mana_atual = self.classe.mana
+
+    def gastar_mana(self, valor):
+        if self.__mana_atual - valor < 0:
+            raise ManaInsuficienteException("O Personagem não possui mana suficiente para esse poder")
+
+        self.__mana_atual -= valor
