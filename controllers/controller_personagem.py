@@ -79,10 +79,7 @@ class ControllerPersonagem(ABC):
         dano = 0
         # Verifica se o ataque acertou ou falhou
         if resultado_acerto >= 15:
-            # Calcula o dano
-            dano_minimo = round(poder.dano * 0.5)
-            dano_maximo = round(poder.dano * 1.5)
-            dano = int(random.randint(dano_minimo, dano_maximo))
+            dano = poder.dano
 
         return dano, resultado_acerto
 
@@ -100,15 +97,42 @@ class ControllerPersonagem(ABC):
     def poderes_estatisticas(personagem):
         poderes_estatisticas = []
         for index, poder in enumerate(personagem.poderes):
-            estatistica = poder.nome + "[" + str(index) + "]: "
-            estatistica += "[Ataque]" if poder.ataque_cura else "[Cura]"
-            estatistica += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
-            estatistica += (
+            estatisticas = poder.nome + "[" + str(index) + "]: "
+            estatisticas += "\n[Ataque]" if poder.ataque_cura else "[Cura]"
+            estatisticas += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
+            estatisticas += (
                     "\nDano: " + str(poder.dano) +
-                    "\nMana Gasta: " + str(poder.mana_gasta)
+                    "\nMana Gasta: " + str(poder.mana_gasta) +
+                    "\nAlvos: " + str(poder.alvos)
             )
             poderes_estatisticas.append(
-                estatistica
+                estatisticas
             )
 
+        poderes_estatisticas = "\n-------------------\n".join(poderes_estatisticas)
+
         return poderes_estatisticas
+
+    @staticmethod
+    def personagens_vida_estatisticas_com_index(personagens=None):
+        estatisticas = [personagem.nome + "[" + str(index) + "]: " +
+                        str(personagem.vida_atual) + "/" + str(personagem.classe.vida) for
+                        index, personagem in enumerate(personagens)]
+        return "\n".join(estatisticas)
+
+    @staticmethod
+    def personagens_vida_mana_estatisticas(personagens=None):
+        estatisticas = [personagem.nome + ": HP[" + str(personagem.vida_atual) + "/" +
+                        str(personagem.classe.vida) + "] Mana[" + str(personagem.mana_atual) + "/" +
+                        str(personagem.classe.mana) + "]" for personagem in personagens]
+        return "\n".join(estatisticas)
+
+    @staticmethod
+    def personagens_nomes(personagens):
+        nomes = [personagem.nome for personagem in personagens]
+        return ", ".join(nomes)
+
+    def restaurar_personagens(self):
+        for personagem in self.__personagens:
+            personagem.restaurar_vida_atual()
+            personagem.restaurar_mana_atual()

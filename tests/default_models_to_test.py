@@ -3,9 +3,9 @@ from models.jogador import Jogador
 from models.npc import Npc
 from models.poder import Poder
 
-CLASSE = Classe("Classe", 10, 5, 5, 5)
+CLASSE = Classe("Classe", 20, 5, 5, 10)
 
-PODER = Poder('Poder', 3, 12, 3, 1, True)
+PODER = Poder('Firebolt', 3, 12, 3, 1, True)
 
 JOGADOR = Jogador("Jogador", CLASSE, 1)
 

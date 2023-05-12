@@ -6,5 +6,3 @@ from models.jogador import Jogador
 class ControllerJogador(ControllerPersonagem):
     def cadastrar_personagem(self, nome: str, classe: Classe, nivel: int):
         super().personagens.append(Jogador(nome, classe, nivel))
-
-

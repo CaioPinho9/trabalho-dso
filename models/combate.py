@@ -113,25 +113,16 @@ class Combate():
             raise TypeError("Finalizado deve ser do tipo booleano")
         self.__finalizado = valor
 
-    def adicionar_npc(self, npc):
-        if not isinstance(npc, Npc):
-            raise TypeError("Npc deve ser do tipo Npc")
-        self.__npcs.append(npc)
-
-    def remover_npc(self, npc):
-        if not isinstance(npc, Npc):
-            raise TypeError("Npc deve ser do tipo Npc")
-        self.__npcs.remove(npc)
-
     def proximo_da_batalha(self):
-        """
-            Adicionar logica de mostrar quando a batalha terminou
-        """
         if len(self.__jogadores) <= 0:
             raise ValueError("Não há jogadores para batalhar")
         if len(self.__npcs) <= 0:
             raise ValueError("Não há npcs para batalhar")
-        proximo_da_batalha = self.__ordem_de_batalha.pop(0)
-        self.__ordem_de_batalha.append(proximo_da_batalha)
+        while True:
+            proximo_da_batalha = self.__ordem_de_batalha.pop(0)
+            self.__ordem_de_batalha.append(proximo_da_batalha)
+            # Pula personagens com 0 de vida
+            if proximo_da_batalha.vida_atual != 0:
+                break
 
         return proximo_da_batalha

@@ -6,13 +6,5 @@ class NaoEncontradoException(Exception):
     pass
 
 
-class CombateAcabou(Exception):
-    pass
-
-
-class VitoriaCombateAcabou(CombateAcabou):
-    pass
-
-
-class DerrotaCombateAcabou(CombateAcabou):
+class ManaInsuficienteException(Exception):
     pass
