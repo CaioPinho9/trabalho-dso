@@ -68,19 +68,14 @@ class ControllerPersonagem(ABC):
         return [personagem for personagem in self.__personagens if personagem.vida_atual > 0]
 
     @staticmethod
-    def calcular_poder(poder):
+    def calcular_acerto(poder):
         if not isinstance(poder, Poder):
             raise TypeError("ataque deve ser um Poder")
 
         rolagem_jogador = random.randint(1, 20)
         resultado_acerto = rolagem_jogador + poder.acerto
 
-        dano = 0
-        # Verifica se o ataque acertou ou falhou
-        if resultado_acerto >= 15:
-            dano = poder.dano
-
-        return dano, resultado_acerto
+        return resultado_acerto
 
     @staticmethod
     def calcular_velocidade(velocidade: int):

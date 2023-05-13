@@ -1,12 +1,13 @@
 class ViewCombate:
 
     def escolher_acao(self):
-        return input("Escolha entre usar um poder[0] ou um item[1]:")
+        return input("Escolha entre usar um poder[0]: ")
 
     def escolher_poder(self, nome_personagem, opcoes_poderes, mana):
         print(f"--------------------------------------------------------------------------")
         return input(
-            f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" + opcoes_poderes)
+            f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" +
+            opcoes_poderes + "\n")
 
     def poder_escolhido_ataque_area(self, poder_nome, maximo):
         print(f"--------------------------------------------------------------------------")
@@ -21,10 +22,10 @@ class ViewCombate:
         print(f"O poder {poder_nome} pode curar um aliado")
 
     def escolher_alvo_area(self, opcoes_alvos, escolhidos, maximo):
-        return input(f"Selecione um alvo:\n{opcoes_alvos}\nAlvos selecionados[{escolhidos}/{maximo}]")
+        return input(f"Selecione um alvo:\n{opcoes_alvos}\nAlvos selecionados[{escolhidos}/{maximo}]\n")
 
     def escolher_alvo_unico(self, opcoes_alvos):
-        return input(f"Selecione um alvo:\n{opcoes_alvos}")
+        return input(f"Selecione um alvo:\n{opcoes_alvos}\n")
 
     def iniciar_combate(self, jogadores, npcs):
         print(f"--------------------------------------------------------------------------")
@@ -35,6 +36,7 @@ class ViewCombate:
     def iniciar_turno(self, personagem, index):
         print(f"--------------------------------------------------------------------------")
         print(f"TURNO {index}: {personagem}")
+        print(f"--------------------------------------------------------------------------")
 
     def resultado_velocidade(self, tipo_personagem, nome, dado, velocidade, resultado):
         print(f"{tipo_personagem} {nome}: [{dado}]+{velocidade} = {resultado}")
@@ -43,18 +45,17 @@ class ViewCombate:
         print(f"--------------------------------------------------------------------------")
         print(f"A ordem de batalha será {ordem}")
 
-    def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, ataque_cura):
+    def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, ataque, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
-        print(f"Rolagem Acerto[{dado}]+{acerto} = {resultado}")
-        print(f"{poder} foi eficaz! Conseguiu {ataque_cura} {dano} ponto de vida em cada alvo!")
+        print(f"Rolagem [{dado}]+{acerto} = {resultado}, Defesa: {alvo_defesa}")
+        print(f"{poder} foi eficaz! Conseguiu {ataque} {dano} ponto de vida em {alvo_nome}!")
 
-    def resultado_poder_falha(self, poder, dado, acerto, resultado):
+    def resultado_poder_falha(self, poder, dado, acerto, resultado, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
-        print(f"Rolagem Acerto[{dado}]+{acerto} = {resultado}")
-        print(f"{poder} falhou! ")
+        print(f"Rolagem [{dado}]+{acerto} = {resultado}, Defesa: {alvo_defesa}")
+        print(f"{poder} errou {alvo_nome}! ")
 
     def escolha_npc(self, nome, poder, alvos):
-        print(f"--------------------------------------------------------------------------")
         print(f"NPC {nome} irá usar {poder} em {alvos}")
 
     def estatistica_vida_geral(self, jogadores, npcs):
@@ -71,3 +72,6 @@ class ViewCombate:
     def derrota(self):
         print(f"--------------------------------------------------------------------------")
         print("GAME OVER.")
+
+    def separacao(self):
+        print(f"--------------------------------------------------------------------------")

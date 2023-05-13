@@ -15,7 +15,7 @@ class Personagem(ABC):
 
         self.__nome = nome
         self.__classe = classe
-        self.__poderes = []
+        self.__poderes = [Poder("Soco", 0, 1, 0, 1, True, 0)]
         self.__vida_atual = classe.vida
         self.__mana_atual = classe.mana
 
@@ -74,13 +74,7 @@ class Personagem(ABC):
     def restaurar_vida_atual(self):
         self.__vida_atual = self.classe.vida
 
-    def mudar_vida_atual(self, valor, ataque_cura):
-        # Defesa alta reduz o dano
-        if ataque_cura:
-            valor -= self.classe.defesa
-            if valor < 0:
-                valor = 0
-
+    def mudar_vida_atual(self, valor):
         self.__vida_atual -= valor
 
         if self.__vida_atual > self.__classe.vida:

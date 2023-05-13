@@ -1,4 +1,6 @@
+import os
 import random
+import time
 
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_personagem import ControllerPersonagem
@@ -21,7 +23,15 @@ class ControllerJogador(ControllerPersonagem):
         self.__controller_classe = controller_classe
         self.__controller_poder = controller_poder
 
-    def cadastrar_personagem(self, nome: str, **kwargs):
+    def cadastrar_personagem(self, index_personagem: int, **kwargs):
+        while True:
+            nome = self.__view_jogador.escolha_nome(index_personagem)
+
+            if not self.get_personagem(nome):
+                break
+
+            self.__view_erro.nome_repetido(nome)
+
         # Escolher a classe do personagem
         while True:
             index = self.__view_jogador.escolha_classe(self.__controller_classe.classe_estatisticas())
@@ -56,11 +66,13 @@ class ControllerJogador(ControllerPersonagem):
             except DuplicadoException:
                 self.__view_erro.poder_repetido(nome, poder.nome)
 
-            quantidade_poderes = len(jogador.poderes)
+            # Lembrando que todos possuem Soco como poder basico
+            quantidade_poderes = len(jogador.poderes) - 1
 
         poderes_mensagem = self.__controller_poder.poderes_nomes(jogador.poderes)
 
-        self.__view_jogador.aviso_criado(nome, classe.nome, poderes_mensagem, Utils.xingamento())
+        os.system("cls")
 
-    def remover_personagem(self, nome: str):
-        return super().remover_personagem(nome)
+        self.__view_jogador.aviso_criado(nome, classe.nome, poderes_mensagem, Utils.xingamento())
+        time.sleep(3)
+        os.system("cls")

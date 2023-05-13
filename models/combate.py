@@ -3,7 +3,7 @@ from models.npc import Npc
 from models.personagem import Personagem
 
 
-class Combate():
+class Combate:
     def __init__(self, codigo: int, jogadores: list[Jogador], npcs: list[Npc]):
         if not isinstance(codigo, int):
             raise TypeError("Código do combate deve ser do tipo inteiro")

@@ -69,11 +69,10 @@ class ControllerPoder:
             estatisticas = poder.nome + "[" + str(index) + "]: "
             estatisticas += "\n[Ataque]" if poder.ataque else "\n[Cura]"
             estatisticas += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
-            estatisticas += (
-                    "\nDano: " + str(poder.dano) +
-                    "\nMana Gasta: " + str(poder.mana_gasta) +
-                    "\nAlvos: " + str(poder.alvos)
-            )
+            estatisticas += "\nDano: " + str(poder.dano) if poder.ataque else "\nCura: " + str(poder.dano)
+            estatisticas += "\nMana Gasta: " + str(poder.mana_gasta)
+            estatisticas += "\nAlvos: " + str(poder.alvos)
+
             poderes_estatisticas.append(
                 estatisticas
             )
@@ -83,3 +82,8 @@ class ControllerPoder:
     def poderes_nomes(self, poderes):
         nomes = [poder.nome for poder in poderes]
         return ", ".join(nomes)
+
+
+def poderes_nomes(self, poderes):
+    nomes = [poder.nome for poder in poderes]
+    return ", ".join(nomes)

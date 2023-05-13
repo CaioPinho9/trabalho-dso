@@ -11,7 +11,7 @@ class Poder:
         if not isinstance(alvos, int):
             raise TypeError("alvos deve ser um int")
         if not isinstance(ataque, bool):
-            raise TypeError("ataque_cura deve ser um boolean")
+            raise TypeError("ataque deve ser um boolean")
         if not isinstance(nivel, int):
             raise TypeError("nivel deve ser um int")
 

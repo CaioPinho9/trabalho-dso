@@ -1,3 +1,6 @@
+import time
+
+
 class ViewJogador:
     def aviso_iniciar(self):
         print(f"--------------------------------------------------------------------------")
@@ -18,8 +21,9 @@ class ViewJogador:
 
     def aviso_escolher_poderes(self, nome, poderes_estatisticas):
         print(f"--------------------------------------------------------------------------")
-        print(f"Você poder escolher até 3 poderes para {nome}")
-        print(f"As opções são: \n{poderes_estatisticas}\n")
+        print(f"Você poder escolher até 3 poderes para {nome}. As opções são: ")
+        time.sleep(3)
+        print(f"{poderes_estatisticas}\n")
 
     def aviso_criado(self, nome, classe, poderes, xingamento):
         print(f"--------------------------------------------------------------------------")

@@ -1,4 +1,6 @@
+import os
 import random
+import time
 
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
@@ -7,6 +9,7 @@ from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import DuplicadoException, NaoEncontradoException, ManaInsuficienteException
 from models.combate import Combate
 from models.jogador import Jogador
+from models.npc import Npc
 from models.personagem import Personagem
 from models.poder import Poder
 from utils.utils import Utils
@@ -15,7 +18,6 @@ from views.view_erro import ViewErro
 
 
 class ControllerCombate:
-
     def __init__(self, view_combate: ViewCombate, view_erro: ViewErro, controller_jogador: ControllerJogador,
                  controller_npc: ControllerNpc, controller_poder: ControllerPoder):
         self.__combates = []
@@ -25,11 +27,12 @@ class ControllerCombate:
         self.__controller_npc = controller_npc
         self.__controller_poder = controller_poder
         self.__combate_atual = None
+        self.__codigo = 0
 
-    def cadastrar_combate(self, combate: Combate):
-        for combate_existente in self.__combates:
-            if combate_existente.codigo == combate.codigo:
-                raise DuplicadoException("Esse combate já existe")
+    def cadastrar_combate(self, jogadores: list[Jogador], npcs: list[Npc]):
+        combate = Combate(self.__codigo, jogadores, npcs)
+
+        self.__codigo += 1
 
         self.__combates.append(combate)
 
@@ -37,9 +40,7 @@ class ControllerCombate:
         if not isinstance(codigo, int):
             raise TypeError("codigo deve ser um numero inteiro")
 
-        for combate in self.__combates:
-            if combate.codigo == codigo:
-                return combate
+        return self.__combates[codigo]
 
     def iniciar_combate(self, codigo: int):
         try:
@@ -61,6 +62,9 @@ class ControllerCombate:
         # Introduz ao jogador quem está participando
         self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
 
+        time.sleep(5)
+        os.system("cls")
+
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
         ordem_de_batalha = self._ordernar_batalha()
         self.__combate_atual.ordem_de_batalha = ordem_de_batalha
@@ -69,22 +73,30 @@ class ControllerCombate:
         nomes_personagens = ControllerPersonagem.personagens_nomes(ordem_de_batalha)
         # Mostra para o usuário a ordem
         self.__view_combate.resultado_ordem_de_batalha(nomes_personagens)
+        time.sleep(6)
 
         # Inicia os turnos até que um dos lados fique com 0 de vida
         continuar = True
         vitoria = False
-        contador_turnos = 0
+        contador_turnos = 1
         while continuar:
+            os.system("cls")
             proximo_personagem = self.__combate_atual.proximo_da_batalha()
 
             self.__view_combate.iniciar_turno(proximo_personagem.nome, contador_turnos)
+            time.sleep(5)
 
-            self._turno(proximo_personagem)
+            try:
+                self._turno(proximo_personagem)
+            except Exception as e:
+                self.__view_erro.erro_inexperado(proximo_personagem.nome)
+                print(e)
 
             # Mostra a vida de todos os personagens
             vida_jogadores = ControllerPersonagem.personagens_vida_mana_estatisticas(jogadores)
             vida_npcs = ControllerPersonagem.personagens_vida_mana_estatisticas(npcs)
             self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
+            time.sleep(5)
 
             continuar, vitoria = self._testar_personagens_vivos()
             contador_turnos += 1
@@ -94,10 +106,14 @@ class ControllerCombate:
         else:
             self.__view_combate.derrota()
 
+        return vitoria
+
     def _ordernar_batalha(self):
         jogadores = self.__combate_atual.jogadores
         npcs = self.__combate_atual.npcs
         ordem_batalha = {}
+
+        self.__view_combate.separacao()
 
         for jogador in jogadores:
             velocidade = jogador.classe.velocidade
@@ -121,14 +137,8 @@ class ControllerCombate:
         # Inicia sendo escolhido a ação do jogador
         poder, item = self._escolher_acao(personagem)
 
-        if not item:
-            # Caso ele escolha um poder o resultado será calculado
-            self._calcular_poder(personagem, poder)
-        else:
-            # resultado = ControllerPersonagem.calcular_item(poder)
-            pass
-
-        # Todo: Show resultado do turno
+        # Quando ele escolher um poder o resultado será calculado
+        self._calcular_poder(personagem, poder)
 
     def _escolher_acao(self, personagem):
         item = None
@@ -163,6 +173,7 @@ class ControllerCombate:
         return poder, item
 
     def _escolher_poder(self, personagem):
+        poder = None
         # Pedir input enquanto o usuario não enviar uma resposta válida
         while True:
             # Mostra ao usuario os poderes de seu personagem
@@ -174,12 +185,22 @@ class ControllerCombate:
             try:
                 if Utils.check_inteiro_intervalo(escolha_poder, [0, len(personagem.poderes) - 1]):
                     poder = personagem.poderes[int(escolha_poder)]
+
+                    if not isinstance(poder, Poder):
+                        raise TypeError("poder precisa ser um poder")
+
                     personagem.gastar_mana(poder.mana_gasta)
                     break
                 self.__view_erro.apenas_inteiros()
+                time.sleep(3)
+                os.system("cls")
 
             except ManaInsuficienteException:
                 self.__view_erro.mana_insuficiente()
+                time.sleep(3)
+                os.system("cls")
+
+        os.system("cls")
 
         if poder.ataque:
             if poder.alvos == "1":
@@ -216,8 +237,8 @@ class ControllerCombate:
 
         personagens_alvos = []
         for i in range(poder.alvos):
-            # Selecionando um inimigo aleatório que ainda não foi selecionado
-            personagens_disponiveis = list(set(personagens_vivos) - set(personagens_alvos))
+            # Selecionar um inimigo que ainda não foi selecionado
+            personagens_disponiveis = [x for x in personagens_vivos if x not in personagens_alvos]
             if not personagens_disponiveis:
                 break
 
@@ -237,16 +258,16 @@ class ControllerCombate:
                 else:
                     personagem_alvo = self.__view_combate.escolher_alvo_unico(mensagem_alvos)
 
-                if Utils.check_inteiro_intervalo(personagem_alvo, [0, len(personagens_vivos)]):
+                if Utils.check_inteiro_intervalo(personagem_alvo, [0, len(personagens_disponiveis) - 1]):
                     break
                 self.__view_erro.apenas_inteiros()
 
-            personagens_alvos.append(personagens_vivos[int(personagem_alvo)])
+            personagens_alvos.append(personagens_disponiveis[int(personagem_alvo)])
 
         return personagens_alvos
 
     def _calcular_poder(self, personagem, poder):
-        dano, resultado_acerto = ControllerPersonagem.calcular_poder(poder)
+        resultado_acerto = ControllerPersonagem.calcular_acerto(poder)
 
         if isinstance(personagem, Jogador):
             personagens_alvos = self._escolher_alvos(poder)
@@ -255,22 +276,29 @@ class ControllerCombate:
             nomes_alvos = ControllerPersonagem.personagens_nomes(personagens_alvos)
             self.__view_combate.escolha_npc(personagem.nome, poder.nome, nomes_alvos)
 
-        if not poder.ataque:
-            dano *= -1
-            ataque_cura = "aumentar"
-        else:
-            ataque_cura = "diminuir"
-
         dado = resultado_acerto - poder.acerto
 
-        if resultado_acerto >= 15:
-            self.__view_combate.resultado_poder_sucesso(poder.nome, dado,
-                                                        poder.acerto, resultado_acerto, abs(dano),
-                                                        ataque_cura)
-        else:
-            self.__view_combate.resultado_poder_falha(poder.nome, dado, poder.acerto, resultado_acerto)
-
         for personagem in personagens_alvos:
+            dano = poder.dano
+
+            # Cura inverte o dano para aumentar a vida
+            if not poder.ataque:
+                dano = poder.dano * -1
+                ataque = "aumentar"
+            else:
+                ataque = "diminuir"
+
+            # Cura sempre acerta, ataques precisam passar pela defesa do inimigo
+            if resultado_acerto >= personagem.classe.defesa or not poder.ataque:
+                self.__view_combate.resultado_poder_sucesso(poder.nome, dado,
+                                                            poder.acerto, resultado_acerto, abs(dano),
+                                                            ataque, personagem.nome, personagem.classe.defesa)
+            else:
+                self.__view_combate.resultado_poder_falha(poder.nome, dado, poder.acerto, resultado_acerto,
+                                                          personagem.nome, personagem.classe.defesa)
+                dano = 0
+
+            time.sleep(2)
             personagem.mudar_vida_atual(dano)
 
     def _testar_personagens_vivos(self):
@@ -279,9 +307,9 @@ class ControllerCombate:
 
         # return Continuar, Vitoria,
         if sum(npc.vida_atual for npc in npcs) == 0:
-            return False, False
+            return False, True
 
         if sum(jogador.vida_atual for jogador in jogadores) == 0:
-            return False, True
+            return False, False
 
         return True, False

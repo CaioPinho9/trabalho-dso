@@ -55,7 +55,7 @@ def test_get_jogador():
 def test_calcular_poder_jogador():
     controller = ControllerJogador(ViewJogador())
     poder = PODER
-    dano, resultado_acerto = controller.calcular_poder(poder)
+    dano, resultado_acerto = controller.calcular_acerto(poder)
     assert isinstance(dano, int)
     assert isinstance(resultado_acerto, int)
 
@@ -109,6 +109,6 @@ def test_get_npc():
 def test_calcular_poder_npc():
     controller = ControllerNpc()
     poder = PODER
-    dano, resultado_acerto = controller.calcular_poder(poder)
+    dano, resultado_acerto = controller.calcular_acerto(poder)
     assert isinstance(dano, int)
     assert isinstance(resultado_acerto, int)
