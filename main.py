@@ -63,11 +63,8 @@ time.sleep(7)
 os.system("cls")
 
 # O grupo será composto por 3 personagens
-for index in range(1, 2):
+for index in range(1, 4):
     controller_jogador.cadastrar_personagem(index)
-    time.sleep(5)
-    os.system("cls")
-
 
 controller_combate.cadastrar_combate(controller_jogador.personagens, controller_npc.personagens)
 controller_combate.iniciar_combate(0)
