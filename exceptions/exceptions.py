@@ -8,3 +8,4 @@ class NaoEncontradoException(Exception):
 
 class ManaInsuficienteException(Exception):
     pass
+

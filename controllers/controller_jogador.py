@@ -1,61 +1,66 @@
+import random
+
+from controllers.controller_classe import ControllerClasse
 from controllers.controller_personagem import ControllerPersonagem
-from models.classe import Classe
-from models.jogador import Jogador
-from views.view_jogador import ViewJogador
-from models.poder import Poder
-from models.item import Item
+from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import DuplicadoException
+from models.jogador import Jogador
+from utils.utils import Utils
+from views.view_erro import ViewErro
+from views.view_jogador import ViewJogador
 
 
 class ControllerJogador(ControllerPersonagem):
-    def __init__(self):
+    def __init__(self, view_jogador: ViewJogador,
+                 view_erro: ViewErro,
+                 controller_classe: ControllerClasse,
+                 controller_poder: ControllerPoder):
         super().__init__()
-        self.__tela_jogador = ViewJogador(self)
+        self.__view_jogador = view_jogador
+        self.__view_erro = view_erro
+        self.__controller_classe = controller_classe
+        self.__controller_poder = controller_poder
 
-    def cadastrar_personagem(self, nome: str, classe: Classe, nivel: int):
-        self.__tela_jogador.cadastro_jogador()
-        super().personagens.append(Jogador(nome, classe, nivel))
+    def cadastrar_personagem(self, nome: str, **kwargs):
+        # Escolher a classe do personagem
+        while True:
+            index = self.__view_jogador.escolha_classe(self.__controller_classe.classe_estatisticas())
 
-    def calcular_ataque(self, poder: Poder):
-        if not isinstance(poder, Poder):
-            raise TypeError("poder deve ser um objeto da classe Poder")
+            # Impede valores invalidos
+            if Utils.check_inteiro_intervalo(index, [0, len(self.__controller_classe.classes) - 1]):
+                classe = self.__controller_classe.get_classe_por_index(int(index))
+                break
+            self.__view_erro.apenas_inteiros()
 
-        return poder.dano
+        jogador = Jogador(nome, classe)
+        super().personagens.append(jogador)
 
-    def calcular_buff(self, item: Item):
-        if not isinstance(item, Item):
-            raise TypeError("item deve ser um objeto da classe Item")
+        # Mostra todos os poderes iniciais
+        poderes_iniciais = self.__controller_poder.poderes_por_nivel(1)
+        poderes_estatisticas = self.__controller_poder.poderes_estatisticas(poderes_iniciais)
+        self.__view_jogador.aviso_escolher_poderes(nome, poderes_estatisticas)
 
-        return item.buff_ataque
+        # O jogador deve escolher 3 poderes
+        quantidade_poderes = 0
+        while quantidade_poderes != 3:
+            poder = None
 
-    def remover_item(self, item: Item):
-        if not isinstance(item, Item):
-            raise TypeError("item deve ser um objeto da classe Item")
+            index = self.__view_jogador.escolha_poderes(quantidade_poderes + 1)
 
-        if self.get_item(item.nome):
-            raise DuplicadoException("Já existe um item com esse nome")
+            try:
+                if Utils.check_inteiro_intervalo(index, [0, len(poderes_iniciais) - 1]):
+                    poder = poderes_iniciais[int(index)]
+                    super().adicionar_poder_personagem(nome, poder)
+                else:
+                    self.__view_erro.apenas_inteiros()
+            except DuplicadoException:
+                self.__view_erro.poder_repetido(nome, poder.nome)
 
-        self.__itens.append(item)
+            quantidade_poderes = len(jogador.poderes)
 
-        return True
+        poderes_mensagem = self.__controller_poder.poderes_nomes(jogador.poderes)
 
-    def adicionar_item(self, item: Item):
-        if not isinstance(item, Item):
-            raise TypeError("item deve ser um objeto da classe Item")
-
-        item = self.get_item(item.nome)
-        if item:
-            self.__itens.remove(item)
-
-            return True
-        else:
-            return False
+        self.__view_jogador.aviso_criado(nome, classe.nome, poderes_mensagem, Utils.xingamento())
 
     def remover_personagem(self, nome: str):
         return super().remover_personagem(nome)
-
-    def get_item(self, nome: str):
-        for item in self.__itens:
-            if item.nome == nome:
-                return item
-        return None

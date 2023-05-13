@@ -9,7 +9,7 @@ def test_criar_poder():
     assert poder.dano == 120
     assert poder.mana_gasta == 20
     assert poder.alvos == 1
-    assert poder.ataque_cura
+    assert poder.ataque
 
 
 def test_criar_poder_invalido():

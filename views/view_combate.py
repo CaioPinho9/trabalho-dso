@@ -1,16 +1,12 @@
 class ViewCombate:
-    def apenas_inteiros(self):
-        print("Utilize apenas números que estão no intervalo")
 
-    def mana_insuficiente(self):
-        print("Você não possui mana suficiente para esse ataque!")
-
-    def escolher_poder_ou_item(self):
+    def escolher_acao(self):
         return input("Escolha entre usar um poder[0] ou um item[1]:")
 
     def escolher_poder(self, nome_personagem, opcoes_poderes, mana):
         print(f"--------------------------------------------------------------------------")
-        return input(f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" + opcoes_poderes)
+        return input(
+            f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" + opcoes_poderes)
 
     def poder_escolhido_ataque_area(self, poder_nome, maximo):
         print(f"--------------------------------------------------------------------------")
@@ -75,4 +71,3 @@ class ViewCombate:
     def derrota(self):
         print(f"--------------------------------------------------------------------------")
         print("GAME OVER.")
-

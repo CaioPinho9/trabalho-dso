@@ -3,6 +3,7 @@ import random
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_personagem import ControllerPersonagem
+from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import DuplicadoException, NaoEncontradoException, ManaInsuficienteException
 from models.combate import Combate
 from models.jogador import Jogador
@@ -10,15 +11,19 @@ from models.personagem import Personagem
 from models.poder import Poder
 from utils.utils import Utils
 from views.view_combate import ViewCombate
+from views.view_erro import ViewErro
 
 
 class ControllerCombate:
 
-    def __init__(self, view_combate: ViewCombate, controller_jogador: ControllerJogador, controller_npc: ControllerNpc):
+    def __init__(self, view_combate: ViewCombate, view_erro: ViewErro, controller_jogador: ControllerJogador,
+                 controller_npc: ControllerNpc, controller_poder: ControllerPoder):
         self.__combates = []
         self.__view_combate = view_combate
+        self.__view_erro = view_erro
         self.__controller_jogador = controller_jogador
         self.__controller_npc = controller_npc
+        self.__controller_poder = controller_poder
         self.__combate_atual = None
 
     def cadastrar_combate(self, combate: Combate):
@@ -114,7 +119,7 @@ class ControllerCombate:
 
     def _turno(self, personagem: Personagem):
         # Inicia sendo escolhido a ação do jogador
-        poder, item = self._escolher_poder_item(personagem)
+        poder, item = self._escolher_acao(personagem)
 
         if not item:
             # Caso ele escolha um poder o resultado será calculado
@@ -125,7 +130,7 @@ class ControllerCombate:
 
         # Todo: Show resultado do turno
 
-    def _escolher_poder_item(self, personagem):
+    def _escolher_acao(self, personagem):
         item = None
         poder = None
         if isinstance(personagem, Jogador):
@@ -133,11 +138,11 @@ class ControllerCombate:
 
             while True:
                 # Jogador escolhe entre usar poder ou item
-                escolha_poder_item = self.__view_combate.escolher_poder_ou_item()
+                escolha_poder_item = self.__view_combate.escolher_acao()
 
                 if Utils.check_inteiro_intervalo(escolha_poder_item, [0, 1]):
                     break
-                self.__view_combate.apenas_inteiros()
+                self.__view_erro.apenas_inteiros()
 
             # Poder[0], Item[1]
             if escolha_poder_item == "0":
@@ -161,7 +166,7 @@ class ControllerCombate:
         # Pedir input enquanto o usuario não enviar uma resposta válida
         while True:
             # Mostra ao usuario os poderes de seu personagem
-            poderes_mensagem = self.__controller_jogador.poderes_estatisticas(personagem)
+            poderes_mensagem = self.__controller_poder.poderes_estatisticas(personagem.poderes)
 
             # Jogador escolhe o ataque
             escolha_poder = self.__view_combate.escolher_poder(personagem.nome, poderes_mensagem, personagem.mana_atual)
@@ -171,12 +176,12 @@ class ControllerCombate:
                     poder = personagem.poderes[int(escolha_poder)]
                     personagem.gastar_mana(poder.mana_gasta)
                     break
-                self.__view_combate.apenas_inteiros()
+                self.__view_erro.apenas_inteiros()
 
             except ManaInsuficienteException:
-                self.__view_combate.mana_insuficiente()
+                self.__view_erro.mana_insuficiente()
 
-        if poder.ataque_cura:
+        if poder.ataque:
             if poder.alvos == "1":
                 self.__view_combate.poder_escolhido_ataque_unico(poder.nome)
             else:
@@ -187,7 +192,7 @@ class ControllerCombate:
         return poder
 
     def _escolher_alvos_aleatorio(self, poder: Poder):
-        if poder.ataque_cura:
+        if poder.ataque:
             personagens_vivos = self.__controller_jogador.personagens_vivos()
         else:
             personagens_vivos = self.__controller_npc.personagens_vivos()
@@ -204,7 +209,7 @@ class ControllerCombate:
         return personagens_alvos
 
     def _escolher_alvos(self, poder: Poder):
-        if poder.ataque_cura:
+        if poder.ataque:
             personagens_vivos = self.__controller_npc.personagens_vivos()
         else:
             personagens_vivos = self.__controller_jogador.personagens_vivos()
@@ -224,7 +229,7 @@ class ControllerCombate:
                 maximo = len(personagens_vivos)
 
             while True:
-                if poder.ataque_cura:
+                if poder.ataque:
                     if poder.alvos == 1:
                         personagem_alvo = self.__view_combate.escolher_alvo_unico(mensagem_alvos)
                     else:
@@ -234,7 +239,7 @@ class ControllerCombate:
 
                 if Utils.check_inteiro_intervalo(personagem_alvo, [0, len(personagens_vivos)]):
                     break
-                self.__view_combate.apenas_inteiros()
+                self.__view_erro.apenas_inteiros()
 
             personagens_alvos.append(personagens_vivos[int(personagem_alvo)])
 
@@ -250,7 +255,7 @@ class ControllerCombate:
             nomes_alvos = ControllerPersonagem.personagens_nomes(personagens_alvos)
             self.__view_combate.escolha_npc(personagem.nome, poder.nome, nomes_alvos)
 
-        if not poder.ataque_cura:
+        if not poder.ataque:
             dano *= -1
             ataque_cura = "aumentar"
         else:

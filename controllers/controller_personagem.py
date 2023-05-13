@@ -1,6 +1,8 @@
 import random
 from abc import ABC, abstractmethod
 
+from controllers.controller_poder import ControllerPoder
+from exceptions.exceptions import NaoEncontradoException
 from models.classe import Classe
 from models.poder import Poder
 
@@ -10,7 +12,7 @@ class ControllerPersonagem(ABC):
         self.__personagens = []
 
     @abstractmethod
-    def cadastrar_personagem(self, nome: str, classe: Classe, nivel: int):
+    def cadastrar_personagem(self, nome: str, classe: Classe = None):
         pass
 
     def remover_personagem(self, nome: str):
@@ -21,8 +23,7 @@ class ControllerPersonagem(ABC):
             if personagem.nome == nome:
                 self.__personagens.pop(index)
                 return True
-        else:
-            return False
+        raise NaoEncontradoException()
 
     def adicionar_poder_personagem(self, nome_personagem: str, poder: Poder):
         if not isinstance(nome_personagem, str):
@@ -32,8 +33,7 @@ class ControllerPersonagem(ABC):
             if personagem.nome == nome_personagem:
                 self.__personagens[index].adicionar_poder(poder)
                 return True
-        else:
-            return False
+        raise NaoEncontradoException()
 
     def remover_poder_personagem(self, nome_personagem: str, nome_poder: str):
         if not isinstance(nome_personagem, str):
@@ -43,8 +43,7 @@ class ControllerPersonagem(ABC):
             if personagem.nome == nome_personagem:
                 self.__personagens[index].remover_poder(nome_poder)
                 return True
-        else:
-            return False
+        raise NaoEncontradoException()
 
     @property
     def personagens(self):
@@ -92,26 +91,6 @@ class ControllerPersonagem(ABC):
         resultado_velocidade = rolagem_jogador + velocidade
 
         return resultado_velocidade
-
-    @staticmethod
-    def poderes_estatisticas(personagem):
-        poderes_estatisticas = []
-        for index, poder in enumerate(personagem.poderes):
-            estatisticas = poder.nome + "[" + str(index) + "]: "
-            estatisticas += "\n[Ataque]" if poder.ataque_cura else "[Cura]"
-            estatisticas += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
-            estatisticas += (
-                    "\nDano: " + str(poder.dano) +
-                    "\nMana Gasta: " + str(poder.mana_gasta) +
-                    "\nAlvos: " + str(poder.alvos)
-            )
-            poderes_estatisticas.append(
-                estatisticas
-            )
-
-        poderes_estatisticas = "\n-------------------\n".join(poderes_estatisticas)
-
-        return poderes_estatisticas
 
     @staticmethod
     def personagens_vida_estatisticas_com_index(personagens=None):

@@ -7,7 +7,7 @@ CLASSE = Classe("Classe", 20, 5, 5, 10)
 
 PODER = Poder('Firebolt', 3, 12, 3, 1, True)
 
-JOGADOR = Jogador("Jogador", CLASSE, 1)
+JOGADOR = Jogador("Jogador", CLASSE)
 
-NPC = Npc("NPC", CLASSE, 1)
+NPC = Npc("NPC", CLASSE)
 

@@ -1,5 +1,5 @@
 class Poder:
-    def __init__(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool):
+    def __init__(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool, nivel: int):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
         if not isinstance(acerto, int):
@@ -12,6 +12,8 @@ class Poder:
             raise TypeError("alvos deve ser um int")
         if not isinstance(ataque, bool):
             raise TypeError("ataque_cura deve ser um boolean")
+        if not isinstance(nivel, int):
+            raise TypeError("nivel deve ser um int")
 
         self.__nome = nome
         self.__acerto = acerto
@@ -20,6 +22,7 @@ class Poder:
         self.__alvos = alvos
         # Ataque == True, cura == False
         self.__ataque = ataque
+        self.__nivel = nivel
 
     @property
     def nome(self):
@@ -42,5 +45,9 @@ class Poder:
         return self.__alvos
 
     @property
-    def ataque_cura(self):
+    def ataque(self):
         return self.__ataque
+
+    @property
+    def nivel(self):
+        return self.__nivel

@@ -1,3 +1,5 @@
+import random
+
 from views.view_combate import ViewCombate
 
 
@@ -10,3 +12,8 @@ class Utils:
             return True
         except Exception:
             return False
+
+    @staticmethod
+    def xingamento():
+        my_list = ["tolo", "fracassado", "idiota", "imbecil", "pateta"]
+        return random.choice(my_list)

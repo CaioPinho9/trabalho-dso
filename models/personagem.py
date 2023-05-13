@@ -1,23 +1,20 @@
 import random
 from abc import ABC
 
-from exceptions.exceptions import ManaInsuficienteException
+from exceptions.exceptions import ManaInsuficienteException, DuplicadoException
 from models.classe import Classe
 from models.poder import Poder
 
 
 class Personagem(ABC):
-    def __init__(self, nome: str, classe: Classe, nivel: int):
+    def __init__(self, nome: str, classe: Classe):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
         if not isinstance(classe, Classe):
             raise TypeError("classe deve ser uma Classe")
-        if not isinstance(nivel, int):
-            raise TypeError("nivel deve ser um inteiro")
 
         self.__nome = nome
         self.__classe = classe
-        self.__nivel = nivel
         self.__poderes = []
         self.__vida_atual = classe.vida
         self.__mana_atual = classe.mana
@@ -37,19 +34,24 @@ class Personagem(ABC):
         return self.__classe
 
     @property
-    def nivel(self):
-        return self.__nivel
-
-    def aumentar_nivel(self):
-        self.__nivel += 1
-
-    @property
     def poderes(self):
         return self.__poderes
+
+    def get_poder(self, nome: str):
+        if not isinstance(nome, str):
+            raise TypeError("nome deve ser uma string")
+
+        for poder in self.__poderes:
+            if poder.nome == nome:
+                return poder
+        return None
 
     def adicionar_poder(self, poder: Poder):
         if not isinstance(poder, Poder):
             raise TypeError("poder deve ser um Poder")
+
+        if self.get_poder(poder.nome):
+            raise DuplicadoException('Não foi possivel criar a classe pois ja existe uma com o mesmo nome')
 
         self.__poderes.append(poder)
         return True
@@ -72,7 +74,13 @@ class Personagem(ABC):
     def restaurar_vida_atual(self):
         self.__vida_atual = self.classe.vida
 
-    def mudar_vida_atual(self, valor):
+    def mudar_vida_atual(self, valor, ataque_cura):
+        # Defesa alta reduz o dano
+        if ataque_cura:
+            valor -= self.classe.defesa
+            if valor < 0:
+                valor = 0
+
         self.__vida_atual -= valor
 
         if self.__vida_atual > self.__classe.vida:

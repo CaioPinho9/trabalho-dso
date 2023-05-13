@@ -6,22 +6,8 @@ class ControllerPoder:
     def __init__(self):
         self.__poderes = []
 
-    def cadastrar_poder(self, poder: Poder):
-        """
-        Cadastra um novo objeto Poder na lista de poderes.
-
-        Parâmetros:
-        poder (Poder): objeto Poder a ser cadastrado.
-
-        Lança:
-        TypeError: caso o objeto passado não seja uma instância válida de Poder.
-        DuplicadoException: caso já exista um objeto Poder com o mesmo nome na lista de poderes.
-
-        Retorno:
-        True.
-        """
-        if not isinstance(poder, Poder):
-            raise TypeError("Não é um poder")
+    def cadastrar_poder(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool, nivel: int):
+        poder = Poder(nome, acerto, dano, mana_gasta, alvos, ataque, nivel)
 
         if self.get_poder(poder.nome):
             raise DuplicadoException('Não foi possivel criar o poder pois ja existe um com o mesmo nome')
@@ -65,3 +51,35 @@ class ControllerPoder:
             if poder.nome == nome:
                 return poder
         return None
+
+    @property
+    def poderes(self):
+        return self.__poderes
+
+    def poderes_por_nivel(self, nivel):
+        poderes = []
+        for poder in self.__poderes:
+            if poder.nivel == nivel:
+                poderes.append(poder)
+        return poderes
+
+    def poderes_estatisticas(self, poderes):
+        poderes_estatisticas = []
+        for index, poder in enumerate(poderes):
+            estatisticas = poder.nome + "[" + str(index) + "]: "
+            estatisticas += "\n[Ataque]" if poder.ataque else "\n[Cura]"
+            estatisticas += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
+            estatisticas += (
+                    "\nDano: " + str(poder.dano) +
+                    "\nMana Gasta: " + str(poder.mana_gasta) +
+                    "\nAlvos: " + str(poder.alvos)
+            )
+            poderes_estatisticas.append(
+                estatisticas
+            )
+
+        return "\n-------------------\n".join(poderes_estatisticas)
+
+    def poderes_nomes(self, poderes):
+        nomes = [poder.nome for poder in poderes]
+        return ", ".join(nomes)
