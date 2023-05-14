@@ -2,15 +2,15 @@ import os
 import random
 import time
 
+from controllers.controller_classe import ControllerClasse
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_personagem import ControllerPersonagem
 from controllers.controller_poder import ControllerPoder
-from exceptions.exceptions import DuplicadoException, NaoEncontradoException, ManaInsuficienteException
+from exceptions.exceptions import NaoEncontradoException, ManaInsuficienteException
 from models.combate import Combate
 from models.jogador import Jogador
 from models.npc import Npc
-from models.personagem import Personagem
 from models.poder import Poder
 from utils.utils import Utils
 from views.view_combate import ViewCombate
@@ -19,13 +19,14 @@ from views.view_erro import ViewErro
 
 class ControllerCombate:
     def __init__(self, view_combate: ViewCombate, view_erro: ViewErro, controller_jogador: ControllerJogador,
-                 controller_npc: ControllerNpc, controller_poder: ControllerPoder):
+                 controller_npc: ControllerNpc, controller_poder: ControllerPoder, controller_classe: ControllerClasse):
         self.__combates = []
         self.__view_combate = view_combate
         self.__view_erro = view_erro
         self.__controller_jogador = controller_jogador
         self.__controller_npc = controller_npc
         self.__controller_poder = controller_poder
+        self.__controller_classe = controller_classe
         self.__combate_atual = None
         self.__codigo = 0
 
@@ -81,13 +82,19 @@ class ControllerCombate:
         contador_turnos = 1
         while continuar:
             os.system("cls")
+            # Proximo da lista de batalha
             proximo_personagem = self.__combate_atual.proximo_da_batalha()
 
+            # Avisa quem está jogando
             self.__view_combate.iniciar_turno(proximo_personagem.nome, contador_turnos)
             time.sleep(5)
 
             try:
-                self._turno(proximo_personagem)
+                # Inicia sendo escolhido a ação do jogador
+                poder = self._escolher_acao(proximo_personagem, contador_turnos)
+
+                # Quando ele escolher um poder o resultado será calculado
+                self._calcular_poder(proximo_personagem, poder)
             except Exception as e:
                 self.__view_erro.erro_inexperado(proximo_personagem.nome)
                 print(e)
@@ -111,55 +118,59 @@ class ControllerCombate:
     def _ordernar_batalha(self):
         jogadores = self.__combate_atual.jogadores
         npcs = self.__combate_atual.npcs
+
+        personagens = [*jogadores, *npcs]
         ordem_batalha = {}
 
         self.__view_combate.separacao()
 
-        for jogador in jogadores:
-            velocidade = jogador.classe.velocidade
+        # Todos os jogadores fazem um teste pra ver quem é mais veloz
+        for personagem in personagens:
+            velocidade = personagem.classe.velocidade
             resultado_velocidade = ControllerPersonagem.calcular_velocidade(velocidade)
-            ordem_batalha[jogador] = resultado_velocidade
-            self.__view_combate.resultado_velocidade("JOGADOR", jogador.nome, resultado_velocidade - velocidade,
-                                                     velocidade, resultado_velocidade)
-
-        for npc in npcs:
-            velocidade = npc.classe.velocidade
-            resultado_velocidade = ControllerPersonagem.calcular_velocidade(velocidade)
-            ordem_batalha[npc] = resultado_velocidade
-            self.__view_combate.resultado_velocidade("NPC", npc.nome, resultado_velocidade - velocidade,
+            ordem_batalha[personagem] = resultado_velocidade
+            self.__view_combate.resultado_velocidade("JOGADOR" if isinstance(personagem, Jogador) else "NPC",
+                                                     personagem.nome, resultado_velocidade - velocidade,
                                                      velocidade, resultado_velocidade)
 
         # Ordenando pela velocidade
         ordem_batalha = sorted(ordem_batalha.items(), key=lambda x: x[1], reverse=True)
         return [x[0] for x in ordem_batalha]
 
-    def _turno(self, personagem: Personagem):
-        # Inicia sendo escolhido a ação do jogador
-        poder, item = self._escolher_acao(personagem)
-
-        # Quando ele escolher um poder o resultado será calculado
-        self._calcular_poder(personagem, poder)
-
-    def _escolher_acao(self, personagem):
-        item = None
-        poder = None
+    def _escolher_acao(self, personagem, index):
         if isinstance(personagem, Jogador):
             # Pedir input enquanto o usuario não enviar uma resposta válida
-
             while True:
-                # Jogador escolhe entre usar poder ou item
-                escolha_poder_item = self.__view_combate.escolher_acao()
+                # Jogador escolhe entre usar poder ou receber um relatório
+                escolha = self.__view_combate.escolher_acao()
 
-                if Utils.check_inteiro_intervalo(escolha_poder_item, [0, 1]):
+                if not Utils.check_inteiro_intervalo(escolha, [0, 3]):
+                    self.__view_erro.apenas_inteiros()
+
+                if escolha == "0":
+                    # Poder[0]
+                    poder = self._escolher_poder(personagem)
                     break
-                self.__view_erro.apenas_inteiros()
+                elif escolha == "1":
+                    # Status Batalha[1]
+                    vida_jogadores = ControllerPersonagem.personagens_vida_mana_estatisticas(
+                        self.__combate_atual.jogadores)
+                    vida_npcs = ControllerPersonagem.personagens_vida_mana_estatisticas(self.__combate_atual.npcs)
+                    self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
+                elif escolha == "2":
+                    # Atributos[2]
+                    self.__view_combate.estatistica_classe(
+                        self.__controller_classe.classe_estatisticas(personagem.classe))
+                elif escolha == "3":
+                    # Atributos[2]
+                    self.__view_combate.poder_estatistica(
+                        self.__controller_poder.poderes_estatisticas(personagem.poderes)
+                    )
 
-            # Poder[0], Item[1]
-            if escolha_poder_item == "0":
-                poder = self._escolher_poder(personagem)
-
-            elif escolha_poder_item == 1:
-                item = None
+                # Limpa a tela e restaura o turno
+                time.sleep(4)
+                os.system("cls")
+                self.__view_combate.iniciar_turno(personagem.nome, index)
 
         else:
             # NPCs escolher aleatoriamente o poder
@@ -170,7 +181,7 @@ class ControllerCombate:
                     personagem.gastar_mana(poder.mana_gasta)
                     break
 
-        return poder, item
+        return poder
 
     def _escolher_poder(self, personagem):
         poder = None

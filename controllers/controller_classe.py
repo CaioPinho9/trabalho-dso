@@ -78,8 +78,15 @@ class ControllerClasse:
         except Exception:
             return None
 
-    def classe_estatisticas(self):
-        estatisticas = [classe.nome + "["+str(index)+"]: \nVida: " + str(classe.vida) +
+    def classe_estatisticas(self, classe):
+        estatisticas = (classe.nome + ": \nVida: " + str(classe.vida) +
+                        "\nDefesa: " + str(classe.defesa) +
+                        "\nMana: " + str(classe.mana) +
+                        "\nVelocidade: " + str(classe.velocidade))
+        return estatisticas
+
+    def classes_estatisticas(self):
+        estatisticas = [classe.nome + "[" + str(index) + "]: \nVida: " + str(classe.vida) +
                         "\nDefesa: " + str(classe.defesa) +
                         "\nMana: " + str(classe.mana) +
                         "\nVelocidade: " + str(classe.velocidade)

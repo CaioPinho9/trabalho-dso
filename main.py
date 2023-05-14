@@ -17,7 +17,8 @@ controller_classe = ControllerClasse()
 controller_poder = ControllerPoder()
 controller_jogador = ControllerJogador(view_jogador, view_erro, controller_classe, controller_poder)
 controller_npc = ControllerNpc()
-controller_combate = ControllerCombate(view_combate, view_erro, controller_jogador, controller_npc, controller_poder)
+controller_combate = ControllerCombate(view_combate, view_erro, controller_jogador, controller_npc,
+                                       controller_poder, controller_classe)
 
 # Gerar classes
 controller_classe.cadastrar_classe("Mago", 10, 2, 12, 30)

@@ -1,7 +1,7 @@
 class ViewCombate:
 
     def escolher_acao(self):
-        return input("Escolha entre usar um poder[0]: ")
+        return input("Opções: \nUsar Poder[0]\nStatus Batalha[1]\nAtributos[2]\nLista Poderes[3]\n")
 
     def escolher_poder(self, nome_personagem, opcoes_poderes, mana):
         print(f"--------------------------------------------------------------------------")
@@ -75,3 +75,11 @@ class ViewCombate:
 
     def separacao(self):
         print(f"--------------------------------------------------------------------------")
+
+    def estatistica_classe(self, classe):
+        print(f"--------------------------------------------------------------------------")
+        print(classe)
+
+    def poder_estatistica(self, poderes):
+        print(f"--------------------------------------------------------------------------")
+        print(poderes)

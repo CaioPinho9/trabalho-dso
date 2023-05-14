@@ -34,7 +34,7 @@ class ControllerJogador(ControllerPersonagem):
 
         # Escolher a classe do personagem
         while True:
-            index = self.__view_jogador.escolha_classe(self.__controller_classe.classe_estatisticas())
+            index = self.__view_jogador.escolha_classe(self.__controller_classe.classes_estatisticas())
 
             # Impede valores invalidos
             if Utils.check_inteiro_intervalo(index, [0, len(self.__controller_classe.classes) - 1]):
