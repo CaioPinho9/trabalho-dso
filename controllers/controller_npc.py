@@ -1,14 +1,24 @@
 from controllers.controller_personagem import ControllerPersonagem
+from exceptions.exceptions import DuplicadoException
 from models.classe import Classe
 from models.npc import Npc
 from models.poder import Poder
 
 
 class ControllerNpc(ControllerPersonagem):
-    def cadastrar_personagem(self, nome: str, classe: Classe = None):
-        if not isinstance(nome, str):
-            raise TypeError("nome deve ser uma string")
-        if not isinstance(classe, Classe):
-            raise TypeError("classe deve ser uma Classe")
+    def cadastrar_personagem(self, nome: str, classe: Classe = None, poderes: list[Poder] = None):
+        """
+        Adiciona um Npc na lista de personagens
+        :param nome: identicador do Npc
+        :param classe: Classe possui os atributos principais do personagem
+        :param poderes: Habilidades que o Npc pode utilizar
+        :return: o Npc cadastrado
+        """
+        npc = Npc(nome, classe, poderes)
 
-        super().personagens.append(Npc(nome, classe))
+        if super().get_personagem(nome):
+            raise DuplicadoException('Não foi possivel criar o npc pois ja existe um com o mesmo nome')
+
+        super().personagens.append(npc)
+
+        return npc

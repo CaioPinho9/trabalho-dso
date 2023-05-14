@@ -1,9 +1,9 @@
 import random
 from abc import ABC, abstractmethod
 
-from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import NaoEncontradoException
 from models.classe import Classe
+from models.personagem import Personagem
 from models.poder import Poder
 
 
@@ -12,7 +12,7 @@ class ControllerPersonagem(ABC):
         self.__personagens = []
 
     @abstractmethod
-    def cadastrar_personagem(self, nome: str, classe: Classe = None):
+    def cadastrar_personagem(self, nome: str, classe: Classe = None, poderes: list[Poder] = None):
         pass
 
     def remover_personagem(self, nome: str):
@@ -49,6 +49,12 @@ class ControllerPersonagem(ABC):
     def personagens(self):
         return self.__personagens
 
+    @personagens.setter
+    def personagens(self, personagens):
+        if not all(isinstance(personagem, Personagem) for personagem in personagens):
+            raise TypeError("personagens deve ser do tipo list[Personagem]")
+        self.__personagens = personagens
+
     def get_personagem(self, nome):
         """
         Obtém um personagem da lista de personagens.
@@ -64,11 +70,13 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    def personagens_vivos(self):
-        return [personagem for personagem in self.__personagens if personagem.vida_atual > 0]
-
     @staticmethod
     def calcular_acerto(poder):
+        """
+        O acerto de um poder é um dado de 20 lados que é jogado e somado com o bonus do poder
+        :param poder: poder que está sendo usado
+        :return: resultado do dado somado com o acerto do poder
+        """
         if not isinstance(poder, Poder):
             raise TypeError("ataque deve ser um Poder")
 
@@ -79,6 +87,11 @@ class ControllerPersonagem(ABC):
 
     @staticmethod
     def calcular_velocidade(velocidade: int):
+        """
+        O velocidade de um personagem é um dado de 20 lados que é jogado e somado com o bonus do personagem
+        :param velocidade: valor somado no dado
+        :return: resultado do dado somado com a velocidade
+        """
         if not isinstance(velocidade, int):
             raise TypeError("velocidade deve ser um inteiro")
 
@@ -87,26 +100,42 @@ class ControllerPersonagem(ABC):
 
         return resultado_velocidade
 
-    @staticmethod
-    def personagens_vida_estatisticas_com_index(personagens=None):
+    def personagens_vida_estatisticas_com_index(self, personagens=None):
+        """
+        Retorna uma string formatada com a vida atual e original de uma lista de personagens
+        :param personagens: list[Personagem]
+        :return:
+        nome[index]: [vida_atual/vida]
+        nome[index + 1]: [vida_atual/vida]
+        """
         estatisticas = [personagem.nome + "[" + str(index) + "]: " +
                         str(personagem.vida_atual) + "/" + str(personagem.classe.vida) for
                         index, personagem in enumerate(personagens)]
         return "\n".join(estatisticas)
 
-    @staticmethod
-    def personagens_vida_mana_estatisticas(personagens=None):
+    def personagens_vida_mana_estatisticas(self, personagens=None):
+        """
+        Retorna uma string formatada com a vida atual e original de uma lista de personagens
+        :param personagens: list[Personagem]
+        :return:
+        nome: HP[vida_atual/vida] Mana[mana_atual/mana]
+        nome: HP[vida_atual/vida] Mana[mana_atual/mana]
+        """
         estatisticas = [personagem.nome + ": HP[" + str(personagem.vida_atual) + "/" +
                         str(personagem.classe.vida) + "] Mana[" + str(personagem.mana_atual) + "/" +
                         str(personagem.classe.mana) + "]" for personagem in personagens]
         return "\n".join(estatisticas)
 
-    @staticmethod
-    def personagens_nomes(personagens):
+    def personagens_nomes(self, personagens):
+        """
+        Retorna uma string formatada com os nomes de uma lista de personagens
+        :param personagens: list[Personagem]
+        :return: nome, nome, nome
+        """
         nomes = [personagem.nome for personagem in personagens]
         return ", ".join(nomes)
 
     def restaurar_personagens(self):
+        """Todos os personagens voltam a ficar com a vida e a mana máxima"""
         for personagem in self.__personagens:
-            personagem.restaurar_vida_atual()
-            personagem.restaurar_mana_atual()
+            personagem.restaurar_personagem()

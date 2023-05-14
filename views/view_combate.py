@@ -9,22 +9,11 @@ class ViewCombate:
             f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" +
             opcoes_poderes + "\n")
 
-    def poder_escolhido_ataque_area(self, poder_nome, maximo):
+    def poder_escolhido(self, poder_nome, ataque, alvos):
         print(f"--------------------------------------------------------------------------")
-        print(f"O poder {poder_nome} pode acertar até {maximo} alvos")
+        print(f"O poder {poder_nome} pode {ataque} {alvos}")
 
-    def poder_escolhido_ataque_unico(self, poder_nome):
-        print(f"--------------------------------------------------------------------------")
-        print(f"O poder {poder_nome} pode acertar um alvo")
-
-    def poder_escolhido_cura_unica(self, poder_nome):
-        print(f"--------------------------------------------------------------------------")
-        print(f"O poder {poder_nome} pode curar um aliado")
-
-    def escolher_alvo_area(self, opcoes_alvos, escolhidos, maximo):
-        return input(f"Selecione um alvo:\n{opcoes_alvos}\nAlvos selecionados[{escolhidos}/{maximo}]\n")
-
-    def escolher_alvo_unico(self, opcoes_alvos):
+    def escolher_alvos(self, opcoes_alvos, area):
         return input(f"Selecione um alvo:\n{opcoes_alvos}\n")
 
     def iniciar_combate(self, jogadores, npcs):
@@ -45,15 +34,19 @@ class ViewCombate:
         print(f"--------------------------------------------------------------------------")
         print(f"A ordem de batalha será {ordem}")
 
-    def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, ataque, alvo_nome, alvo_defesa):
+    def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
         print(f"Rolagem [{dado}]+{acerto} = {resultado}, Defesa: {alvo_defesa}")
-        print(f"{poder} foi eficaz! Conseguiu {ataque} {dano} ponto de vida em {alvo_nome}!")
+        print(f"{poder} foi eficaz! Conseguiu causar {dano} de dano em {alvo_nome}!")
 
     def resultado_poder_falha(self, poder, dado, acerto, resultado, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
         print(f"Rolagem [{dado}]+{acerto} = {resultado}, Defesa: {alvo_defesa}")
         print(f"{poder} errou {alvo_nome}! ")
+
+    def resultado_cura(self, poder, dano, alvo_nome):
+        print(f"--------------------------------------------------------------------------")
+        print(f"{poder} foi eficaz! Conseguiu curar {dano} ponto de vida em {alvo_nome}!")
 
     def escolha_npc(self, nome, poder, alvos):
         print(f"NPC {nome} irá usar {poder} em {alvos}")
@@ -72,6 +65,7 @@ class ViewCombate:
     def derrota(self):
         print(f"--------------------------------------------------------------------------")
         print("GAME OVER.")
+        print(f"--------------------------------------------------------------------------")
 
     def separacao(self):
         print(f"--------------------------------------------------------------------------")
@@ -83,3 +77,7 @@ class ViewCombate:
     def poder_estatistica(self, poderes):
         print(f"--------------------------------------------------------------------------")
         print(poderes)
+
+    def desmaiou(self, nome):
+        print(f"--------------------------------------------------------------------------")
+        print(f"{nome} desmaiou em combate")

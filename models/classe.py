@@ -1,5 +1,5 @@
 class Classe:
-    def __init__(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int):
+    def __init__(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int, nivel: int, tipo: str = None):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser um str")
         if not isinstance(vida, int):
@@ -10,12 +10,18 @@ class Classe:
             raise TypeError("defesa deve ser um int")
         if not isinstance(mana, int):
             raise TypeError("mana deve ser um int")
+        if not isinstance(nivel, int):
+            raise TypeError("nivel deve ser um int")
+        if not isinstance(tipo, str) and tipo:
+            raise TypeError("tipo deve ser uma str")
 
         self.__nome = nome
         self.__vida = vida
         self.__velocidade = velocidade
         self.__defesa = defesa
         self.__mana = mana
+        self.__nivel = nivel
+        self.__tipo = tipo
 
     @property
     def nome(self):
@@ -36,3 +42,11 @@ class Classe:
     @property
     def mana(self):
         return self.__mana
+
+    @property
+    def nivel(self):
+        return self.__nivel
+
+    @property
+    def tipo(self):
+        return self.__tipo

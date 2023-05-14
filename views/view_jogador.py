@@ -2,13 +2,6 @@ import time
 
 
 class ViewJogador:
-    def aviso_iniciar(self):
-        print(f"--------------------------------------------------------------------------")
-        print("Bem vindo ao RPG (Real Programming Game), você será um grande herói ou um grande fracassado?")
-        print("Esse é um jogo que você precisará de muita habilidade (e sorte) para vencer os 5 combates")
-        print("Primeiramente você irá criar o seu grupo de fracassados!")
-        print(f"--------------------------------------------------------------------------")
-
     def escolha_nome(self, index):
         print(f"--------------------------------------------------------------------------")
         return input(f"Escolha o nome do {index}º personagem: ")
@@ -19,13 +12,19 @@ class ViewJogador:
     def escolha_poderes(self, quantidade):
         return input(f"Escolha o {quantidade}º poder: ")
 
-    def aviso_escolher_poderes(self, nome, poderes_estatisticas):
+    def aviso_escolher_poderes(self, nome, quantidade, poderes_estatisticas):
         print(f"--------------------------------------------------------------------------")
-        print(f"Você poder escolher até 3 poderes para {nome}. As opções são: ")
+        print(f"Você poder escolher até {str(quantidade)} poderes para {nome}. As opções são: ")
         time.sleep(3)
         print(f"{poderes_estatisticas}\n")
 
-    def aviso_criado(self, nome, classe, poderes, xingamento):
+    def aviso_criado(self, nome, classe, poderes, adjetivo):
         print(f"--------------------------------------------------------------------------")
-        print(f"O {classe} {nome} será lembrado como um {xingamento} que possuia os poderes {poderes}")
+        print(f"O {classe} {nome} será lembrado como um {adjetivo} que possuia os poderes:\n{poderes}")
         print(f"--------------------------------------------------------------------------")
+
+    def aviso_aumento_nivel(self, nome, classe, classe_nova):
+        print(f"--------------------------------------------------------------------------")
+        print(f"O {classe} {nome} conseguiu experiencia nesse combate e agora é um {classe_nova}")
+
+

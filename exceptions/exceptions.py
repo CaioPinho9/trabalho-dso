@@ -10,3 +10,5 @@ class ManaInsuficienteException(Exception):
     pass
 
 
+class CombateAcabouException(Exception):
+    pass

@@ -1,7 +1,5 @@
 import random
 
-from views.view_combate import ViewCombate
-
 
 class Utils:
     @staticmethod
@@ -10,10 +8,19 @@ class Utils:
             if not intervalo[0] <= int(valor) <= intervalo[1]:
                 raise TypeError("Deve ser um dos números da lista")
             return True
-        except Exception:
-            return False
+        except ValueError:
+            raise TypeError("Precisa ser um inteiro")
 
     @staticmethod
-    def xingamento():
-        my_list = ["tolo", "fracassado", "idiota", "imbecil", "pateta"]
-        return random.choice(my_list)
+    def adjetivo(nivel: int):
+        if not isinstance(nivel, int):
+            raise TypeError("nivel deve ser um inteiro")
+
+        adjetivos = []
+        if nivel == 1:
+            adjetivos = ["tolo", "fracassado", "idiota", "imbecil", "pateta"]
+        elif nivel == 2:
+            adjetivos = ["medíocre aventureiro", "típico aventureiro", "aventureiro comum"]
+        elif nivel == 3:
+            adjetivos = ["incrível aventureiro", "héroi", "excelente aventureiro", "grande aventureiro"]
+        return random.choice(adjetivos)

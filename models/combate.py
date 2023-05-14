@@ -4,29 +4,21 @@ from models.personagem import Personagem
 
 
 class Combate:
-    def __init__(self, codigo: int, jogadores: list[Jogador], npcs: list[Npc]):
+    def __init__(self, codigo: int, npcs: list[Npc]):
         if not isinstance(codigo, int):
             raise TypeError("Código do combate deve ser do tipo inteiro")
-        if not isinstance(jogadores, list):
-            raise TypeError("Jogadores do combate deve ser do tipo lista")
         if not isinstance(npcs, list):
             raise TypeError("Npcs do combate deve ser do tipo lista")
-        if not all(isinstance(jogador, Jogador) for jogador in jogadores):
-            raise TypeError("Jogadores do combate devem ser do tipo Jogador")
         if not all(isinstance(npc, Npc) for npc in npcs):
             raise TypeError("Npcs do combate devem ser do tipo Npc")
-        if len(jogadores) == 0:
-            raise ValueError("Combate deve ter pelo menos um jogador")
         if len(npcs) == 0:
             raise ValueError("Combate deve ter pelo menos um npc")
 
         self.__codigo = codigo
         self.__npcs = npcs
-        self.__jogadores = jogadores
+        self.__jogadores = []
         self.__ordem_de_batalha = []
-        self.__vitoria = 0
-        self.__dano_causado = 0
-        self.__dano_recebido = 0
+        self.__vitoria = False
         self.__finalizado = False
 
     @property
@@ -48,14 +40,6 @@ class Combate:
     @property
     def vitoria(self):
         return self.__vitoria
-
-    @property
-    def dano_causado(self):
-        return self.__dano_causado
-
-    @property
-    def dano_recebido(self):
-        return self.__dano_recebido
 
     @property
     def finalizado(self):
@@ -85,27 +69,15 @@ class Combate:
     def ordem_de_batalha(self, lista_de_batalha):
         if not isinstance(lista_de_batalha, list):
             raise TypeError("Ordem de batalha deve ser do tipo lista")
-        if not all(isinstance(batalha, Personagem) for batalha in lista_de_batalha):
-            raise TypeError("Ordem de batalha deve ser do tipo Personagem")
+        if not all(isinstance(personagem, Personagem) for personagem in lista_de_batalha):
+            raise TypeError("Ordem de batalha deve ser do tipo list[Personagem]")
         self.__ordem_de_batalha = lista_de_batalha
 
     @vitoria.setter
     def vitoria(self, valor):
-        if not isinstance(valor, int):
-            raise TypeError("Vitoria deve ser do tipo inteiro")
+        if not isinstance(valor, bool):
+            raise TypeError("Vitoria deve ser do tipo bool")
         self.__vitoria = valor
-
-    @dano_causado.setter
-    def dano_causado(self, valor):
-        if not isinstance(valor, int):
-            raise TypeError("Dano causado deve ser do tipo inteiro")
-        self.__dano_causado = valor
-
-    @dano_recebido.setter
-    def dano_recebido(self, valor):
-        if not isinstance(valor, int):
-            raise TypeError("Dano recebido deve ser do tipo inteiro")
-        self.__dano_recebido = valor
 
     @finalizado.setter
     def finalizado(self, valor):
@@ -114,6 +86,10 @@ class Combate:
         self.__finalizado = valor
 
     def proximo_da_batalha(self):
+        """
+        Retorna o primeiro valor da lista e o coloca no final
+        :return: Personagem
+        """
         if len(self.__jogadores) <= 0:
             raise ValueError("Não há jogadores para batalhar")
         if len(self.__npcs) <= 0:
