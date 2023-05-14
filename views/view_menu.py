@@ -18,7 +18,9 @@ class ViewMenu:
         return input()
 
     def sair(self):
-        print("Obrigado por Jogar!")
+        print(f"--------------------------------------------------------------------------")
+        print("Obrigado por Jogar! Trabalho Nota 10")
+        print(f"--------------------------------------------------------------------------")
 
     def grupo(self, grupo):
         print(f"--------------------------------------------------------------------------")

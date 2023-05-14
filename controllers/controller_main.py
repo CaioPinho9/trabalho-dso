@@ -7,7 +7,6 @@ from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import CombateAcabouException
-from models.jogador import Jogador
 from utils.utils import Utils
 from views.view_combate import ViewCombate
 from views.view_erro import ViewErro
@@ -151,24 +150,31 @@ class ControllerMain:
                 # Display menu
                 os.system("cls")
                 escolha = self.__view_menu.menu_inicial(combates_vencidos)
-                os.system("cls")
 
                 Utils.check_inteiro_intervalo(escolha, [0, combates_vencidos + 3])
+
+                os.system("cls")
 
                 escolha = int(escolha)
                 # O grupo será composto por 3 personagens
                 if escolha == 0:
+                    # Criar grupo de personagens
                     self.__controller_jogador.personagens = []
+                    # Grupo possui 3 personagens
                     for index in range(1, 4):
                         self.__controller_jogador.criar_personagem(index, combates_vencidos)
                 elif escolha == 1:
+                    # Mostrar grupo atual
                     self.__view_menu.grupo(self.__controller_jogador.grupo_estatisticas())
                     time.sleep(5)
                 elif 1 < escolha < combates_vencidos + 3:
+                    # Iniciar um combate
                     vitoria = self.__controller_combate.iniciar_combate(escolha - 2)
                     time.sleep(5)
                     os.system("cls")
-                    if vitoria:
+
+                    # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
+                    if vitoria and escolha == combates_vencidos + 2:
                         combates_vencidos += 1
                         self.__controller_jogador.aumentar_nivel()
                 else:

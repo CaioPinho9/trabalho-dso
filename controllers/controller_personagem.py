@@ -71,21 +71,6 @@ class ControllerPersonagem(ABC):
         return None
 
     @staticmethod
-    def calcular_acerto(poder):
-        """
-        O acerto de um poder é um dado de 20 lados que é jogado e somado com o bonus do poder
-        :param poder: poder que está sendo usado
-        :return: resultado do dado somado com o acerto do poder
-        """
-        if not isinstance(poder, Poder):
-            raise TypeError("ataque deve ser um Poder")
-
-        rolagem_jogador = random.randint(1, 20)
-        resultado_acerto = rolagem_jogador + poder.acerto
-
-        return resultado_acerto
-
-    @staticmethod
     def calcular_velocidade(velocidade: int):
         """
         O velocidade de um personagem é um dado de 20 lados que é jogado e somado com o bonus do personagem

@@ -78,7 +78,7 @@ class ControllerCombate:
         # Introduz ao jogador quem está participando
         self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
 
-        time.sleep(5)
+        time.sleep(6)
         os.system("cls")
 
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
@@ -89,7 +89,7 @@ class ControllerCombate:
         nomes_personagens = self.__controller_jogador.personagens_nomes(ordem_de_batalha)
         # Mostra para o usuário a ordem
         self.__view_combate.resultado_ordem_de_batalha(nomes_personagens)
-        time.sleep(6)
+        time.sleep(8)
 
         # Inicia os turnos até que um dos lados fique com 0 de vida
         continuar = True
@@ -353,24 +353,25 @@ class ControllerCombate:
 
     def __calcular_poder(self, personagens_alvos, poder):
         """
-
-        :param personagens_alvos:
-        :param poder:
-        :return:
+        Calcula quanto de vida será alterado em cada personagem alvo
+        :param personagens_alvos: alvos que serão atingidos
+        :param poder: poder que foi usado
         """
-        resultado_acerto = ControllerPersonagem.calcular_acerto(poder)
+        # Calcula o numero rolado no dado
+        dado = random.randint(1, 20)
 
-        dado = resultado_acerto - poder.acerto
+        # Resultado com o bonus do poder
+        resultado_acerto = dado + poder.acerto
 
         for personagem in personagens_alvos:
             dano = poder.dano
 
-            # Cura inverte o dano para aumentar a vida
+            # Cura sempre acerta e inverte o dano para aumentar a vida
             if not poder.ataque:
                 dano = poder.dano * -1
                 self.__view_combate.resultado_cura(poder.nome, abs(dano), personagem.nome)
 
-            # Cura sempre acerta, ataques precisam passar pela defesa do inimigo
+            # Ataques precisam passar pela defesa do inimigo
             elif resultado_acerto >= personagem.classe.defesa:
                 self.__view_combate.resultado_poder_sucesso(poder.nome, dado,
                                                             poder.acerto, resultado_acerto, dano,
@@ -382,12 +383,17 @@ class ControllerCombate:
 
             personagem.mudar_vida_atual(dano)
 
+            # Mostra se um personagem desmaiou
             if personagem.vida_atual == 0:
                 self.__view_combate.desmaiou(personagem.nome)
 
             time.sleep(1)
 
     def _testar_personagens_vivos(self):
+        """
+        Testa se ainda tem personagens vivos nos dois grupos
+        :return: (continuar os turnos, vitoria ou derrota)
+        """
         jogadores = self.__combate_atual.jogadores
         npcs = self.__combate_atual.npcs
 
@@ -409,7 +415,7 @@ class ControllerCombate:
 
     def jogadores_vivos(self):
         """
-        Npcs que possuem a vida atual acima de 0 ainda estão vivos
-        :return: Npcs com vida atual acima de 0
+        Jogadores que possuem a vida atual acima de 0 ainda estão vivos
+        :return: Jogadores com vida atual acima de 0
         """
         return [jogador for jogador in self.__combate_atual.jogadores if jogador.vida_atual > 0]
