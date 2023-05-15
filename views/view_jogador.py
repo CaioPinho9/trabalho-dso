@@ -6,15 +6,16 @@ class ViewJogador:
         print(f"--------------------------------------------------------------------------")
         return input(f"Escolha o nome do {index}º personagem: ")
 
-    def escolha_classe(self, classes):
-        return input(f"Escolha uma classe para o personagem: \n{classes}\n")
+    def escolha_classe(self, nome, classes):
+        print(f"--------------------------------------------------------------------------")
+        return input(f"Escolha uma classe para o personagem {nome}: \n{classes}\n")
 
     def escolha_poderes(self, quantidade):
         return input(f"Escolha o {quantidade}º poder: ")
 
     def aviso_escolher_poderes(self, nome, quantidade, poderes_estatisticas):
         print(f"--------------------------------------------------------------------------")
-        print(f"Você poder escolher até {str(quantidade)} poderes para {nome}. As opções são: ")
+        print(f"Você poder escolher até {quantidade} poderes para {nome}. As opções são: ")
         time.sleep(3)
         print(f"{poderes_estatisticas}\n")
 

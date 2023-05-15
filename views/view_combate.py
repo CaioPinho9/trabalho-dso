@@ -1,20 +1,22 @@
 class ViewCombate:
 
     def escolher_acao(self):
-        return input("Opções: \nUsar Poder[0]\nStatus Batalha[1]\nAtributos[2]\nLista Poderes[3]\n")
+        return input("Opções: \nUsar Poder[0]\nStatus Batalha[1]\nAtributos[2]\nLista Poderes[3]\nDesistir[4]\n")
 
     def escolher_poder(self, nome_personagem, opcoes_poderes, mana):
         print(f"--------------------------------------------------------------------------")
-        return input(
-            f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" +
-            opcoes_poderes + "\n")
+        print(f"O personagem {nome_personagem} tem {mana} de mana sobrando e pode usar esses poderes:\n" +
+              opcoes_poderes + "\n")
+        print(f"--------------------------------------------------------------------------")
+        return input()
 
     def poder_escolhido(self, poder_nome, ataque, alvos):
         print(f"--------------------------------------------------------------------------")
         print(f"O poder {poder_nome} pode {ataque} {alvos}")
 
     def escolher_alvos(self, opcoes_alvos, area):
-        return input(f"Selecione um alvo:\n{opcoes_alvos}\n")
+        print(f"--------------------------------------------------------------------------")
+        return input(f"Selecione um alvo:\n{opcoes_alvos}\n{area}")
 
     def iniciar_combate(self, jogadores, npcs):
         print(f"--------------------------------------------------------------------------")
@@ -33,6 +35,7 @@ class ViewCombate:
     def resultado_ordem_de_batalha(self, ordem):
         print(f"--------------------------------------------------------------------------")
         print(f"A ordem de batalha será {ordem}")
+        print(f"--------------------------------------------------------------------------")
 
     def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
@@ -61,6 +64,7 @@ class ViewCombate:
     def vitoria(self):
         print(f"--------------------------------------------------------------------------")
         print("Parabéns! Vocês venceram essa batalha")
+        print(f"--------------------------------------------------------------------------")
 
     def derrota(self):
         print(f"--------------------------------------------------------------------------")

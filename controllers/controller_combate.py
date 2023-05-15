@@ -5,7 +5,6 @@ import time
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
-from controllers.controller_personagem import ControllerPersonagem
 from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import NaoEncontradoException, ManaInsuficienteException, CombateAcabouException
 from models.combate import Combate
@@ -19,10 +18,10 @@ from views.view_erro import ViewErro
 
 
 class ControllerCombate:
-    def __init__(self, view_combate: ViewCombate, view_erro: ViewErro, controller_jogador: ControllerJogador,
+    def __init__(self, view_erro: ViewErro, controller_jogador: ControllerJogador,
                  controller_npc: ControllerNpc, controller_poder: ControllerPoder, controller_classe: ControllerClasse):
         self.__combates = []
-        self.__view_combate = view_combate
+        self.__view_combate = ViewCombate()
         self.__view_erro = view_erro
         self.__controller_jogador = controller_jogador
         self.__controller_npc = controller_npc
@@ -43,8 +42,20 @@ class ControllerCombate:
         """Retorna um combate especifico"""
         if not isinstance(codigo, int):
             raise TypeError("codigo deve ser um numero inteiro")
+        try:
+            combate = self.__combates[codigo]
+        except Exception:
+            raise NaoEncontradoException()
+        return combate
 
-        return self.__combates[codigo]
+    def remover_combate(self, codigo: int):
+        """Retorna um combate especifico"""
+        if not isinstance(codigo, int):
+            raise TypeError("codigo deve ser um numero inteiro")
+        try:
+            self.__combates.pop(codigo)
+        except Exception:
+            raise NaoEncontradoException()
 
     def iniciar_combate(self, codigo: int):
         """
@@ -102,7 +113,7 @@ class ControllerCombate:
 
             # Avisa quem está jogando
             self.__view_combate.iniciar_turno(proximo_personagem.nome, contador_turnos)
-            time.sleep(5)
+            time.sleep(2)
 
             try:
                 # Inicia sendo escolhido a ação do jogador
@@ -112,12 +123,14 @@ class ControllerCombate:
                 if isinstance(proximo_personagem, Jogador):
                     personagens_alvos = self.__escolher_alvos(poder)
                 else:
-                    personagens_alvos = self.__escolher_alvos_aleatorio(poder)
+                    personagens_alvos = self.__escolher_alvos_aleatorios(poder)
                     nomes_alvos = self.__controller_jogador.personagens_nomes(personagens_alvos)
                     self.__view_combate.escolha_npc(proximo_personagem.nome, poder.nome, nomes_alvos)
 
                 # Quando ele escolher um poder o resultado será calculado
                 self.__calcular_poder(personagens_alvos, poder)
+            except CombateAcabouException as e:
+                raise e
             except Exception as e:
                 self.__view_erro.erro_inexperado_turno(proximo_personagem.nome)
                 print(e)
@@ -131,12 +144,11 @@ class ControllerCombate:
             continuar, vitoria = self._testar_personagens_vivos()
             contador_turnos += 1
 
+        os.system("cls")
         if vitoria:
             self.__view_combate.vitoria()
-            self.__combate_atual.vitoria = True
         else:
             self.__view_combate.derrota()
-            self.__combate_atual.vitoria = False
 
         return vitoria
 
@@ -156,11 +168,14 @@ class ControllerCombate:
         # Todos os jogadores fazem um teste pra ver quem é mais veloz
         for personagem in personagens:
             velocidade = personagem.classe.velocidade
-            resultado_velocidade = ControllerPersonagem.calcular_velocidade(velocidade)
+
+            dado = random.randint(1, 20)
+
+            resultado_velocidade = dado + velocidade
+
             ordem_batalha[personagem] = resultado_velocidade
             self.__view_combate.resultado_velocidade("JOGADOR" if isinstance(personagem, Jogador) else "NPC",
-                                                     personagem.nome, resultado_velocidade - velocidade,
-                                                     velocidade, resultado_velocidade)
+                                                     personagem.nome, dado, velocidade, resultado_velocidade)
 
         # Ordenando pela velocidade
         ordem_batalha = sorted(ordem_batalha.items(), key=lambda x: x[1], reverse=True)
@@ -177,7 +192,7 @@ class ControllerCombate:
         """
         if isinstance(personagem, Jogador):
             # Personagem escolhe um dos itens do menu
-            poder = self.__escolher_menu(personagem, index)
+            poder = self.__escolher_turno_jogador(personagem, index)
 
         else:
             # NPCs escolher aleatoriamente o poder
@@ -190,7 +205,7 @@ class ControllerCombate:
 
         return poder
 
-    def __escolher_menu(self, personagem: Jogador, index: int):
+    def __escolher_turno_jogador(self, personagem: Jogador, index: int):
         """
         Jogadores podem escolher usar um Poder ou ver estatistica de seus personagens
         :param personagem: Jogador que fará a acao
@@ -220,14 +235,17 @@ class ControllerCombate:
                     self.__view_combate.estatistica_classe(
                         self.__controller_classe.classe_estatisticas(personagem.classe))
                 elif escolha == "3":
-                    # Poderes[2]
+                    # Poderes[3]
                     self.__view_combate.poder_estatistica(
                         self.__controller_poder.poderes_estatisticas(personagem.poderes)
                     )
                 elif escolha == "4":
+                    # Desistir[4]
                     raise CombateAcabouException()
             except TypeError:
                 self.__view_erro.apenas_inteiros()
+                time.sleep(3)
+                os.system("cls")
 
             # Limpa a tela e restaura o turno
             time.sleep(4)
@@ -241,6 +259,7 @@ class ControllerCombate:
         :return: poder escolhido
         """
         # Pedir input enquanto o usuario não enviar uma resposta válida
+        os.system("cls")
         while True:
             # Mostra ao usuario os poderes de seu personagem
             poderes_mensagem = self.__controller_poder.poderes_estatisticas(personagem.poderes)
@@ -277,7 +296,7 @@ class ControllerCombate:
 
         return poder
 
-    def __escolher_alvos_aleatorio(self, poder: Poder):
+    def __escolher_alvos_aleatorios(self, poder: Poder):
         """
         Npc escolhem alvos aleatóriamente
         :param poder: Poder que será utilizado contra o jogador alvo
@@ -346,6 +365,8 @@ class ControllerCombate:
                     break
                 except TypeError:
                     self.__view_erro.apenas_inteiros()
+                    time.sleep(3)
+                    os.system("cls")
 
             personagens_alvos.append(personagens_disponiveis[int(personagem_alvo)])
 

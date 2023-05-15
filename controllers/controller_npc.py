@@ -6,7 +6,7 @@ from models.poder import Poder
 
 
 class ControllerNpc(ControllerPersonagem):
-    def cadastrar_personagem(self, nome: str, classe: Classe = None, poderes: list[Poder] = None):
+    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         """
         Adiciona um Npc na lista de personagens
         :param nome: identicador do Npc

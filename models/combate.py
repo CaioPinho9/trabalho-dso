@@ -18,8 +18,6 @@ class Combate:
         self.__npcs = npcs
         self.__jogadores = []
         self.__ordem_de_batalha = []
-        self.__vitoria = False
-        self.__finalizado = False
 
     @property
     def codigo(self):
@@ -36,14 +34,6 @@ class Combate:
     @property
     def ordem_de_batalha(self):
         return self.__ordem_de_batalha
-
-    @property
-    def vitoria(self):
-        return self.__vitoria
-
-    @property
-    def finalizado(self):
-        return self.__finalizado
 
     @jogadores.setter
     def jogadores(self, lista_de_jogadores):
@@ -72,18 +62,6 @@ class Combate:
         if not all(isinstance(personagem, Personagem) for personagem in lista_de_batalha):
             raise TypeError("Ordem de batalha deve ser do tipo list[Personagem]")
         self.__ordem_de_batalha = lista_de_batalha
-
-    @vitoria.setter
-    def vitoria(self, valor):
-        if not isinstance(valor, bool):
-            raise TypeError("Vitoria deve ser do tipo bool")
-        self.__vitoria = valor
-
-    @finalizado.setter
-    def finalizado(self, valor):
-        if not isinstance(valor, bool):
-            raise TypeError("Finalizado deve ser do tipo booleano")
-        self.__finalizado = valor
 
     def proximo_da_batalha(self):
         """

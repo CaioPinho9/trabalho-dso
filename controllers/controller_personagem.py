@@ -1,4 +1,3 @@
-import random
 from abc import ABC, abstractmethod
 
 from exceptions.exceptions import NaoEncontradoException
@@ -12,7 +11,7 @@ class ControllerPersonagem(ABC):
         self.__personagens = []
 
     @abstractmethod
-    def cadastrar_personagem(self, nome: str, classe: Classe = None, poderes: list[Poder] = None):
+    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         pass
 
     def remover_personagem(self, nome: str):
@@ -55,7 +54,7 @@ class ControllerPersonagem(ABC):
             raise TypeError("personagens deve ser do tipo list[Personagem]")
         self.__personagens = personagens
 
-    def get_personagem(self, nome):
+    def get_personagem(self, nome: str):
         """
         Obtém um personagem da lista de personagens.
 
@@ -70,22 +69,7 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    @staticmethod
-    def calcular_velocidade(velocidade: int):
-        """
-        O velocidade de um personagem é um dado de 20 lados que é jogado e somado com o bonus do personagem
-        :param velocidade: valor somado no dado
-        :return: resultado do dado somado com a velocidade
-        """
-        if not isinstance(velocidade, int):
-            raise TypeError("velocidade deve ser um inteiro")
-
-        rolagem_jogador = random.randint(1, 20)
-        resultado_velocidade = rolagem_jogador + velocidade
-
-        return resultado_velocidade
-
-    def personagens_vida_estatisticas_com_index(self, personagens=None):
+    def personagens_vida_estatisticas_com_index(self, personagens: list[Personagem]):
         """
         Retorna uma string formatada com a vida atual e original de uma lista de personagens
         :param personagens: list[Personagem]
@@ -98,7 +82,7 @@ class ControllerPersonagem(ABC):
                         index, personagem in enumerate(personagens)]
         return "\n".join(estatisticas)
 
-    def personagens_vida_mana_estatisticas(self, personagens=None):
+    def personagens_vida_mana_estatisticas(self, personagens: list[Personagem]):
         """
         Retorna uma string formatada com a vida atual e original de uma lista de personagens
         :param personagens: list[Personagem]
@@ -111,7 +95,7 @@ class ControllerPersonagem(ABC):
                         str(personagem.classe.mana) + "]" for personagem in personagens]
         return "\n".join(estatisticas)
 
-    def personagens_nomes(self, personagens):
+    def personagens_nomes(self, personagens: list[Personagem]):
         """
         Retorna uma string formatada com os nomes de uma lista de personagens
         :param personagens: list[Personagem]

@@ -2,7 +2,7 @@ class ViewMenu:
 
     def menu_inicial(self, combates_vencidos):
         print(f"--------------------------------------------------------------------------")
-        print("Bem vindo ao RPG (Real Programming Game), você será um grande herói ou um grande fracassado?")
+        print("Bem vindo ao RPG (Real Programmed Game), você será um grande herói ou um grande fracassado?")
         print("Esse é um jogo que você precisará de muita habilidade (e sorte) para vencer os 3 combates")
         print(f"--------------------------------------------------------------------------")
         print("[MENU INICIAL]")
@@ -25,3 +25,8 @@ class ViewMenu:
     def grupo(self, grupo):
         print(f"--------------------------------------------------------------------------")
         print(f"O grupo é formado pelo {grupo}")
+
+    def desistir(self):
+        print(f"--------------------------------------------------------------------------")
+        print("O grupo fugiu da luta. GAME OVER.")
+        print(f"--------------------------------------------------------------------------")

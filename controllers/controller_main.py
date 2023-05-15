@@ -8,25 +8,21 @@ from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import CombateAcabouException
 from utils.utils import Utils
-from views.view_combate import ViewCombate
 from views.view_erro import ViewErro
-from views.view_jogador import ViewJogador
 from views.view_menu import ViewMenu
 
 
 class ControllerMain:
 
     def __init__(self):
-        self.__view_combate = ViewCombate()
-        self.__view_jogador = ViewJogador()
         self.__view_erro = ViewErro()
         self.__view_menu = ViewMenu()
         self.__controller_classe = ControllerClasse()
         self.__controller_poder = ControllerPoder()
-        self.__controller_jogador = ControllerJogador(self.__view_jogador, self.__view_erro, self.__controller_classe,
+        self.__controller_jogador = ControllerJogador(self.__view_erro, self.__controller_classe,
                                                       self.__controller_poder)
         self.__controller_npc = ControllerNpc()
-        self.__controller_combate = ControllerCombate(self.__view_combate, self.__view_erro, self.__controller_jogador,
+        self.__controller_combate = ControllerCombate(self.__view_erro, self.__controller_jogador,
                                                       self.__controller_npc,
                                                       self.__controller_poder, self.__controller_classe)
 
@@ -76,11 +72,12 @@ class ControllerMain:
         # Ataques em área, gasto de mana medio/alto, porem dano alto e acerto alto
         self.__controller_poder.cadastrar_poder("Ataque Giratório", acerto=5, dano=3, mana_gasta=3, alvos=2,
                                                 ataque=True, nivel=1)
-        self.__controller_poder.cadastrar_poder("Bola de Fogo", acerto=7, dano=10, mana_gasta=10, alvos=3, ataque=True,
-                                                nivel=1)
         self.__controller_poder.cadastrar_poder("Golpe Poderoso", acerto=4, dano=20, mana_gasta=4, alvos=1, ataque=True,
                                                 nivel=1)
-
+        self.__controller_poder.cadastrar_poder("Raio de Fogo", acerto=5, dano=5, mana_gasta=4, alvos=3, ataque=True,
+                                                nivel=1)
+        self.__controller_poder.cadastrar_poder("Bola de Fogo", acerto=7, dano=10, mana_gasta=10, alvos=3, ataque=True,
+                                                nivel=2)
         self.__controller_poder.cadastrar_poder("Golpe Esmagador", acerto=3, dano=20, mana_gasta=10, alvos=2,
                                                 ataque=True, nivel=3)
         self.__controller_poder.cadastrar_poder("Lançamento de Pedras", acerto=6, dano=10, mana_gasta=15, alvos=2,
@@ -95,8 +92,7 @@ class ControllerMain:
                                                    )
 
         self.__controller_npc.cadastrar_personagem("Kobold", self.__controller_classe.get_classe("Ladino Aprendiz"),
-                                                   [self.__controller_poder.get_poder("Adaga de Aço"),
-                                                    self.__controller_poder.get_poder("Cura Inferior")]
+                                                   [self.__controller_poder.get_poder("Adaga de Aço")]
                                                    )
         npcs_combate1 = [self.__controller_npc.get_personagem("Kobold"),
                          self.__controller_npc.get_personagem("Hobgoblin")]
@@ -183,10 +179,10 @@ class ControllerMain:
 
             except TypeError:
                 self.__view_erro.apenas_inteiros()
-                time.sleep(3)
+                time.sleep(2)
             except CombateAcabouException:
-                self.__view_combate.derrota()
-                time.sleep(3)
+                self.__view_menu.desistir()
+                time.sleep(2)
             except Exception:
                 self.__view_erro.erro_inexperado_menu()
-                time.sleep(3)
+                time.sleep(2)

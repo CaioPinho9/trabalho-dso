@@ -14,17 +14,16 @@ from views.view_jogador import ViewJogador
 
 
 class ControllerJogador(ControllerPersonagem):
-    def __init__(self, view_jogador: ViewJogador,
-                 view_erro: ViewErro,
+    def __init__(self, view_erro: ViewErro,
                  controller_classe: ControllerClasse,
                  controller_poder: ControllerPoder):
         super().__init__()
-        self.__view_jogador = view_jogador
+        self.__view_jogador = ViewJogador()
         self.__view_erro = view_erro
         self.__controller_classe = controller_classe
         self.__controller_poder = controller_poder
 
-    def cadastrar_personagem(self, nome: str, classe: Classe = None, poderes: list[Poder] = None):
+    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         """
         Adiciona um Jogador na lista de personagens
         :param nome: identicador do Jogador
@@ -46,7 +45,7 @@ class ControllerJogador(ControllerPersonagem):
         :param combates_vencidos: De acordo com as vitorias é possivel escolher classes mais altas
         :return: Jogador criado
         """
-        # Nivel dos personagens criados
+        # Nivel dos personagens criados = combates_vencidos + 1
         if combates_vencidos > 2:
             combates_vencidos = 2
         classes = self.__controller_classe.get_classes_por_nivel(combates_vencidos + 1)
@@ -61,11 +60,14 @@ class ControllerJogador(ControllerPersonagem):
                 break
 
             self.__view_erro.nome_repetido(nome)
+            time.sleep(2)
+            os.system("cls")
 
+        os.system("cls")
         # Escolher a classe do personagem
         while True:
             try:
-                index = self.__view_jogador.escolha_classe(self.__controller_classe.classes_estatisticas(classes))
+                index = self.__view_jogador.escolha_classe(nome, self.__controller_classe.classes_estatisticas(classes))
 
                 # Impede valores invalidos
                 Utils.check_inteiro_intervalo(index, [0, len(classes) - 1])
@@ -73,6 +75,9 @@ class ControllerJogador(ControllerPersonagem):
                 break
             except TypeError:
                 self.__view_erro.apenas_inteiros()
+                time.sleep(2)
+                os.system("cls")
+        os.system("cls")
 
         # Cria personagem
         jogador = Jogador(nome, classe)
@@ -111,43 +116,6 @@ class ControllerJogador(ControllerPersonagem):
                 time.sleep(3)
             os.system("cls")
 
-    def __escolher_poder(self, jogador, quantidade_escolha, aumentar_nivel=False):
-        """
-        Pede para o jogador escolher um dos poderes disponiveis
-        :param jogador: jogador que recebera o poder
-        :param quantidade_escolha: Quantos poderes ele pode escolher
-        :return:
-        """
-        # Mostra todos os poderes disponiveis, se for aumentar o nivel mostra apenas os poderes do nivel novo
-        if not aumentar_nivel:
-            poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
-        else:
-            poderes_disponiveis = self.__controller_poder.get_poderes_por_nivel(jogador.classe.nivel)
-
-        poderes_estatisticas = self.__controller_poder.poderes_estatisticas(poderes_disponiveis)
-        self.__view_jogador.aviso_escolher_poderes(jogador.nome, quantidade_escolha, poderes_estatisticas)
-
-        for quantidade_poderes in range(quantidade_escolha):
-            poder = None
-
-            index = self.__view_jogador.escolha_poderes(quantidade_poderes + 1)
-
-            try:
-                Utils.check_inteiro_intervalo(index, [0, len(poderes_disponiveis) - 1])
-                poder = poderes_disponiveis[int(index)]
-
-                # Nao pode escolher um poder que não possui mana para usar
-                if poder.mana_gasta > jogador.classe.mana:
-                    raise ManaInsuficienteException()
-
-                super().adicionar_poder_personagem(jogador.nome, poder)
-            except DuplicadoException:
-                self.__view_erro.poder_repetido(jogador.nome, poder.nome)
-            except ManaInsuficienteException:
-                self.__view_erro.mana_insuficiente()
-            except TypeError:
-                self.__view_erro.apenas_inteiros()
-
     def grupo_estatisticas(self):
         """
         Retorna uma string formatada com as classes e nomes dos jogadores
@@ -165,3 +133,42 @@ class ControllerJogador(ControllerPersonagem):
             grupo_estatisticas += classe_jogador
 
         return grupo_estatisticas
+
+    def __escolher_poder(self, jogador, quantidade_escolha, aumentar_nivel=False):
+        """
+        Pede para o jogador escolher um dos poderes disponiveis
+        :param jogador: jogador que recebera o poder
+        :param quantidade_escolha: Quantos poderes ele pode escolher
+        :return:
+        """
+        # Mostra todos os poderes disponiveis, se for aumentar o nivel mostra apenas os poderes do nivel novo
+        if not aumentar_nivel:
+            poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
+        else:
+            poderes_disponiveis = self.__controller_poder.get_poderes_por_nivel(jogador.classe.nivel)
+
+        poderes_estatisticas = self.__controller_poder.poderes_estatisticas(poderes_disponiveis)
+        self.__view_jogador.aviso_escolher_poderes(jogador.nome, quantidade_escolha, poderes_estatisticas)
+
+        quantidade_poderes = 0
+        while quantidade_poderes != quantidade_escolha:
+            poder = None
+
+            index = self.__view_jogador.escolha_poderes(quantidade_poderes + 1)
+
+            try:
+                Utils.check_inteiro_intervalo(index, [0, len(poderes_disponiveis) - 1])
+                poder = poderes_disponiveis[int(index)]
+
+                # Nao pode escolher um poder que não possui mana para usar
+                if poder.mana_gasta > jogador.classe.mana:
+                    raise ManaInsuficienteException()
+
+                super().adicionar_poder_personagem(jogador.nome, poder)
+                quantidade_poderes += 1
+            except DuplicadoException:
+                self.__view_erro.poder_repetido(jogador.nome, poder.nome)
+            except ManaInsuficienteException:
+                self.__view_erro.mana_insuficiente()
+            except TypeError:
+                self.__view_erro.apenas_inteiros()

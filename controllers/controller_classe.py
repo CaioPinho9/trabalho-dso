@@ -50,7 +50,7 @@ class ControllerClasse:
                 return classe
         return None
 
-    def get_classes_por_nivel(self, nivel):
+    def get_classes_por_nivel(self, nivel: int):
         """
         Retorna uma lista com as classes de certo nivel
         :param nivel: numero que determina a força de um classe
@@ -67,22 +67,23 @@ class ControllerClasse:
     def get_classe_superior(self, tipo: str, nivel: int):
         """
         Retorna uma classe do mesmo tipo, mas com nivel maior
+        :param nivel: Indica qual o nivel que está sendo buscado
         :param tipo: tipos de classe como mago, guerreiro, ladino
         :return: classe do nivel acima do anterior
         """
-        # Nivel maximo
-        if nivel > 3:
-            nivel = 3
         if not isinstance(tipo, str):
             raise TypeError("tipo deve ser uma string")
         if not isinstance(nivel, int):
             raise TypeError("nivel deve ser um inteiro")
+        # Nivel maximo
+        if nivel > 3:
+            nivel = 3
 
         for classe in self.__classes:
             if classe.nivel == nivel and classe.tipo == tipo:
                 return classe
 
-    def classe_estatisticas(self, classe):
+    def classe_estatisticas(self, classe: Classe):
         """
         Retorna uma string formatada com os atributos de uma classe
         :param classe: Classe
@@ -99,10 +100,10 @@ class ControllerClasse:
                         "\nVelocidade: " + str(classe.velocidade))
         return estatisticas
 
-    def classes_estatisticas(self, classes):
+    def classes_estatisticas(self, classes: list[Classe]):
         """
-        Retorna uma string formatada com os atributos de uma classe
-        :param classe: Classe
+        Retorna uma string formatada com os atributos de uma lista de classes
+        :param classes: Classes que serão mostradas
         :return:
         Classe[index]:
         Vida: 0

@@ -45,6 +45,14 @@ class Personagem(ABC):
     def poderes(self):
         return self.__poderes
 
+    @property
+    def vida_atual(self):
+        return self.__vida_atual
+
+    @property
+    def mana_atual(self):
+        return self.__mana_atual
+
     def get_poder(self, nome: str):
         """
         Retorna o poder com um nome unico
@@ -86,10 +94,6 @@ class Personagem(ABC):
         else:
             return False
 
-    @property
-    def vida_atual(self):
-        return self.__vida_atual
-
     def restaurar_personagem(self):
         """O personagem volta com sua vida e mana inicial"""
         self.__vida_atual = self.classe.vida
@@ -110,10 +114,6 @@ class Personagem(ABC):
             self.__vida_atual = self.__classe.vida
         elif self.__vida_atual < 0:
             self.__vida_atual = 0
-
-    @property
-    def mana_atual(self):
-        return self.__mana_atual
 
     def gastar_mana(self, valor):
         """Ao utilizar um poder a mana atual do personagem é gasta"""

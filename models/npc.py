@@ -4,5 +4,5 @@ from models.poder import Poder
 
 
 class Npc(Personagem):
-    def __init__(self, nome: str, classe: Classe, poderes: list[Poder]):
+    def __init__(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         super().__init__(nome, classe, poderes)
