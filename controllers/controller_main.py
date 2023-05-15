@@ -121,7 +121,7 @@ class ControllerMain:
 
     def __criar_personagens(self):
         self.__controller_jogador.cadastrar_personagem("Jorge", self.__controller_classe.get_classe("Mago Estudante"),
-                                                       [self.__controller_poder.get_poder("Bola de Fogo"),
+                                                       [self.__controller_poder.get_poder("Raio de Fogo"),
                                                         self.__controller_poder.get_poder("Adaga de Bronze"),
                                                         self.__controller_poder.get_poder("Cura Inferior")])
         self.__controller_jogador.cadastrar_personagem("João", self.__controller_classe.get_classe("Guerreiro Novato"),
@@ -131,7 +131,7 @@ class ControllerMain:
         self.__controller_jogador.cadastrar_personagem("Jaime", self.__controller_classe.get_classe("Ladino Aprendiz"),
                                                        [self.__controller_poder.get_poder("Ataque Giratório"),
                                                         self.__controller_poder.get_poder("Adaga de Bronze"),
-                                                        self.__controller_poder.get_poder("Golpe Poderoso")])
+                                                        self.__controller_poder.get_poder("Raio de Fogo")])
 
     def iniciar(self):
         self.__criar_classes()
