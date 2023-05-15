@@ -170,7 +170,7 @@ class ControllerMain:
                     os.system("cls")
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
-                    if vitoria and escolha == combates_vencidos + 2:
+                    if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
                         self.__controller_jogador.aumentar_nivel()
                 else:
