@@ -32,11 +32,11 @@ class ControllerMain:
         self.__controller_classe.cadastrar_classe("Guerreiro Novato", 30, -2, 16, 10, 1, "Guerreiro")
         self.__controller_classe.cadastrar_classe("Ladino Aprendiz", 15, 5, 15, 15, 1, "Ladino")
 
-        self.__controller_classe.cadastrar_classe("Mago", 15, 2, 12, 40, 2, "Mago")
+        self.__controller_classe.cadastrar_classe("Mago", 20, 2, 12, 40, 2, "Mago")
         self.__controller_classe.cadastrar_classe("Guerreiro", 40, -2, 17, 12, 2, "Guerreiro")
         self.__controller_classe.cadastrar_classe("Ladino", 30, 5, 15, 20, 2, "Ladino")
 
-        self.__controller_classe.cadastrar_classe("Arquimago", 20, 2, 13, 50, 3, "Mago")
+        self.__controller_classe.cadastrar_classe("Arquimago", 30, 2, 13, 50, 3, "Mago")
         self.__controller_classe.cadastrar_classe("Guerreiro Mestre", 50, -2, 19, 15, 3, "Guerreiro")
         self.__controller_classe.cadastrar_classe("Ladino Chefe", 40, 8, 16, 25, 3, "Ladino")
 
@@ -54,27 +54,27 @@ class ControllerMain:
                                                 ataque=False, nivel=3)
 
         # Sem gasto de mana, porem dano medio e acerto medio
-        self.__controller_poder.cadastrar_poder("Espada de Bronze", acerto=7, dano=5, mana_gasta=0, alvos=1,
+        self.__controller_poder.cadastrar_poder("Espada de Bronze", acerto=7, dano=8, mana_gasta=0, alvos=1,
                                                 ataque=True, nivel=1)
-        self.__controller_poder.cadastrar_poder("Espada de Aço", acerto=8, dano=8, mana_gasta=0, alvos=1, ataque=True,
+        self.__controller_poder.cadastrar_poder("Espada de Aço", acerto=8, dano=10, mana_gasta=0, alvos=1, ataque=True,
                                                 nivel=2)
-        self.__controller_poder.cadastrar_poder("Espada de Adamantio", acerto=9, dano=10, mana_gasta=0, alvos=1,
+        self.__controller_poder.cadastrar_poder("Espada de Adamantio", acerto=9, dano=12, mana_gasta=0, alvos=1,
                                                 ataque=True, nivel=3)
 
         # Sem gasto de mana, porem dano baixo e acerto alto
-        self.__controller_poder.cadastrar_poder("Adaga de Bronze", acerto=9, dano=3, mana_gasta=0, alvos=1, ataque=True,
+        self.__controller_poder.cadastrar_poder("Adaga de Bronze", acerto=9, dano=4, mana_gasta=0, alvos=1, ataque=True,
                                                 nivel=1)
-        self.__controller_poder.cadastrar_poder("Adaga de Aço", acerto=11, dano=5, mana_gasta=0, alvos=1, ataque=True,
+        self.__controller_poder.cadastrar_poder("Adaga de Aço", acerto=11, dano=6, mana_gasta=0, alvos=1, ataque=True,
                                                 nivel=2)
-        self.__controller_poder.cadastrar_poder("Adaga de Adamantio", acerto=13, dano=7, mana_gasta=0, alvos=1,
+        self.__controller_poder.cadastrar_poder("Adaga de Adamantio", acerto=13, dano=8, mana_gasta=0, alvos=1,
                                                 ataque=True, nivel=3)
 
         # Ataques em área, gasto de mana medio/alto, porem dano alto e acerto alto
-        self.__controller_poder.cadastrar_poder("Ataque Giratório", acerto=5, dano=3, mana_gasta=3, alvos=2,
+        self.__controller_poder.cadastrar_poder("Ataque Giratório", acerto=5, dano=5, mana_gasta=3, alvos=2,
                                                 ataque=True, nivel=1)
         self.__controller_poder.cadastrar_poder("Golpe Poderoso", acerto=4, dano=20, mana_gasta=4, alvos=1, ataque=True,
                                                 nivel=1)
-        self.__controller_poder.cadastrar_poder("Raio de Fogo", acerto=5, dano=5, mana_gasta=4, alvos=3, ataque=True,
+        self.__controller_poder.cadastrar_poder("Raio de Fogo", acerto=5, dano=6, mana_gasta=4, alvos=3, ataque=True,
                                                 nivel=1)
         self.__controller_poder.cadastrar_poder("Bola de Fogo", acerto=7, dano=10, mana_gasta=10, alvos=3, ataque=True,
                                                 nivel=2)
@@ -121,7 +121,7 @@ class ControllerMain:
 
     def __criar_personagens(self):
         self.__controller_jogador.cadastrar_personagem("Jorge", self.__controller_classe.get_classe("Mago Estudante"),
-                                                       [self.__controller_poder.get_poder("Bola de Fogo"),
+                                                       [self.__controller_poder.get_poder("Raio de Fogo"),
                                                         self.__controller_poder.get_poder("Adaga de Bronze"),
                                                         self.__controller_poder.get_poder("Cura Inferior")])
         self.__controller_jogador.cadastrar_personagem("João", self.__controller_classe.get_classe("Guerreiro Novato"),
@@ -131,7 +131,7 @@ class ControllerMain:
         self.__controller_jogador.cadastrar_personagem("Jaime", self.__controller_classe.get_classe("Ladino Aprendiz"),
                                                        [self.__controller_poder.get_poder("Ataque Giratório"),
                                                         self.__controller_poder.get_poder("Adaga de Bronze"),
-                                                        self.__controller_poder.get_poder("Golpe Poderoso")])
+                                                        self.__controller_poder.get_poder("Raio de Fogo")])
 
     def iniciar(self):
         self.__criar_classes()
@@ -170,7 +170,7 @@ class ControllerMain:
                     os.system("cls")
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
-                    if vitoria and escolha == combates_vencidos + 2:
+                    if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
                         self.__controller_jogador.aumentar_nivel()
                 else:
