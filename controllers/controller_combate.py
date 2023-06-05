@@ -128,7 +128,14 @@ class ControllerCombate:
                     self.__view_combate.escolha_npc(proximo_personagem.nome, poder.nome, nomes_alvos)
 
                 # Quando ele escolher um poder o resultado será calculado
-                self.__calcular_poder(personagens_alvos, poder)
+                dano = self.__calcular_poder(personagens_alvos, poder)
+
+                if isinstance(proximo_personagem, Jogador):
+                    if dano > 0:
+                        proximo_personagem.causou_dano(dano)
+                    else:
+                        proximo_personagem.causou_cura(abs(dano))
+
             except CombateAcabouException as e:
                 raise e
             except Exception as e:
@@ -404,11 +411,18 @@ class ControllerCombate:
 
             personagem.mudar_vida_atual(dano)
 
+            if isinstance(personagem, Jogador):
+                if poder.ataque:
+                    personagem.recebeu_dano(dano)
+                else:
+                    personagem.recebeu_cura(abs(dano))
+
             # Mostra se um personagem desmaiou
             if personagem.vida_atual == 0:
                 self.__view_combate.desmaiou(personagem.nome)
 
             time.sleep(1)
+            return dano
 
     def _testar_personagens_vivos(self):
         """
