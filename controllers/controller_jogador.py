@@ -49,51 +49,32 @@ class ControllerJogador(ControllerPersonagem):
         if combates_vencidos > 2:
             combates_vencidos = 2
         classes = self.__controller_classe.get_classes_por_nivel(combates_vencidos + 1)
+        poderes = self.__controller_poder.get_poderes_ate_nivel(1)
 
-        # Inicio do cadastro
-        while True:
-            # Escolher o nome do personagem
-            nome = self.__view_jogador.escolha_nome(index_personagem)
+        created = False
+        jogador = None
+        while not created:
+            # Cadastro
+            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, classes, poderes, 3)
 
-            # Se esse personagem não existir pode continuar
-            if not self.get_personagem(nome):
-                break
+            if not jogador_dict:
+                return False
 
-            self.__view_erro.nome_repetido(nome)
-            time.sleep(2)
-            os.system("cls")
+            nome = jogador_dict["nome"]
+            classe_nome = jogador_dict["classe"]
+            poderes_nome = jogador_dict["poderes"]
 
-        os.system("cls")
-        # Escolher a classe do personagem
-        while True:
-            try:
-                index = self.__view_jogador.escolha_classe(nome, self.__controller_classe.classes_estatisticas(classes))
+            classe = self.__controller_classe.get_classe(classe_nome)
+            # Cria personagem
+            jogador = Jogador(nome, classe)
+            super().personagens.append(jogador)
 
-                # Impede valores invalidos
-                Utils.check_inteiro_intervalo(index, [0, len(classes) - 1])
-                classe = classes[int(index)]
-                break
-            except TypeError:
-                self.__view_erro.apenas_inteiros()
-                time.sleep(2)
-                os.system("cls")
-        os.system("cls")
+            for nome in poderes_nome:
+                poder = self.__controller_poder.get_poder(nome)
+                jogador.adicionar_poder(poder)
 
-        # Cria personagem
-        jogador = Jogador(nome, classe)
-        super().personagens.append(jogador)
-
-        # O jogador deve escolher 3 poderes
-        self.__escolher_poder(jogador, 3)
-
-        os.system("cls")
-
-        # Aviso de criaçao do personagem
-        poderes_mensagem = self.__controller_poder.poderes_nomes(jogador.poderes)
-        self.__view_jogador.aviso_criado(nome, classe.nome, poderes_mensagem, Utils.adjetivo(classe.nivel))
-
-        time.sleep(3)
-        os.system("cls")
+            # Aviso de criaçao do personagem
+            created = self.__view_jogador.aviso_criado(jogador_dict)
 
         return jogador
 

@@ -1,3 +1,5 @@
 from controllers.controller_main import ControllerMain
 
-ControllerMain().iniciar()
+
+if __name__ == "__main__":
+    ControllerMain().iniciar()

@@ -157,8 +157,14 @@ class ControllerMain:
                     # Criar grupo de personagens
                     self.__controller_jogador.personagens = []
                     # Grupo possui 3 personagens
-                    for index in range(1, 4):
-                        self.__controller_jogador.criar_personagem(index, combates_vencidos)
+                    index = 1
+                    while index != 3:
+                        jogador = self.__controller_jogador.criar_personagem(index, combates_vencidos)
+                        if jogador is False:
+                            break
+
+                        if jogador is not None:
+                            index += 1
                 elif escolha == 1:
                     # Mostrar grupo atual
                     self.__view_menu.grupo(self.__controller_jogador.grupo_estatisticas())
@@ -177,12 +183,12 @@ class ControllerMain:
                     self.__view_menu.sair()
                     break
 
-            except TypeError:
+            except TypeError as e:
                 self.__view_erro.apenas_inteiros()
                 time.sleep(2)
             except CombateAcabouException:
                 self.__view_menu.desistir()
                 time.sleep(2)
-            except Exception:
+            except Exception as e:
                 self.__view_erro.erro_inexperado_menu()
                 time.sleep(2)
