@@ -7,6 +7,7 @@ from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import CombateAcabouException
+from utils.menu_enum import Opcao
 from utils.utils import Utils
 from views.view_erro import ViewErro
 from views.view_menu import ViewMenu
@@ -144,18 +145,14 @@ class ControllerMain:
         while True:
             try:
                 # Display menu
-                os.system("cls")
                 escolha = self.__view_menu.menu_inicial(combates_vencidos)
 
-                Utils.check_inteiro_intervalo(escolha, [0, combates_vencidos + 3])
-
-                os.system("cls")
-
-                escolha = int(escolha)
+                if not escolha:
+                    self.__view_menu.sair()
+                    break
                 # O grupo será composto por 3 personagens
-                if escolha == 0:
+                elif escolha == Opcao.CRIAR_GRUPO:
                     # Criar grupo de personagens
-                    self.__controller_jogador.personagens = []
                     # Grupo possui 3 personagens
                     index = 1
                     while index != 3:
@@ -165,13 +162,19 @@ class ControllerMain:
 
                         if jogador is not None:
                             index += 1
-                elif escolha == 1:
+                elif escolha == Opcao.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
                     self.__view_menu.grupo(self.__controller_jogador.grupo_estatisticas())
                     time.sleep(5)
-                elif 1 < escolha < combates_vencidos + 3:
+                elif escolha.value in Opcao.COMBATES.value:
+                    combate_numero = 0
+                    for index, value in enumerate(Opcao.COMBATES.value):
+                        if escolha.value == value:
+                            combate_numero = index
+                            break
+
                     # Iniciar um combate
-                    vitoria = self.__controller_combate.iniciar_combate(escolha - 2)
+                    vitoria = self.__controller_combate.iniciar_combate(combate_numero)
                     time.sleep(5)
                     os.system("cls")
 
@@ -180,9 +183,7 @@ class ControllerMain:
                         combates_vencidos += 1
                         self.__controller_jogador.aumentar_nivel()
                 else:
-                    self.__view_menu.sair()
-                    break
-
+                    raise Exception("Opção Inexistente")
             except TypeError as e:
                 self.__view_erro.apenas_inteiros()
                 time.sleep(2)

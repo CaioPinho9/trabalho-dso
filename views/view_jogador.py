@@ -44,7 +44,7 @@ class ViewJogador:
              sg.Button("Unselect", key="-POWER_UNSELECT-")
              ],
             [sg.Button("Choose", key="-POWER_BUTTON-")],
-            [sg.Button("Voltar", key="-Return-"), sg.Button("Criar Jogador", key="-CREATE-")]
+            [sg.Button("Voltar", key="-BACK-"), sg.Button("Criar Jogador", key="-CREATE-")]
         ]
 
         self.window = sg.Window("Player Creation", layout)

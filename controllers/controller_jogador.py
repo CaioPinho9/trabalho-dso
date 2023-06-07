@@ -67,6 +67,7 @@ class ControllerJogador(ControllerPersonagem):
             classe = self.__controller_classe.get_classe(classe_nome)
             # Cria personagem
             jogador = Jogador(nome, classe)
+            super().personagens.pop(0)
             super().personagens.append(jogador)
 
             for nome in poderes_nome:
