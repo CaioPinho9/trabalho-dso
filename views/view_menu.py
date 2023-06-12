@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 
-from utils.menu_enum import Opcao
+from utils.enumerate import MenuInicial
 from utils.utils import Utils
 
 
@@ -12,22 +12,22 @@ class ViewMenu:
     def _combates(combates_vencidos):
         layout = []
         if combates_vencidos >= 0:
-            layout.append([sg.Button("Combate Inicial", key=Opcao.PRIMEIRO_COMBATE, size=(25, 2), enable_events=True)])
+            layout.append([sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(25, 2), enable_events=True)])
         if combates_vencidos >= 1:
             layout.append(
-                [sg.Button("Combate Intermediário", key=Opcao.SEGUNDO_COMBATE, size=(25, 2), enable_events=True)])
+                [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(25, 2), enable_events=True)])
         if combates_vencidos >= 2:
-            layout.append([sg.Button("Combate FINAL", key=Opcao.ULTIMO_COMBATE, size=(25, 2), enable_events=True)])
+            layout.append([sg.Button("Combate FINAL", key=MenuInicial.ULTIMO_COMBATE, size=(25, 2), enable_events=True)])
         return layout
 
     def menu_inicial(self, combates_vencidos):
         layout = [
             [sg.Text("Bem vindo ao RPG (Real Programmed Game), você será um grande herói ou um grande fracassado?")],
             [sg.Text("Esse é um jogo que você precisará de muita habilidade (e sorte) para vencer os 3 combates")],
-            [sg.Button("Criar grupo de personagens", key=Opcao.CRIAR_GRUPO, size=(25, 2), enable_events=True)],
-            [sg.Button("Mostrar grupo de personagens", key=Opcao.MOSTRAR_GRUPO, size=(25, 2), enable_events=True)],
+            [sg.Button("Criar grupo de personagens", key=MenuInicial.CRIAR_GRUPO, size=(25, 2), enable_events=True)],
+            [sg.Button("Mostrar grupo de personagens", key=MenuInicial.MOSTRAR_GRUPO, size=(25, 2), enable_events=True)],
             [self._combates(combates_vencidos)],
-            [sg.Button("Sair", key="-EXIT-", size=(12, 2))]
+            [sg.Button("Sair", key=MenuInicial.SAIR, size=(12, 2))]
         ]
 
         self.window = sg.Window("MENU INICIAL", layout)
@@ -37,22 +37,22 @@ class ViewMenu:
         while True:
             event, valores = self.window.read()
 
-            if event == sg.WINDOW_CLOSED or event == "-EXIT-":
+            if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                 break
 
-            if event == Opcao.CRIAR_GRUPO:
+            if event == MenuInicial.CRIAR_GRUPO:
                 escolha = event
                 break
-            if event == Opcao.MOSTRAR_GRUPO:
+            if event == MenuInicial.MOSTRAR_GRUPO:
                 escolha = event
                 break
-            if event == Opcao.PRIMEIRO_COMBATE:
+            if event == MenuInicial.PRIMEIRO_COMBATE:
                 escolha = event
                 break
-            if event == Opcao.SEGUNDO_COMBATE:
+            if event == MenuInicial.SEGUNDO_COMBATE:
                 escolha = event
                 break
-            if event == Opcao.ULTIMO_COMBATE:
+            if event == MenuInicial.ULTIMO_COMBATE:
                 escolha = event
                 break
 
@@ -70,7 +70,7 @@ class ViewMenu:
         while True:
             event, valores = self.window.read()
 
-            if event == sg.WINDOW_CLOSED or event == "-EXIT-":
+            if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                 break
 
         self.window.close()
@@ -88,7 +88,7 @@ class ViewMenu:
         while True:
             event, valores = self.window.read()
 
-            if event == sg.WINDOW_CLOSED or event == "-EXIT-":
+            if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                 break
 
         self.window.close()

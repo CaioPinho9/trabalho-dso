@@ -7,7 +7,7 @@ from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions.exceptions import CombateAcabouException
-from utils.menu_enum import Opcao
+from utils.enumerate import MenuInicial
 from utils.utils import Utils
 from views.view_erro import ViewErro
 from views.view_menu import ViewMenu
@@ -151,7 +151,7 @@ class ControllerMain:
                     self.__view_menu.sair()
                     break
                 # O grupo será composto por 3 personagens
-                elif escolha == Opcao.CRIAR_GRUPO:
+                elif escolha == MenuInicial.CRIAR_GRUPO:
                     # Criar grupo de personagens
                     # Grupo possui 3 personagens
                     index = 1
@@ -163,13 +163,13 @@ class ControllerMain:
                         if jogador is not None:
                             index += 1
 
-                elif escolha == Opcao.MOSTRAR_GRUPO:
+                elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
                     self.__view_menu.grupo(self.__controller_jogador.personagens)
 
-                elif escolha.value in Opcao.COMBATES.value:
+                elif escolha.value in MenuInicial.COMBATES.value:
                     combate_numero = 0
-                    for index, value in enumerate(Opcao.COMBATES.value):
+                    for index, value in enumerate(MenuInicial.COMBATES.value):
                         if escolha.value == value:
                             combate_numero = index
                             break

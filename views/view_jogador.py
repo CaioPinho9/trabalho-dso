@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 
 from models.classe import Classe
 from models.poder import Poder
+from utils.enumerate import MenuCriacao
 from utils.utils import Utils
 
 
@@ -32,83 +33,81 @@ class ViewJogador:
         classes_nomes = [classe.nome for classe in classes]
         poderes_nome = [poder.nome for poder in poderes]
         layout = [
-            [sg.Text(f"Escolha o nome do {index}º personagem:"), sg.InputText(key="-NAME-", size=(30, 1))],
+            [sg.Text(f"Escolha o nome do {index}º personagem:"), sg.InputText(key=MenuCriacao.NOME, size=(30, 1))],
             [sg.Text("Escolha uma classe para o personagem:"),
-             sg.Combo(classes_nomes, key="-CLASSE-", default_value=classes_nomes[0], enable_events=True)],
-            [sg.Text(self._coluna_classe(classes[0]), key="-CLASSE_ESTATISTICAS-")],
+             sg.Combo(classes_nomes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=classes_nomes[0],
+                      enable_events=True)],
+            [sg.Text(self._coluna_classe(classes[0]), key=MenuCriacao.ESTATISTICAS_CLASSE)],
             [sg.Text(f"Escolha {quantidade} poderes:")],
-            [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key="-PODERES-",
+            [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=poderes_nome[0]),
-             sg.Text(self._coluna_poder(poderes[0]), key="-PODER_ESTATISTICAS-", size=(21, 5)),
-             sg.Listbox(values=[], size=(15, 3), enable_events=True, key="-PODERES_ESCOLHIDO-"),
-             sg.Button("Remover", key="-PODER_REMOVER-")
+             sg.Text(self._coluna_poder(poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER, size=(21, 5)),
+             sg.Listbox(values=[], size=(15, 3), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
+             sg.Button("Remover", key=MenuCriacao.REMOVER_PODER)
              ],
-            [sg.Button("Escolher", key="-PODER_BOTAO-")],
-            [sg.Button("Voltar", key="-RETORNO-"), sg.Button("Criar Jogador", key="-CRIAR-")]
+            [sg.Button("Escolher", key=MenuCriacao.ESCOLHER_PODER)],
+            [sg.Button("Voltar", key=MenuCriacao.SAIR), sg.Button("Criar Jogador", key=MenuCriacao.CRIAR)]
         ]
 
-        self.window = sg.Window("Player Creation", layout)
+        self.window = sg.Window("Criação do Grupo", layout)
 
         try:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == "-RETORNO-":
+                if event == sg.WINDOW_CLOSED or event == MenuCriacao.SAIR:
                     break
 
-                if event == "-CRIAR-":
+                if event == MenuCriacao.CRIAR:
                     jogador_dict = self.criar_personagem(valores, quantidade)
                     if jogador_dict:
                         return jogador_dict
 
-                if event == "-CLASSE-":
-                    classe_selecionada = valores["-CLASSE-"]
+                if event == MenuCriacao.SELECIONAR_CLASSE:
+                    classe_selecionada = valores[MenuCriacao.SELECIONAR_CLASSE]
                     for index_classe, classe in enumerate(classes):
                         if classe.nome == classe_selecionada:
                             index = index_classe
                             break
-                    self.window.Element("-CLASSE_ESTATISTICAS-").update(self._coluna_classe(classes[index]))
+                    self.window.Element(MenuCriacao.ESTATISTICAS_CLASSE).update(self._coluna_classe(classes[index]))
 
-                if event == "-PODERES-" or event == "-PODERES_ESCOLHIDO-":
+                if event == MenuCriacao.SELECIONAR_PODERES or event == MenuCriacao.ESCOLHIDOS_PODERES:
                     poder_selecionado = valores[event]
                     for index_poder, poder in enumerate(poderes):
                         if poder.nome == poder_selecionado[0]:
                             index = index_poder
                             break
-                    self.window.Element("-PODER_ESTATISTICAS-").update(self._coluna_poder(poderes[index]))
+                    self.window.Element(MenuCriacao.ESTATISTICAS_PODER).update(self._coluna_poder(poderes[index]))
 
-                if event == "-PODER_BOTAO-":
-                    poder_selecionado = valores["-PODERES-"]
-                    poderes_selecionados = self.window["-PODERES_ESCOLHIDO-"].Values
+                if event == MenuCriacao.ESCOLHER_PODER:
+                    poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]
+                    poderes_selecionados = self.window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
                     if len(poderes_selecionados) < 3 and len(poder_selecionado) == 1:
                         poderes_selecionados.append(poder_selecionado[0])
 
-                        poderes_para_escolher = self.window["-PODERES-"].Values
+                        poderes_para_escolher = self.window[MenuCriacao.SELECIONAR_PODERES].Values
                         poderes_para_escolher.remove(poder_selecionado[0])
-                        self.window["-PODERES-"].update(poderes_para_escolher)
-                        self.window["-PODERES_ESCOLHIDO-"].update(values=poderes_selecionados)
+                        self.window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
+                        self.window[MenuCriacao.ESCOLHIDOS_PODERES].update(values=poderes_selecionados)
 
-                if event == "-PODER_REMOVER-":
-                    poder_selecionado = valores["-PODERES_ESCOLHIDO-"]
+                if event == MenuCriacao.REMOVER_PODER:
+                    poder_selecionado = valores[MenuCriacao.ESCOLHIDOS_PODERES]
                     if len(poder_selecionado) == 1:
-                        poderes_selecionados = self.window["-PODERES_ESCOLHIDO-"].Values
+                        poderes_selecionados = self.window[MenuCriacao.ESCOLHIDOS_PODERES].Values
                         poderes_selecionados.remove(poder_selecionado[0])
-                        poderes_para_escolher = self.window["-PODERES-"].Values
+                        poderes_para_escolher = self.window[MenuCriacao.SELECIONAR_PODERES].Values
                         poderes_para_escolher.append(poder_selecionado[0])
-                        self.window["-PODERES_ESCOLHIDO-"].update(values=poderes_selecionados)
-                        self.window["-PODERES-"].update(poderes_para_escolher)
+                        self.window[MenuCriacao.ESCOLHIDOS_PODERES].update(values=poderes_selecionados)
+                        self.window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
 
-        except Exception as e:
-            print(str(e))
-            raise e
         finally:
             self.window.close()
 
     def criar_personagem(self, valores, quantidade):
-        nome = valores["-NAME-"]
-        classe = valores["-CLASSE-"]
-        poderes = self.window["-PODERES_ESCOLHIDO-"].Values
+        nome = valores[MenuCriacao.NOME]
+        classe = valores[MenuCriacao.SELECIONAR_CLASSE]
+        poderes = self.window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
         if not nome:
             sg.popup_error("Escolha um nome para o personagem.")
@@ -127,22 +126,20 @@ class ViewJogador:
             [sg.Text(f"{jogador_dict['nome']}, o {Utils.adjetivo(1)}")],
             [sg.Text(f"Classe: {jogador_dict['classe']}")],
             [sg.Listbox(jogador_dict['poderes'], size=(15, 3), disabled=True)],
-            [sg.Button("Voltar", key="-RETORNO-"), sg.Button("OK", key="-OK-")]
+            [sg.Button("Voltar", key=MenuCriacao.SAIR), sg.Button("OK", key=MenuCriacao.CONTINUAR)]
         ]
-        self.window = sg.Window("Player Created", layout)
+        self.window = sg.Window("Jogador Criado", layout)
 
         try:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == "-RETORNO-":
+                if event == sg.WINDOW_CLOSED or event == MenuCriacao.SAIR:
                     break
 
-                if event == "-OK-":
+                if event == MenuCriacao.CONTINUAR:
                     return True
 
-        except Exception as e:
-            raise e
         finally:
             self.window.close()
 

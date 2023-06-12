@@ -1,4 +1,11 @@
+import PySimpleGUI as sg
+
+from utils.enumerate import MenuCombate
+
+
 class ViewCombate:
+    def __init__(self):
+        self.window = None
 
     def escolher_acao(self):
         return input("Opções: \nUsar Poder[0]\nStatus Batalha[1]\nAtributos[2]\nLista Poderes[3]\nDesistir[4]\n")
@@ -19,6 +26,27 @@ class ViewCombate:
         return input(f"Selecione um alvo:\n{opcoes_alvos}\n{area}")
 
     def iniciar_combate(self, jogadores, npcs):
+        layout = [
+            [sg.Text("Nesse combate os seguintes personagens se enfrentarão!")],
+            [sg.Text("Quem será o vencedor dessa batalha sangrenta!?")],
+            [sg.Listbox(jogadores, size=(15, len(jogadores)), disabled=True, no_scrollbar=True), sg.Text("vs"),
+             sg.Listbox(npcs, size=(15, len(npcs)), disabled=True, no_scrollbar=True)],
+            [sg.Button("Voltar", key=MenuCombate.SAIR), sg.Button("Continuar", key=MenuCombate.CONTINUAR)]
+        ]
+        self.window = sg.Window("COMBATE", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    break
+
+                if event == MenuCombate.CONTINUAR:
+                    return True
+
+        finally:
+            self.window.close()
         print(f"--------------------------------------------------------------------------")
         print(f"Nesse combate os personagens {jogadores} irão enfrentar os inimigos {npcs}")
         print(f"--------------------------------------------------------------------------")

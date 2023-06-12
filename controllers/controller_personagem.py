@@ -95,15 +95,6 @@ class ControllerPersonagem(ABC):
                         str(personagem.classe.mana) + "]" for personagem in personagens]
         return "\n".join(estatisticas)
 
-    def personagens_nomes(self, personagens: list[Personagem]):
-        """
-        Retorna uma string formatada com os nomes de uma lista de personagens
-        :param personagens: list[Personagem]
-        :return: nome, nome, nome
-        """
-        nomes = [personagem.nome for personagem in personagens]
-        return ", ".join(nomes)
-
     def restaurar_personagens(self):
         """Todos os personagens voltam a ficar com a vida e a mana máxima"""
         for personagem in self.__personagens:

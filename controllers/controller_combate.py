@@ -83,21 +83,18 @@ class ControllerCombate:
         npcs = self.__combate_atual.npcs
 
         # Recebe os nomes de todos os jogadores e npcs separadamente
-        nomes_jogadores = self.__controller_jogador.personagens_nomes(jogadores)
-        nomes_npcs = self.__controller_npc.personagens_nomes(npcs)
+        nomes_jogadores = [personagem.nome for personagem in jogadores]
+        nomes_npcs = [personagem.nome for personagem in npcs]
 
         # Introduz ao jogador quem está participando
         self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
-
-        time.sleep(6)
-        os.system("cls")
 
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
         ordem_de_batalha = self._ordernar_batalha()
         self.__combate_atual.ordem_de_batalha = ordem_de_batalha
 
         # Recebe os nomes de todos os personagens juntos de acordo com a ordem de batalha
-        nomes_personagens = self.__controller_jogador.personagens_nomes(ordem_de_batalha)
+        nomes_personagens = [personagem.nome for personagem in ordem_de_batalha]
         # Mostra para o usuário a ordem
         self.__view_combate.resultado_ordem_de_batalha(nomes_personagens)
         time.sleep(8)
@@ -124,7 +121,7 @@ class ControllerCombate:
                     personagens_alvos = self.__escolher_alvos(poder)
                 else:
                     personagens_alvos = self.__escolher_alvos_aleatorios(poder)
-                    nomes_alvos = self.__controller_jogador.personagens_nomes(personagens_alvos)
+                    nomes_alvos = [personagem.nome for personagem in personagens_alvos]
                     self.__view_combate.escolha_npc(proximo_personagem.nome, poder.nome, nomes_alvos)
 
                 # Quando ele escolher um poder o resultado será calculado
