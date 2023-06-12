@@ -98,24 +98,6 @@ class ControllerJogador(ControllerPersonagem):
                 time.sleep(3)
             os.system("cls")
 
-    def grupo_estatisticas(self):
-        """
-        Retorna uma string formatada com as classes e nomes dos jogadores
-        :return: classe_nome adjetivo jogador_nome, classe_nome adjetivo jogador_nome
-        """
-        grupo_estatisticas = ""
-        for index, jogador in enumerate(super().personagens):
-            classe_jogador = Utils.adjetivo(jogador.classe.nivel) + " " + jogador.classe.nome + " " + jogador.nome
-
-            if index == len(super().personagens) - 1:
-                grupo_estatisticas += " e pelo "
-            elif index != 0:
-                grupo_estatisticas += ", pelo "
-
-            grupo_estatisticas += classe_jogador
-
-        return grupo_estatisticas
-
     def __escolher_poder(self, jogador, quantidade_escolha, aumentar_nivel=False):
         """
         Pede para o jogador escolher um dos poderes disponiveis

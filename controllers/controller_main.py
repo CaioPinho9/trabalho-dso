@@ -162,10 +162,11 @@ class ControllerMain:
 
                         if jogador is not None:
                             index += 1
+
                 elif escolha == Opcao.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
-                    self.__view_menu.grupo(self.__controller_jogador.grupo_estatisticas())
-                    time.sleep(5)
+                    self.__view_menu.grupo(self.__controller_jogador.personagens)
+
                 elif escolha.value in Opcao.COMBATES.value:
                     combate_numero = 0
                     for index, value in enumerate(Opcao.COMBATES.value):

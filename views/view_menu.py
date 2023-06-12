@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 
 from utils.menu_enum import Opcao
+from utils.utils import Utils
 
 
 class ViewMenu:
@@ -74,9 +75,23 @@ class ViewMenu:
 
         self.window.close()
 
-    def grupo(self, grupo):
-        print(f"--------------------------------------------------------------------------")
-        print(f"O grupo é formado pelo {grupo}")
+    def grupo(self, jogadores):
+        layout = [
+            [sg.Text("O grupo é formado por:")]
+        ]
+
+        for jogador in jogadores:
+            layout.append([sg.Text(f"{jogador.nome}, o {Utils.adjetivo(jogador.classe.nivel)}")])
+
+        self.window = sg.Window("Grupo", layout)
+
+        while True:
+            event, valores = self.window.read()
+
+            if event == sg.WINDOW_CLOSED or event == "-EXIT-":
+                break
+
+        self.window.close()
 
     def desistir(self):
         print(f"--------------------------------------------------------------------------")

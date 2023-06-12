@@ -34,17 +34,17 @@ class ViewJogador:
         layout = [
             [sg.Text(f"Escolha o nome do {index}º personagem:"), sg.InputText(key="-NAME-", size=(30, 1))],
             [sg.Text("Escolha uma classe para o personagem:"),
-             sg.Combo(classes_nomes, key="-CLASS-", default_value=classes_nomes[0], enable_events=True)],
-            [sg.Text(self._coluna_classe(classes[0]), key="-CLASS_STATS-")],
+             sg.Combo(classes_nomes, key="-CLASSE-", default_value=classes_nomes[0], enable_events=True)],
+            [sg.Text(self._coluna_classe(classes[0]), key="-CLASSE_ESTATISTICAS-")],
             [sg.Text(f"Escolha {quantidade} poderes:")],
-            [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key="-POWERS-",
+            [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key="-PODERES-",
                         default_values=poderes_nome[0]),
-             sg.Text(self._coluna_poder(poderes[0]), key="-POWER_STATS-", size=(21, 5)),
-             sg.Listbox(values=[], size=(15, 3), enable_events=True, key="-POWERS_CHOOSED-"),
-             sg.Button("Unselect", key="-POWER_UNSELECT-")
+             sg.Text(self._coluna_poder(poderes[0]), key="-PODER_ESTATISTICAS-", size=(21, 5)),
+             sg.Listbox(values=[], size=(15, 3), enable_events=True, key="-PODERES_ESCOLHIDO-"),
+             sg.Button("Remover", key="-PODER_REMOVER-")
              ],
-            [sg.Button("Choose", key="-POWER_BUTTON-")],
-            [sg.Button("Voltar", key="-BACK-"), sg.Button("Criar Jogador", key="-CREATE-")]
+            [sg.Button("Escolher", key="-PODER_BOTAO-")],
+            [sg.Button("Voltar", key="-RETORNO-"), sg.Button("Criar Jogador", key="-CRIAR-")]
         ]
 
         self.window = sg.Window("Player Creation", layout)
@@ -53,51 +53,51 @@ class ViewJogador:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == "-BACK-":
+                if event == sg.WINDOW_CLOSED or event == "-RETORNO-":
                     break
 
-                if event == "-CREATE-":
+                if event == "-CRIAR-":
                     jogador_dict = self.criar_personagem(valores, quantidade)
                     if jogador_dict:
                         return jogador_dict
 
-                if event == "-CLASS-":
-                    classe_selecionada = valores["-CLASS-"]
+                if event == "-CLASSE-":
+                    classe_selecionada = valores["-CLASSE-"]
                     for index_classe, classe in enumerate(classes):
                         if classe.nome == classe_selecionada:
                             index = index_classe
                             break
-                    self.window.Element("-CLASS_STATS-").update(self._coluna_classe(classes[index]))
+                    self.window.Element("-CLASSE_ESTATISTICAS-").update(self._coluna_classe(classes[index]))
 
-                if event == "-POWERS-" or event == "-POWERS_CHOOSED-":
+                if event == "-PODERES-" or event == "-PODERES_ESCOLHIDO-":
                     poder_selecionado = valores[event]
                     for index_poder, poder in enumerate(poderes):
                         if poder.nome == poder_selecionado[0]:
                             index = index_poder
                             break
-                    self.window.Element("-POWER_STATS-").update(self._coluna_poder(poderes[index]))
+                    self.window.Element("-PODER_ESTATISTICAS-").update(self._coluna_poder(poderes[index]))
 
-                if event == "-POWER_BUTTON-":
-                    poder_selecionado = valores["-POWERS-"]
-                    poderes_selecionados = self.window["-POWERS_CHOOSED-"].Values
+                if event == "-PODER_BOTAO-":
+                    poder_selecionado = valores["-PODERES-"]
+                    poderes_selecionados = self.window["-PODERES_ESCOLHIDO-"].Values
 
                     if len(poderes_selecionados) < 3 and len(poder_selecionado) == 1:
                         poderes_selecionados.append(poder_selecionado[0])
 
-                        poderes_para_escolher = self.window["-POWERS-"].Values
+                        poderes_para_escolher = self.window["-PODERES-"].Values
                         poderes_para_escolher.remove(poder_selecionado[0])
-                        self.window["-POWERS-"].update(poderes_para_escolher)
-                        self.window["-POWERS_CHOOSED-"].update(values=poderes_selecionados)
+                        self.window["-PODERES-"].update(poderes_para_escolher)
+                        self.window["-PODERES_ESCOLHIDO-"].update(values=poderes_selecionados)
 
-                if event == "-POWER_UNSELECT-":
-                    poder_selecionado = valores["-POWERS_CHOOSED-"]
+                if event == "-PODER_REMOVER-":
+                    poder_selecionado = valores["-PODERES_ESCOLHIDO-"]
                     if len(poder_selecionado) == 1:
-                        poderes_selecionados = self.window["-POWERS_CHOOSED-"].Values
+                        poderes_selecionados = self.window["-PODERES_ESCOLHIDO-"].Values
                         poderes_selecionados.remove(poder_selecionado[0])
-                        poderes_para_escolher = self.window["-POWERS-"].Values
+                        poderes_para_escolher = self.window["-PODERES-"].Values
                         poderes_para_escolher.append(poder_selecionado[0])
-                        self.window["-POWERS_CHOOSED-"].update(values=poderes_selecionados)
-                        self.window["-POWERS-"].update(poderes_para_escolher)
+                        self.window["-PODERES_ESCOLHIDO-"].update(values=poderes_selecionados)
+                        self.window["-PODERES-"].update(poderes_para_escolher)
 
         except Exception as e:
             print(str(e))
@@ -107,8 +107,8 @@ class ViewJogador:
 
     def criar_personagem(self, valores, quantidade):
         nome = valores["-NAME-"]
-        classe = valores["-CLASS-"]
-        poderes = self.window["-POWERS_CHOOSED-"].Values
+        classe = valores["-CLASSE-"]
+        poderes = self.window["-PODERES_ESCOLHIDO-"].Values
 
         if not nome:
             sg.popup_error("Escolha um nome para o personagem.")
@@ -127,7 +127,7 @@ class ViewJogador:
             [sg.Text(f"{jogador_dict['nome']}, o {Utils.adjetivo(1)}")],
             [sg.Text(f"Classe: {jogador_dict['classe']}")],
             [sg.Listbox(jogador_dict['poderes'], size=(15, 3), disabled=True)],
-            [sg.Button("Back", key="-BACK-"), sg.Button("OK", key="-OK-")]
+            [sg.Button("Voltar", key="-RETORNO-"), sg.Button("OK", key="-OK-")]
         ]
         self.window = sg.Window("Player Created", layout)
 
@@ -135,7 +135,7 @@ class ViewJogador:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == "-BACK-":
+                if event == sg.WINDOW_CLOSED or event == "-RETORNO-":
                     break
 
                 if event == "-OK-":

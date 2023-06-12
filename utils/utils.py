@@ -18,9 +18,10 @@ class Utils:
 
         adjetivos = []
         if nivel == 1:
-            adjetivos = ["tolo", "fracassado", "idiota", "imbecil", "pateta"]
+            adjetivos = ["tolo", "fracassado", "idiota", "imbecil", "pateta", "desajeitado", "ingênuo"]
         elif nivel == 2:
-            adjetivos = ["medíocre aventureiro", "típico aventureiro", "aventureiro comum"]
+            adjetivos = ["medíocre aventureiro", "típico aventureiro", "aventureiro comum", "destemido", "corajoso"]
         elif nivel == 3:
-            adjetivos = ["incrível aventureiro", "héroi", "excelente aventureiro", "grande aventureiro"]
+            adjetivos = ["incrível aventureiro", "herói", "excelente aventureiro", "grande aventureiro", "ousado",
+                         "intrépido"]
         return random.choice(adjetivos)
