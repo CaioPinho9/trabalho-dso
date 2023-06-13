@@ -39,7 +39,7 @@ class ViewCombate:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                if event == MenuCombate.SAIR:
                     return None
 
                 if event == MenuCombate.CONTINUAR:
@@ -66,7 +66,7 @@ class ViewCombate:
             while True:
                 event, valores = self.window.read()
 
-                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                if event == MenuCombate.SAIR:
                     return None
 
                 if event == MenuCombate.CONTINUAR:
