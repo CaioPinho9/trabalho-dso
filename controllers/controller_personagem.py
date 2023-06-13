@@ -11,10 +11,10 @@ class ControllerPersonagem(ABC):
         self.__personagens = []
 
     @abstractmethod
-    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
+    def cadastrar(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         pass
 
-    def remover_personagem(self, nome: str):
+    def remover_by_name(self, nome: str):
         if not isinstance(nome, str):
             raise TypeError("nome deve ser um uma string")
 
@@ -54,7 +54,7 @@ class ControllerPersonagem(ABC):
             raise TypeError("personagens deve ser do tipo list[Personagem]")
         self.__personagens = personagens
 
-    def get_personagem(self, nome: str):
+    def get_by_name(self, nome: str):
         """
         Obtém um personagem da lista de personagens.
 
@@ -69,7 +69,7 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    def personagens_vida_estatisticas_com_index(self, personagens: list[Personagem]):
+    def vida_estatisticas_com_index(self, personagens: list[Personagem]):
         """
         Retorna uma string formatada com a vida atual e original de uma lista de personagens
         :param personagens: list[Personagem]
@@ -82,7 +82,7 @@ class ControllerPersonagem(ABC):
                         index, personagem in enumerate(personagens)]
         return "\n".join(estatisticas)
 
-    def personagens_vida_mana_estatisticas(self, personagens: list[Personagem]):
+    def vida_mana_estatisticas(self, personagens: list[Personagem]):
         """
         Retorna uma string formatada com a vida atual e original de uma lista de personagens
         :param personagens: list[Personagem]
@@ -95,7 +95,17 @@ class ControllerPersonagem(ABC):
                         str(personagem.classe.mana) + "]" for personagem in personagens]
         return "\n".join(estatisticas)
 
-    def restaurar_personagens(self):
+    def restaurar_vida_mana(self):
         """Todos os personagens voltam a ficar com a vida e a mana máxima"""
         for personagem in self.__personagens:
             personagem.restaurar_personagem()
+
+    def nomes(self, personagens: list[Personagem]):
+        """
+        Retorna uma string formatada com os nomes dos personagens
+        :param personagens:
+        :return: list[personagem.nome]
+        """
+        if not all(isinstance(personagem, Personagem) for personagem in personagens):
+            return TypeError("A lista deve conter personagens")
+        return [personagem.nome for personagem in personagens]

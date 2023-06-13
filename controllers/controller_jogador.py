@@ -18,12 +18,12 @@ class ControllerJogador(ControllerPersonagem):
                  controller_classe: ControllerClasse,
                  controller_poder: ControllerPoder):
         super().__init__()
-        self.__view_jogador = ViewJogador()
+        self.__view_jogador = ViewJogador(controller_classe, controller_poder)
         self.__view_erro = view_erro
         self.__controller_classe = controller_classe
         self.__controller_poder = controller_poder
 
-    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
+    def cadastrar(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         """
         Adiciona um Jogador na lista de personagens
         :param nome: identicador do Jogador
@@ -33,7 +33,7 @@ class ControllerJogador(ControllerPersonagem):
         """
         jogador = Jogador(nome, classe, poderes)
 
-        if super().get_personagem(nome):
+        if super().get_by_name(nome):
             raise DuplicadoException('Não foi possivel criar o jogador pois ja existe um com o mesmo nome')
 
         super().personagens.append(jogador)
@@ -51,11 +51,14 @@ class ControllerJogador(ControllerPersonagem):
         classes = self.__controller_classe.get_classes_por_nivel(combates_vencidos + 1)
         poderes = self.__controller_poder.get_poderes_ate_nivel(1)
 
+        nomes_classes = self.__controller_classe.nomes(classes)
+        nomes_poderes = self.__controller_poder.nomes(poderes)
+
         created = False
         jogador = None
         while not created:
             # Cadastro
-            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, classes, poderes, 3)
+            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes, 3)
 
             if not jogador_dict:
                 return False
@@ -92,7 +95,7 @@ class ControllerJogador(ControllerPersonagem):
                 self.__escolher_poder(jogador, 2, True)
 
                 # Aviso de upar do personagem
-                poderes_mensagem = self.__controller_poder.poderes_nomes(jogador.poderes)
+                poderes_mensagem = [poder.nome for poder in jogador.poderes]
                 self.__view_jogador.aviso_criado(jogador.nome, jogador.classe.nome, poderes_mensagem,
                                                  Utils.adjetivo(jogador.classe.nivel))
                 time.sleep(3)

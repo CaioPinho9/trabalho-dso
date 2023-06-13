@@ -40,30 +40,40 @@ class ViewCombate:
                 event, valores = self.window.read()
 
                 if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
-                    break
+                    return None
 
                 if event == MenuCombate.CONTINUAR:
                     return True
 
         finally:
             self.window.close()
-        print(f"--------------------------------------------------------------------------")
-        print(f"Nesse combate os personagens {jogadores} irão enfrentar os inimigos {npcs}")
-        print(f"--------------------------------------------------------------------------")
-        print(f"Vamos decidir quem irá começar a batalha!")
 
     def iniciar_turno(self, personagem, index):
         print(f"--------------------------------------------------------------------------")
         print(f"TURNO {index}: {personagem}")
         print(f"--------------------------------------------------------------------------")
 
-    def resultado_velocidade(self, tipo_personagem, nome, dado, velocidade, resultado):
-        print(f"{tipo_personagem} {nome}: [{dado}]+{velocidade} = {resultado}")
+    def resultado_ordem_de_batalha(self, ordem, ordem_nomes):
+        layout = [
+            [sg.Text(self._resultado_velocidade(ordem))],
+            [sg.Text("A ordem de batalha será:")],
+            [sg.Listbox(ordem_nomes, size=(15, len(ordem_nomes)), disabled=True, no_scrollbar=True)],
+            [sg.Button("Voltar", key=MenuCombate.SAIR), sg.Button("Continuar", key=MenuCombate.CONTINUAR)]
+        ]
+        self.window = sg.Window("COMBATE", layout)
 
-    def resultado_ordem_de_batalha(self, ordem):
-        print(f"--------------------------------------------------------------------------")
-        print(f"A ordem de batalha será {ordem}")
-        print(f"--------------------------------------------------------------------------")
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    return None
+
+                if event == MenuCombate.CONTINUAR:
+                    return True
+
+        finally:
+            self.window.close()
 
     def resultado_poder_sucesso(self, poder, dado, acerto, resultado, dano, alvo_nome, alvo_defesa):
         print(f"--------------------------------------------------------------------------")
@@ -113,3 +123,15 @@ class ViewCombate:
     def desmaiou(self, nome):
         print(f"--------------------------------------------------------------------------")
         print(f"{nome} desmaiou em combate")
+
+    def _resultado_velocidade(self, ordem):
+        layout = ""
+        for index, personagem in enumerate(ordem):
+            layout += f"{'JOGADOR: ' if personagem['jogador'] else 'NPC: '}"
+            layout += f"{personagem['nome']}:"
+            layout += f" dado[{personagem['dado']}]"
+            layout += f"{'+' if personagem['velocidade'] > 0 else ''}{personagem['velocidade']} = {personagem['resultado']}"
+            if index != len(ordem) - 1:
+                layout += "\n\n"
+
+        return layout

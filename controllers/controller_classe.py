@@ -1,4 +1,4 @@
-from exceptions.exceptions import DuplicadoException, NaoEncontradoException
+from exceptions import exceptions
 from models.classe import Classe
 
 
@@ -11,7 +11,7 @@ class ControllerClasse:
         classe = Classe(nome, vida, velocidade, defesa, mana, nivel, tipo)
 
         if self.get_classe(classe.nome):
-            raise DuplicadoException('Não foi possivel criar a classe pois ja existe uma com o mesmo nome')
+            raise exceptions.DuplicadoException('Não foi possivel criar a classe pois ja existe uma com o mesmo nome')
 
         self.__classes.append(classe)
 
@@ -30,7 +30,7 @@ class ControllerClasse:
         """
         classe = self.get_classe(nome)
         if not classe:
-            raise NaoEncontradoException("A classe não foi encontrada")
+            raise exceptions.NaoEncontradoException("A classe não foi encontrada")
 
         self.__classes.remove(classe)
 
@@ -123,3 +123,28 @@ class ControllerClasse:
                         "\nVelocidade: " + str(classe.velocidade)
                         for index, classe in enumerate(classes)]
         return "\n-------------------\n".join(estatisticas)
+
+    def nomes(self, classes: list[Classe]):
+        """
+        Retorna uma string formatada com os nomes dos classes
+        :param classes:
+        :return: list[classe.nome]
+        """
+        if not all(isinstance(classe, Classe) for classe in classes):
+            return TypeError("A lista deve conter personagens")
+
+        return [classe.nome for classe in classes]
+
+    def estatisticas(self, classe_name):
+        classe = self.get_classe(classe_name)
+
+        if not classe:
+            raise exceptions.NaoEncontradoException("Poder não encontrado")
+
+        layout = f"Nome: {str(classe.nome)}\n"
+        layout += f"Vida: {str(classe.vida)}\n"
+        layout += f"Defesa: {str(classe.defesa)}\n"
+        layout += f"Mana: {str(classe.mana)}\n"
+        layout += f"Velocidade: {str(classe.velocidade)}"
+
+        return layout

@@ -6,6 +6,7 @@ from controllers.controller_combate import ControllerCombate
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
+from exceptions import exceptions
 from exceptions.exceptions import CombateAcabouException
 from utils.enumerate import MenuInicial
 from utils.utils import Utils
@@ -86,53 +87,53 @@ class ControllerMain:
 
     def __criar_combates(self):
         # Combate 1
-        self.__controller_npc.cadastrar_personagem("Hobgoblin", self.__controller_classe.get_classe("Guerreiro Novato"),
-                                                   [self.__controller_poder.get_poder("Espada de Aço"),
-                                                    self.__controller_poder.get_poder("Ataque Giratório"),
-                                                    self.__controller_poder.get_poder("Golpe Poderoso")]
-                                                   )
+        self.__controller_npc.cadastrar("Hobgoblin", self.__controller_classe.get_classe("Guerreiro Novato"),
+                                        [self.__controller_poder.get_poder("Espada de Aço"),
+                                         self.__controller_poder.get_poder("Ataque Giratório"),
+                                         self.__controller_poder.get_poder("Golpe Poderoso")]
+                                        )
 
-        self.__controller_npc.cadastrar_personagem("Kobold", self.__controller_classe.get_classe("Ladino Aprendiz"),
-                                                   [self.__controller_poder.get_poder("Adaga de Aço")]
-                                                   )
-        npcs_combate1 = [self.__controller_npc.get_personagem("Kobold"),
-                         self.__controller_npc.get_personagem("Hobgoblin")]
+        self.__controller_npc.cadastrar("Kobold", self.__controller_classe.get_classe("Ladino Aprendiz"),
+                                        [self.__controller_poder.get_poder("Adaga de Aço")]
+                                        )
+        npcs_combate1 = [self.__controller_npc.get_by_name("Kobold"),
+                         self.__controller_npc.get_by_name("Hobgoblin")]
         self.__controller_combate.cadastrar_combate(npcs_combate1)
 
         # Combate 2
         npcs_combate2 = [
-            self.__controller_npc.cadastrar_personagem(f"Gnomo{i}", self.__controller_classe.get_classe("Minion"),
-                                                       [self.__controller_poder.get_poder("Adaga de Aço"),
-                                                        self.__controller_poder.get_poder("Ataque Giratório")]
-                                                       ) for i in range(1, 8)]
+            self.__controller_npc.cadastrar(f"Gnomo{i}", self.__controller_classe.get_classe("Minion"),
+                                            [self.__controller_poder.get_poder("Adaga de Aço"),
+                                             self.__controller_poder.get_poder("Ataque Giratório")]
+                                            ) for i in range(1, 8)]
         self.__controller_combate.cadastrar_combate(npcs_combate2)
 
         # Combate 3
         npcs_combate3 = [
-            self.__controller_npc.cadastrar_personagem(f"Rei Gnomo", self.__controller_classe.get_classe("Boss"),
-                                                       [self.__controller_poder.get_poder("Golpe Esmagador"),
-                                                        self.__controller_poder.get_poder("Lançamento de Pedras"),
-                                                        self.__controller_poder.get_poder("Espada de Adamantio")
-                                                        ]
-                                                       ),
-            self.__controller_npc.get_personagem("Gnomo1"),
-            self.__controller_npc.get_personagem("Gnomo2"),
-            self.__controller_npc.get_personagem("Gnomo3")]
+            self.__controller_npc.cadastrar(f"Rei Gnomo", self.__controller_classe.get_classe("Boss"),
+                                            [self.__controller_poder.get_poder("Golpe Esmagador"),
+                                             self.__controller_poder.get_poder("Lançamento de Pedras"),
+                                             self.__controller_poder.get_poder("Espada de Adamantio")
+                                             ]
+                                            ),
+            self.__controller_npc.get_by_name("Gnomo1"),
+            self.__controller_npc.get_by_name("Gnomo2"),
+            self.__controller_npc.get_by_name("Gnomo3")]
         self.__controller_combate.cadastrar_combate(npcs_combate3)
 
     def __criar_personagens(self):
-        self.__controller_jogador.cadastrar_personagem("Jorge", self.__controller_classe.get_classe("Mago Estudante"),
-                                                       [self.__controller_poder.get_poder("Raio de Fogo"),
-                                                        self.__controller_poder.get_poder("Adaga de Bronze"),
-                                                        self.__controller_poder.get_poder("Cura Inferior")])
-        self.__controller_jogador.cadastrar_personagem("João", self.__controller_classe.get_classe("Guerreiro Novato"),
-                                                       [self.__controller_poder.get_poder("Ataque Giratório"),
-                                                        self.__controller_poder.get_poder("Espada de Bronze"),
-                                                        self.__controller_poder.get_poder("Golpe Poderoso")])
-        self.__controller_jogador.cadastrar_personagem("Jaime", self.__controller_classe.get_classe("Ladino Aprendiz"),
-                                                       [self.__controller_poder.get_poder("Ataque Giratório"),
-                                                        self.__controller_poder.get_poder("Adaga de Bronze"),
-                                                        self.__controller_poder.get_poder("Raio de Fogo")])
+        self.__controller_jogador.cadastrar("Jorge", self.__controller_classe.get_classe("Mago Estudante"),
+                                            [self.__controller_poder.get_poder("Raio de Fogo"),
+                                             self.__controller_poder.get_poder("Adaga de Bronze"),
+                                             self.__controller_poder.get_poder("Cura Inferior")])
+        self.__controller_jogador.cadastrar("João", self.__controller_classe.get_classe("Guerreiro Novato"),
+                                            [self.__controller_poder.get_poder("Ataque Giratório"),
+                                             self.__controller_poder.get_poder("Espada de Bronze"),
+                                             self.__controller_poder.get_poder("Golpe Poderoso")])
+        self.__controller_jogador.cadastrar("Jaime", self.__controller_classe.get_classe("Ladino Aprendiz"),
+                                            [self.__controller_poder.get_poder("Ataque Giratório"),
+                                             self.__controller_poder.get_poder("Adaga de Bronze"),
+                                             self.__controller_poder.get_poder("Raio de Fogo")])
 
     def iniciar(self):
         self.__criar_classes()
@@ -165,7 +166,10 @@ class ControllerMain:
 
                 elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
-                    self.__view_menu.grupo(self.__controller_jogador.personagens)
+                    self.__view_menu.grupo(
+                        self.__controller_jogador.nomes(self.__controller_jogador.personagens),
+                        combates_vencidos + 1
+                    )
 
                 elif escolha.value in MenuInicial.COMBATES.value:
                     combate_numero = 0
@@ -176,8 +180,6 @@ class ControllerMain:
 
                     # Iniciar um combate
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
-                    time.sleep(5)
-                    os.system("cls")
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
                     if vitoria and combates_vencidos != 2:

@@ -1,4 +1,4 @@
-from exceptions.exceptions import DuplicadoException, NaoEncontradoException
+from exceptions import exceptions
 from models.poder import Poder
 
 
@@ -22,7 +22,7 @@ class ControllerPoder:
         poder = Poder(nome, acerto, dano, mana_gasta, alvos, ataque, nivel)
 
         if self.get_poder(poder.nome):
-            raise DuplicadoException('Não foi possivel criar o poder pois ja existe um com o mesmo nome')
+            raise exceptions.DuplicadoException('Não foi possivel criar o poder pois ja existe um com o mesmo nome')
 
         self.__poderes.append(poder)
 
@@ -37,7 +37,7 @@ class ControllerPoder:
         """
         poder = self.get_poder(nome)
         if not poder:
-            raise NaoEncontradoException("O poder não foi encontrado.")
+            raise exceptions.NaoEncontradoException("O poder não foi encontrado.")
 
         self.__poderes.remove(poder)
 
@@ -116,15 +116,26 @@ class ControllerPoder:
 
         return "\n-------------------\n".join(poderes_estatisticas)
 
-    def poderes_nomes(self, poderes):
+    def nomes(self, poderes: list[Poder]):
         """
         Retorna uma string formatada com os nomes dos poderes
         :param poderes:
-        :return:
-        nome
-        nome
+        :return: list[poder.nome]
         """
-        nomes = [poder.nome for poder in poderes]
-        return "\n".join(nomes)
+        if not all(isinstance(poder, Poder) for poder in poderes):
+            return TypeError("A lista deve conter personagens")
 
+        return [poder.nome for poder in poderes]
 
+    def estatisticas(self, poder_name: str):
+        poder = self.get_poder(poder_name)
+
+        if not poder:
+            raise exceptions.NaoEncontradoException("Poder não encontrado")
+
+        layout = f"[{poder.nome} Nvl{poder.nivel}]\n"
+        layout += f"{'Dano' if poder.ataque else 'Cura'}: {poder.dano}\n"
+        layout += f"Acerto: {poder.acerto}\n"
+        layout += f"Mana: {poder.mana_gasta}\n"
+        layout += f"Acerta {poder.alvos} {'alvo' if poder.alvos == 1 else 'alvos'}"
+        return layout

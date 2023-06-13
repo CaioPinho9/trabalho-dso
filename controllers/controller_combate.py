@@ -76,41 +76,34 @@ class ControllerCombate:
         self.__combate_atual.jogadores = self.__controller_jogador.personagens
 
         # Garante que a vida e a mana estarão cheias
-        self.__controller_jogador.restaurar_personagens()
-        self.__controller_npc.restaurar_personagens()
+        self.__controller_jogador.restaurar_vida_mana()
+        self.__controller_npc.restaurar_vida_mana()
 
         jogadores = self.__combate_atual.jogadores
         npcs = self.__combate_atual.npcs
 
         # Recebe os nomes de todos os jogadores e npcs separadamente
-        nomes_jogadores = [personagem.nome for personagem in jogadores]
-        nomes_npcs = [personagem.nome for personagem in npcs]
+        nomes_jogadores = self.__controller_jogador.nomes(jogadores)
+        nomes_npcs = self.__controller_npc.nomes(npcs)
 
         # Introduz ao jogador quem está participando
-        self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
+        if not self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs):
+            return
 
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
-        ordem_de_batalha = self._ordernar_batalha()
-        self.__combate_atual.ordem_de_batalha = ordem_de_batalha
-
-        # Recebe os nomes de todos os personagens juntos de acordo com a ordem de batalha
-        nomes_personagens = [personagem.nome for personagem in ordem_de_batalha]
-        # Mostra para o usuário a ordem
-        self.__view_combate.resultado_ordem_de_batalha(nomes_personagens)
-        time.sleep(8)
+        if not self._ordernar_batalha():
+            return
 
         # Inicia os turnos até que um dos lados fique com 0 de vida
         continuar = True
         vitoria = False
         contador_turnos = 1
         while continuar:
-            os.system("cls")
             # Proximo da lista de batalha
             proximo_personagem = self.__combate_atual.proximo_da_batalha()
 
             # Avisa quem está jogando
             self.__view_combate.iniciar_turno(proximo_personagem.nome, contador_turnos)
-            time.sleep(2)
 
             try:
                 # Inicia sendo escolhido a ação do jogador
@@ -121,7 +114,7 @@ class ControllerCombate:
                     personagens_alvos = self.__escolher_alvos(poder)
                 else:
                     personagens_alvos = self.__escolher_alvos_aleatorios(poder)
-                    nomes_alvos = [personagem.nome for personagem in personagens_alvos]
+                    nomes_alvos = self.__controller_jogador.nomes(personagens_alvos)
                     self.__view_combate.escolha_npc(proximo_personagem.nome, poder.nome, nomes_alvos)
 
                 # Quando ele escolher um poder o resultado será calculado
@@ -140,8 +133,8 @@ class ControllerCombate:
                 print(e)
 
             # Mostra a vida de todos os personagens
-            vida_jogadores = self.__controller_jogador.personagens_vida_mana_estatisticas(jogadores)
-            vida_npcs = self.__controller_npc.personagens_vida_mana_estatisticas(npcs)
+            vida_jogadores = self.__controller_jogador.vida_mana_estatisticas(jogadores)
+            vida_npcs = self.__controller_npc.vida_mana_estatisticas(npcs)
             self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
             time.sleep(5)
 
@@ -166,8 +159,7 @@ class ControllerCombate:
 
         personagens = [*jogadores, *npcs]
         ordem_batalha = {}
-
-        self.__view_combate.separacao()
+        ordem_display = []
 
         # Todos os jogadores fazem um teste pra ver quem é mais veloz
         for personagem in personagens:
@@ -178,12 +170,21 @@ class ControllerCombate:
             resultado_velocidade = dado + velocidade
 
             ordem_batalha[personagem] = resultado_velocidade
-            self.__view_combate.resultado_velocidade("JOGADOR" if isinstance(personagem, Jogador) else "NPC",
-                                                     personagem.nome, dado, velocidade, resultado_velocidade)
+            ordem_display.append({"nome": personagem.nome, "dado": dado, "velocidade": velocidade,
+                                  "resultado": resultado_velocidade,
+                                  "jogador": isinstance(personagem, Jogador)})
+
+        # Mostra para o usuário a ordem
+        ordem_batalha = sorted(ordem_batalha.items(), key=lambda x: x[1], reverse=True)
+        ordem_batalha = [x[0] for x in ordem_batalha]
+        if not self.__view_combate.resultado_ordem_de_batalha(ordem_display,
+                                                              self.__controller_jogador.nomes(ordem_batalha)):
+            return
+
+        self.__combate_atual.ordem_de_batalha = ordem_batalha
 
         # Ordenando pela velocidade
-        ordem_batalha = sorted(ordem_batalha.items(), key=lambda x: x[1], reverse=True)
-        return [x[0] for x in ordem_batalha]
+        return True
 
     def _escolher_turno(self, personagem: Personagem, index: int):
         """
@@ -230,9 +231,9 @@ class ControllerCombate:
 
                 elif escolha == "1":
                     # Status Batalha[1]
-                    vida_jogadores = self.__controller_jogador.personagens_vida_mana_estatisticas(
+                    vida_jogadores = self.__controller_jogador.vida_mana_estatisticas(
                         self.__combate_atual.jogadores)
-                    vida_npcs = self.__controller_npc.personagens_vida_mana_estatisticas(self.__combate_atual.npcs)
+                    vida_npcs = self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs)
                     self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
                 elif escolha == "2":
                     # Atributos[2]
@@ -349,7 +350,7 @@ class ControllerCombate:
                 break
 
             # Mostra a vida restante dos personagens alvos
-            mensagem_alvos = self.__controller_jogador.personagens_vida_estatisticas_com_index(personagens_disponiveis)
+            mensagem_alvos = self.__controller_jogador.vida_estatisticas_com_index(personagens_disponiveis)
 
             # Numero maximo que o poder podera escolher
             maximo = poder.alvos

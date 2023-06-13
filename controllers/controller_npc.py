@@ -6,7 +6,7 @@ from models.poder import Poder
 
 
 class ControllerNpc(ControllerPersonagem):
-    def cadastrar_personagem(self, nome: str, classe: Classe, poderes: list[Poder] = []):
+    def cadastrar(self, nome: str, classe: Classe, poderes: list[Poder] = []):
         """
         Adiciona um Npc na lista de personagens
         :param nome: identicador do Npc
@@ -16,7 +16,7 @@ class ControllerNpc(ControllerPersonagem):
         """
         npc = Npc(nome, classe, poderes)
 
-        if super().get_personagem(nome):
+        if super().get_by_name(nome):
             raise DuplicadoException('Não foi possivel criar o npc pois ja existe um com o mesmo nome')
 
         super().personagens.append(npc)

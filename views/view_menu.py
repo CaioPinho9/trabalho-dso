@@ -75,15 +75,15 @@ class ViewMenu:
 
         self.window.close()
 
-    def grupo(self, jogadores):
+    def grupo(self, nomes_jogadores, nivel):
         layout = [
             [sg.Text("O grupo é formado por:")]
         ]
 
-        for jogador in jogadores:
-            layout.append([sg.Text(f"{jogador.nome}, o {Utils.adjetivo(jogador.classe.nivel)}")])
+        for nome in nomes_jogadores:
+            layout.append([sg.Text(f"{nome}, o {Utils.adjetivo(nivel)}")])
 
-        self.window = sg.Window("Grupo", layout)
+        self.window = sg.Window("GRUPO", layout)
 
         while True:
             event, valores = self.window.read()
