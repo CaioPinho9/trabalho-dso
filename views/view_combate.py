@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 
 from exceptions import exceptions
-from utils.enumerate import MenuCombate
+from utils.opcoes_menus import MenuCombate
 
 
 class ViewCombate:
@@ -133,18 +133,18 @@ class ViewCombate:
         return vida_mana
 
     def estatistica_vida_mana_geral(self, jogadores, npcs):
-        column_jogador = []
+        column_jogador = [[sg.Text("Jogadores")]]
         for personagem in jogadores:
             column_jogador.append([sg.Text(self._mostrar_vida_mana(personagem))])
 
-        column_npc = []
+        column_npc = [[sg.Text("Npcs")]]
         for personagem in npcs:
             column_npc.append([sg.Text(self._mostrar_vida_mana(personagem))])
 
         layout = [
             [sg.Text("STATUS BATALHA")],
             [sg.Column(column_jogador), sg.Column(column_npc)],
-            [sg.Button("Continuar", key=MenuCombate.SAIR)]
+            [sg.Button("Voltar", key=MenuCombate.SAIR)]
         ]
         self.window = sg.Window("COMBATE", layout)
 
@@ -168,9 +168,26 @@ class ViewCombate:
         print("GAME OVER.")
         print(f"--------------------------------------------------------------------------")
 
-    def estatistica_classe(self, classe):
-        print(f"--------------------------------------------------------------------------")
-        print(classe)
+    def estatistica_classe(self, personagem, classe):
+        layout = [
+            [sg.Text(f"Atributos de {personagem['nome']}")],
+            [sg.Text(f"Vida: {personagem['vida_atual']}/{classe['vida']}")],
+            [sg.Text(f"Mana: {personagem['mana_atual']}/{classe['mana']}")],
+            [sg.Text(f"Defesa: {classe['defesa']}")],
+            [sg.Text(f"Velocidade: {classe['velocidade']}")],
+            [sg.Button("Voltar", key=MenuCombate.SAIR)]
+        ]
+        self.window = sg.Window("COMBATE", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    return True
+
+        finally:
+            self.window.close()
 
     def poder_estatistica(self, poderes):
         print(f"--------------------------------------------------------------------------")

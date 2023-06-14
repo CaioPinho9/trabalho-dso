@@ -12,7 +12,7 @@ from models.jogador import Jogador
 from models.npc import Npc
 from models.personagem import Personagem
 from models.poder import Poder
-from utils.enumerate import MenuCombate
+from utils.opcoes_menus import MenuCombate
 from utils.utils import Utils
 from views.view_combate import ViewCombate
 from views.view_erro import ViewErro
@@ -227,13 +227,15 @@ class ControllerCombate:
             elif escolha == MenuCombate.STATUS_BATALHA:
                 # Status Batalha[1]
                 vida_mana_jogadores = self.__controller_jogador.vida_mana_estatisticas(
-                    self.__combate_atual.jogadores)
+                    self.__combate_atual.jogadores
+                )
                 vida_mana_npcs = self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs)
                 self.__view_combate.estatistica_vida_mana_geral(vida_mana_jogadores, vida_mana_npcs)
             elif escolha == MenuCombate.ATRIBUTOS:
                 # Atributos[2]
-                self.__view_combate.estatistica_classe(
-                    self.__controller_classe.classe_estatisticas(personagem.classe))
+                vida_mana_jogador = self.__controller_jogador.vida_mana_estatisticas([personagem])[0]
+                atributos_classes = self.__controller_classe.classe_estatisticas(personagem.classe)
+                self.__view_combate.estatistica_classe(vida_mana_jogador, atributos_classes)
             elif escolha == MenuCombate.LISTAR_PODERES:
                 # Poderes[3]
                 self.__view_combate.poder_estatistica(

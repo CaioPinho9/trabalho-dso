@@ -85,19 +85,13 @@ class ControllerClasse:
 
     def classe_estatisticas(self, classe: Classe):
         """
-        Retorna uma string formatada com os atributos de uma classe
+        Retorna um dicionário formatado com os atributos de uma classe
         :param classe: Classe
-        :return:
-        Classe:
-        Vida: 0
-        Defesa: 0
-        Mana: 0
-        Velocidade: 0
+        :return: {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
+                  "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         """
-        estatisticas = (classe.nome + ": \nVida: " + str(classe.vida) +
-                        "\nDefesa: " + str(classe.defesa) +
-                        "\nMana: " + str(classe.mana) +
-                        "\nVelocidade: " + str(classe.velocidade))
+        estatisticas = {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
+                        "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         return estatisticas
 
     def classes_estatisticas(self, classes: list[Classe]):

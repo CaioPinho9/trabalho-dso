@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_poder import ControllerPoder
 from exceptions import exceptions
-from utils.enumerate import MenuCriacao
+from utils.opcoes_menus import MenuCriacao
 from utils.utils import Utils
 
 

@@ -7,7 +7,7 @@ from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions import exceptions
-from utils.enumerate import MenuInicial
+from utils.opcoes_menus import MenuInicial
 from utils.utils import Utils
 from views.view_erro import ViewErro
 from views.view_menu import ViewMenu
