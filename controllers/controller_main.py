@@ -7,7 +7,6 @@ from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
 from exceptions import exceptions
-from exceptions.exceptions import CombateAcabouException
 from utils.enumerate import MenuInicial
 from utils.utils import Utils
 from views.view_erro import ViewErro
@@ -148,11 +147,8 @@ class ControllerMain:
                 # Display menu
                 escolha = self.__view_menu.menu_inicial(combates_vencidos)
 
-                if not escolha:
-                    self.__view_menu.sair()
-                    break
                 # O grupo será composto por 3 personagens
-                elif escolha == MenuInicial.CRIAR_GRUPO:
+                if escolha == MenuInicial.CRIAR_GRUPO:
                     # Criar grupo de personagens
                     # Grupo possui 3 personagens
                     index = 1
@@ -187,12 +183,12 @@ class ControllerMain:
                         self.__controller_jogador.aumentar_nivel()
                 else:
                     raise Exception("Opção Inexistente")
-            except TypeError as e:
-                self.__view_erro.apenas_inteiros()
-                time.sleep(2)
-            except CombateAcabouException:
+            except exceptions.VoltarMenu as e:
+                pass
+            except exceptions.CombateAcabouException as e:
                 self.__view_menu.desistir()
-                time.sleep(2)
+            except exceptions.FecharPrograma as e:
+                break
             except Exception as e:
                 self.__view_erro.erro_inexperado_menu()
-                time.sleep(2)
+        self.__view_menu.sair()

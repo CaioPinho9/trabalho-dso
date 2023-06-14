@@ -69,31 +69,23 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    def vida_estatisticas_com_index(self, personagens: list[Personagem]):
-        """
-        Retorna uma string formatada com a vida atual e original de uma lista de personagens
-        :param personagens: list[Personagem]
-        :return:
-        nome[index]: [vida_atual/vida]
-        nome[index + 1]: [vida_atual/vida]
-        """
-        estatisticas = [personagem.nome + "[" + str(index) + "]: " +
-                        str(personagem.vida_atual) + "/" + str(personagem.classe.vida) for
-                        index, personagem in enumerate(personagens)]
-        return "\n".join(estatisticas)
-
     def vida_mana_estatisticas(self, personagens: list[Personagem]):
         """
-        Retorna uma string formatada com a vida atual e original de uma lista de personagens
+        Retorna uma lista de dicionarios contendo nome, vida e mana atual, vida e mana máxima
         :param personagens: list[Personagem]
         :return:
-        nome: HP[vida_atual/vida] Mana[mana_atual/mana]
-        nome: HP[vida_atual/vida] Mana[mana_atual/mana]
+        list["nome": personagem.nome,
+             "vida_atual": str(personagem.vida_atual), "vida_maxima": str(personagem.classe.vida),
+             "mana_atual": str(personagem.mana_atual), "mana_maxima": str(personagem.classe.mana)]
         """
-        estatisticas = [personagem.nome + ": HP[" + str(personagem.vida_atual) + "/" +
-                        str(personagem.classe.vida) + "] Mana[" + str(personagem.mana_atual) + "/" +
-                        str(personagem.classe.mana) + "]" for personagem in personagens]
-        return "\n".join(estatisticas)
+        estatisticas = []
+        for personagem in personagens:
+            dictionary = {"nome": personagem.nome,
+                          "vida_atual": str(personagem.vida_atual), "vida_maxima": str(personagem.classe.vida),
+                          "mana_atual": str(personagem.mana_atual), "mana_maxima": str(personagem.classe.mana)}
+
+            estatisticas.append(dictionary)
+        return estatisticas
 
     def restaurar_vida_mana(self):
         """Todos os personagens voltam a ficar com a vida e a mana máxima"""

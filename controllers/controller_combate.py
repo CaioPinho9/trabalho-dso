@@ -6,12 +6,13 @@ from controllers.controller_classe import ControllerClasse
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
-from exceptions.exceptions import NaoEncontradoException, ManaInsuficienteException, CombateAcabouException
+from exceptions import exceptions
 from models.combate import Combate
 from models.jogador import Jogador
 from models.npc import Npc
 from models.personagem import Personagem
 from models.poder import Poder
+from utils.enumerate import MenuCombate
 from utils.utils import Utils
 from views.view_combate import ViewCombate
 from views.view_erro import ViewErro
@@ -45,7 +46,7 @@ class ControllerCombate:
         try:
             combate = self.__combates[codigo]
         except Exception:
-            raise NaoEncontradoException()
+            raise exceptions.NaoEncontradoException()
         return combate
 
     def remover_combate(self, codigo: int):
@@ -55,7 +56,7 @@ class ControllerCombate:
         try:
             self.__combates.pop(codigo)
         except Exception:
-            raise NaoEncontradoException()
+            raise exceptions.NaoEncontradoException()
 
     def iniciar_combate(self, codigo: int):
         """
@@ -71,7 +72,7 @@ class ControllerCombate:
         try:
             self.__combate_atual = self.get_combate(codigo)
         except Exception:
-            raise NaoEncontradoException("Combate não encontrado")
+            raise exceptions.NaoEncontradoException("Combate não encontrado")
 
         self.__combate_atual.jogadores = self.__controller_jogador.personagens
 
@@ -87,12 +88,10 @@ class ControllerCombate:
         nomes_npcs = self.__controller_npc.nomes(npcs)
 
         # Introduz ao jogador quem está participando
-        if not self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs):
-            return
+        self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
 
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
-        if not self._ordernar_batalha():
-            return
+        self._ordernar_batalha()
 
         # Inicia os turnos até que um dos lados fique com 0 de vida
         continuar = True
@@ -103,7 +102,6 @@ class ControllerCombate:
             proximo_personagem = self.__combate_atual.proximo_da_batalha()
 
             # Avisa quem está jogando
-            self.__view_combate.iniciar_turno(proximo_personagem.nome, contador_turnos)
 
             try:
                 # Inicia sendo escolhido a ação do jogador
@@ -126,7 +124,7 @@ class ControllerCombate:
                     else:
                         proximo_personagem.causou_cura(abs(dano))
 
-            except CombateAcabouException as e:
+            except exceptions.CombateAcabouException as e:
                 raise e
             except Exception as e:
                 self.__view_erro.erro_inexperado_turno(proximo_personagem.nome)
@@ -135,7 +133,7 @@ class ControllerCombate:
             # Mostra a vida de todos os personagens
             vida_jogadores = self.__controller_jogador.vida_mana_estatisticas(jogadores)
             vida_npcs = self.__controller_npc.vida_mana_estatisticas(npcs)
-            self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
+            self.__view_combate.estatistica_vida_mana_geral(vida_jogadores, vida_npcs)
             time.sleep(5)
 
             continuar, vitoria = self._testar_personagens_vivos()
@@ -179,7 +177,7 @@ class ControllerCombate:
         ordem_batalha = [x[0] for x in ordem_batalha]
         if not self.__view_combate.resultado_ordem_de_batalha(ordem_display,
                                                               self.__controller_jogador.nomes(ordem_batalha)):
-            return
+            raise exceptions.CombateAcabouException("Volte para o menu")
 
         self.__combate_atual.ordem_de_batalha = ordem_batalha
 
@@ -220,42 +218,27 @@ class ControllerCombate:
         # Pedir input enquanto o usuario não enviar uma resposta válida
         while True:
             # Jogador escolhe entre usar poder ou receber um relatório
-            try:
-                escolha = self.__view_combate.escolher_acao()
+            escolha = self.__view_combate.escolher_acao(personagem.nome, index)
 
-                Utils.check_inteiro_intervalo(escolha, [0, 4])
+            if escolha == MenuCombate.USAR_PODER:
+                # Poder[0]
+                return self.__escolher_poder(personagem)
 
-                if escolha == "0":
-                    # Poder[0]
-                    return self.__escolher_poder(personagem)
-
-                elif escolha == "1":
-                    # Status Batalha[1]
-                    vida_jogadores = self.__controller_jogador.vida_mana_estatisticas(
-                        self.__combate_atual.jogadores)
-                    vida_npcs = self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs)
-                    self.__view_combate.estatistica_vida_geral(vida_jogadores, vida_npcs)
-                elif escolha == "2":
-                    # Atributos[2]
-                    self.__view_combate.estatistica_classe(
-                        self.__controller_classe.classe_estatisticas(personagem.classe))
-                elif escolha == "3":
-                    # Poderes[3]
-                    self.__view_combate.poder_estatistica(
-                        self.__controller_poder.poderes_estatisticas(personagem.poderes)
-                    )
-                elif escolha == "4":
-                    # Desistir[4]
-                    raise CombateAcabouException()
-            except TypeError:
-                self.__view_erro.apenas_inteiros()
-                time.sleep(3)
-                os.system("cls")
-
-            # Limpa a tela e restaura o turno
-            time.sleep(4)
-            os.system("cls")
-            self.__view_combate.iniciar_turno(personagem.nome, index)
+            elif escolha == MenuCombate.STATUS_BATALHA:
+                # Status Batalha[1]
+                vida_mana_jogadores = self.__controller_jogador.vida_mana_estatisticas(
+                    self.__combate_atual.jogadores)
+                vida_mana_npcs = self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs)
+                self.__view_combate.estatistica_vida_mana_geral(vida_mana_jogadores, vida_mana_npcs)
+            elif escolha == MenuCombate.ATRIBUTOS:
+                # Atributos[2]
+                self.__view_combate.estatistica_classe(
+                    self.__controller_classe.classe_estatisticas(personagem.classe))
+            elif escolha == MenuCombate.LISTAR_PODERES:
+                # Poderes[3]
+                self.__view_combate.poder_estatistica(
+                    self.__controller_poder.poderes_estatisticas(personagem.poderes)
+                )
 
     def __escolher_poder(self, personagem: Jogador):
         """
@@ -283,7 +266,7 @@ class ControllerCombate:
                 personagem.gastar_mana(poder.mana_gasta)
                 break
 
-            except ManaInsuficienteException:
+            except exceptions.ManaInsuficienteException:
                 self.__view_erro.mana_insuficiente()
                 time.sleep(3)
                 os.system("cls")

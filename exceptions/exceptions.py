@@ -12,3 +12,11 @@ class ManaInsuficienteException(Exception):
 
 class CombateAcabouException(Exception):
     pass
+
+
+class VoltarMenu(Exception):
+    pass
+
+
+class FecharPrograma(Exception):
+    pass

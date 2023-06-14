@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 
+from exceptions import exceptions
 from utils.enumerate import MenuCombate
 
 
@@ -7,8 +8,46 @@ class ViewCombate:
     def __init__(self):
         self.window = None
 
-    def escolher_acao(self):
-        return input("Opções: \nUsar Poder[0]\nStatus Batalha[1]\nAtributos[2]\nLista Poderes[3]\nDesistir[4]\n")
+    def _mostrar_turno(self, nome, turno, jogador):
+        layout = [
+            [sg.Text(f"TURNO {turno}: {'JOGADOR' if jogador else 'NPC'}: {nome}")],
+        ]
+
+        return layout
+
+    def escolher_acao(self, nome, turno):
+        layout = self._mostrar_turno(nome, turno, True)
+
+        layout += [
+            [sg.Button("Usar Poder", size=(25, 2), key=MenuCombate.USAR_PODER),
+             sg.Button("Lista Poderes", size=(25, 2), key=MenuCombate.LISTAR_PODERES)],
+            [sg.Button("Status Batalha", size=(25, 2), key=MenuCombate.STATUS_BATALHA),
+             sg.Button("Atributos", size=(25, 2), key=MenuCombate.ATRIBUTOS)],
+            [sg.Button("Desistir", size=(13, 2), key=MenuCombate.SAIR)]
+        ]
+        self.window = sg.Window("COMBATE", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    raise exceptions.CombateAcabouException("Voltar para o menu")
+
+                if event == MenuCombate.USAR_PODER:
+                    return event
+
+                if event == MenuCombate.LISTAR_PODERES:
+                    return event
+
+                if event == MenuCombate.STATUS_BATALHA:
+                    return event
+
+                if event == MenuCombate.ATRIBUTOS:
+                    return event
+
+        finally:
+            self.window.close()
 
     def escolher_poder(self, nome_personagem, opcoes_poderes, mana):
         print(f"--------------------------------------------------------------------------")
@@ -39,8 +78,8 @@ class ViewCombate:
             while True:
                 event, valores = self.window.read()
 
-                if event == MenuCombate.SAIR:
-                    return None
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    raise exceptions.CombateAcabouException("Voltar para o menu")
 
                 if event == MenuCombate.CONTINUAR:
                     return True
@@ -66,7 +105,7 @@ class ViewCombate:
             while True:
                 event, valores = self.window.read()
 
-                if event == MenuCombate.SAIR:
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
                     return None
 
                 if event == MenuCombate.CONTINUAR:
@@ -92,12 +131,37 @@ class ViewCombate:
     def escolha_npc(self, nome, poder, alvos):
         print(f"NPC {nome} irá usar {poder} em {alvos}")
 
-    def estatistica_vida_geral(self, jogadores, npcs):
-        print(f"--------------------------------------------------------------------------")
-        print(f"[STATUS BATALHA]")
-        print(jogadores)
-        print(f"----------------------------")
-        print(npcs)
+    def _mostrar_vida_mana(self, personagem):
+        vida_mana = f"{personagem['nome']}: "
+        vida_mana += f"HP[{personagem['vida_atual']}/{personagem['vida_maxima']}] "
+        vida_mana += f"Mana:[{personagem['mana_atual']}/{personagem['mana_maxima']}]"
+        return vida_mana
+
+    def estatistica_vida_mana_geral(self, jogadores, npcs):
+        column_jogador = []
+        for personagem in jogadores:
+            column_jogador.append([sg.Text(self._mostrar_vida_mana(personagem))])
+
+        column_npc = []
+        for personagem in npcs:
+            column_npc.append([sg.Text(self._mostrar_vida_mana(personagem))])
+
+        layout = [
+            [sg.Text("STATUS BATALHA")],
+            [sg.Column(column_jogador), sg.Column(column_npc)],
+            [sg.Button("Voltar", key=MenuCombate.SAIR)]
+        ]
+        self.window = sg.Window("COMBATE", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED or event == MenuCombate.SAIR:
+                    return True
+
+        finally:
+            self.window.close()
 
     def vitoria(self):
         print(f"--------------------------------------------------------------------------")

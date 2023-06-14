@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 
+from exceptions import exceptions
 from utils.enumerate import MenuInicial
 from utils.utils import Utils
 
@@ -37,29 +38,31 @@ class ViewMenu:
 
         escolha = None
 
-        while True:
-            event, valores = self.window.read()
+        try:
+            while True:
+                event, valores = self.window.read()
 
-            if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
-                break
+                if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
+                    raise exceptions.FecharPrograma("Fechar o app")
 
-            if event == MenuInicial.CRIAR_GRUPO:
-                escolha = event
-                break
-            if event == MenuInicial.MOSTRAR_GRUPO:
-                escolha = event
-                break
-            if event == MenuInicial.PRIMEIRO_COMBATE:
-                escolha = event
-                break
-            if event == MenuInicial.SEGUNDO_COMBATE:
-                escolha = event
-                break
-            if event == MenuInicial.ULTIMO_COMBATE:
-                escolha = event
-                break
+                if event == MenuInicial.CRIAR_GRUPO:
+                    escolha = event
+                    break
+                if event == MenuInicial.MOSTRAR_GRUPO:
+                    escolha = event
+                    break
+                if event == MenuInicial.PRIMEIRO_COMBATE:
+                    escolha = event
+                    break
+                if event == MenuInicial.SEGUNDO_COMBATE:
+                    escolha = event
+                    break
+                if event == MenuInicial.ULTIMO_COMBATE:
+                    escolha = event
+                    break
+        finally:
+            self.window.close()
 
-        self.window.close()
         return escolha
 
     def sair(self):

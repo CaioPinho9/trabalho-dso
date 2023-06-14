@@ -26,5 +26,9 @@ class MenuCriacao(Enum):
 
 
 class MenuCombate(Enum):
+    ATRIBUTOS = "ATRIBUTOS"
+    LISTAR_PODERES = "LISTAR PODERES"
+    STATUS_BATALHA = "STATUS BATALHA"
+    USAR_PODER = "USAR PODER"
     CONTINUAR = "CONTINUAR"
     SAIR = "SAIR"

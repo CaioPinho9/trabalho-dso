@@ -3,6 +3,7 @@ import PySimpleGUI as sg
 
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_poder import ControllerPoder
+from exceptions import exceptions
 from utils.enumerate import MenuCriacao
 from utils.utils import Utils
 
@@ -128,7 +129,7 @@ class ViewJogador:
                 event, valores = self._window.read()
 
                 if event == sg.WINDOW_CLOSED or event == MenuCriacao.SAIR:
-                    break
+                    raise exceptions.VoltarMenu("Voltar para o menu")
 
                 if event == MenuCriacao.CONTINUAR:
                     return True
