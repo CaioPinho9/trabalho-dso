@@ -87,11 +87,6 @@ class ViewCombate:
         finally:
             self.window.close()
 
-    def iniciar_turno(self, personagem, index):
-        print(f"--------------------------------------------------------------------------")
-        print(f"TURNO {index}: {personagem}")
-        print(f"--------------------------------------------------------------------------")
-
     def resultado_ordem_de_batalha(self, ordem, ordem_nomes):
         layout = [
             [sg.Text(self._resultado_velocidade(ordem))],
@@ -149,7 +144,7 @@ class ViewCombate:
         layout = [
             [sg.Text("STATUS BATALHA")],
             [sg.Column(column_jogador), sg.Column(column_npc)],
-            [sg.Button("Voltar", key=MenuCombate.SAIR)]
+            [sg.Button("Continuar", key=MenuCombate.SAIR)]
         ]
         self.window = sg.Window("COMBATE", layout)
 
@@ -173,9 +168,6 @@ class ViewCombate:
         print("GAME OVER.")
         print(f"--------------------------------------------------------------------------")
 
-    def separacao(self):
-        print(f"--------------------------------------------------------------------------")
-
     def estatistica_classe(self, classe):
         print(f"--------------------------------------------------------------------------")
         print(classe)
@@ -192,9 +184,10 @@ class ViewCombate:
         layout = ""
         for index, personagem in enumerate(ordem):
             layout += f"{'JOGADOR: ' if personagem['jogador'] else 'NPC: '}"
-            layout += f"{personagem['nome']}:"
-            layout += f" dado[{personagem['dado']}]"
-            layout += f"{'+' if personagem['velocidade'] > 0 else ''}{personagem['velocidade']} = {personagem['resultado']}"
+            layout += f"{personagem['nome']}: "
+            layout += f"dado[{personagem['dado']}]"
+            layout += f"{'+' if personagem['velocidade'] > 0 else ''}"
+            layout += f"{personagem['velocidade']} = {personagem['resultado']}"
             if index != len(ordem) - 1:
                 layout += "\n\n"
 

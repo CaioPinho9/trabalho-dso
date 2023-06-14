@@ -25,7 +25,7 @@ class ViewJogador:
             [sg.Text(f"Escolha o nome do {index}º personagem:"), sg.InputText(key=MenuCriacao.NOME, size=(30, 1))],
             [sg.Text("Escolha uma classe para o personagem:"),
              sg.Combo(classes_nomes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=classes_nomes[0],
-                      enable_events=True)],
+                      enable_events=True, readonly=True)],
             [sg.Text(self._controller_classe.estatisticas(classes_nomes[0]), key=MenuCriacao.ESTATISTICAS_CLASSE)],
             [sg.Text(f"Escolha {quantidade} poderes:")],
             [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
@@ -65,19 +65,21 @@ class ViewJogador:
 
                 if event == MenuCriacao.SELECIONAR_PODERES or event == MenuCriacao.ESCOLHIDOS_PODERES:
                     poder_selecionado = valores[event]
-                    for index_poder, poder in enumerate(poderes_nome):
-                        if poder == poder_selecionado[0]:
-                            index = index_poder
-                            break
-                    self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
-                        self._controller_poder.estatisticas(poderes_nome[index])
-                    )
+
+                    if poder_selecionado:
+                        for index_poder, poder in enumerate(poderes_nome):
+                            if poder == poder_selecionado[0]:
+                                index = index_poder
+                                break
+                        self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
+                            self._controller_poder.estatisticas(poderes_nome[index])
+                        )
 
                 if event == MenuCriacao.ESCOLHER_PODER:
                     poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]
                     poderes_selecionados = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
-                    if len(poderes_selecionados) < 3 and len(poder_selecionado) == 1:
+                    if poder_selecionado and len(poderes_selecionados) < 3 and len(poder_selecionado) == 1:
                         poderes_selecionados.append(poder_selecionado[0])
 
                         poderes_para_escolher = self._window[MenuCriacao.SELECIONAR_PODERES].Values
@@ -136,14 +138,6 @@ class ViewJogador:
 
         finally:
             self._window.close()
-
-    def escolha_nome(self, index):
-        print(f"--------------------------------------------------------------------------")
-        return input(f"Escolha o nome do {index}º personagem: ")
-
-    def escolha_classe(self, nome, classes):
-        print(f"--------------------------------------------------------------------------")
-        return input(f"Escolha uma classe para o personagem {nome}: \n{classes}\n")
 
     def escolha_poderes(self, quantidade):
         return input(f"Escolha o {quantidade}º poder: ")
