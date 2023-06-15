@@ -83,7 +83,33 @@ class ControllerClasse:
             if classe.nivel == nivel and classe.tipo == tipo:
                 return classe
 
-    def classe_estatisticas(self, classe: Classe):
+    def nomes(self, classes: list[Classe]):
+        """
+        Retorna uma string formatada com os nomes dos classes
+        :param classes:
+        :return: list[classe.nome]
+        """
+        if not all(isinstance(classe, Classe) for classe in classes):
+            return TypeError("A lista deve conter classes")
+
+        return [classe.nome for classe in classes]
+
+    def estatisticas_string(self, classe_name):
+        classe = self.get_classe(classe_name)
+
+        if not classe:
+            raise exceptions.NaoEncontradoException("Classe não encontrado")
+
+        layout = f"{str(classe.nome)}\n"
+        layout += f"Vida: {str(classe.vida)}\n"
+        layout += f"Defesa: {str(classe.defesa)}\n"
+        layout += f"Mana: {str(classe.mana)}\n"
+        layout += f"Velocidade: {str(classe.velocidade)}"
+
+        return layout
+
+    @staticmethod
+    def estatisticas_dict(classe: Classe):
         """
         Retorna um dicionário formatado com os atributos de uma classe
         :param classe: Classe
@@ -93,52 +119,3 @@ class ControllerClasse:
         estatisticas = {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
                         "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         return estatisticas
-
-    def classes_estatisticas(self, classes: list[Classe]):
-        """
-        Retorna uma string formatada com os atributos de uma lista de classes
-        :param classes: Classes que serão mostradas
-        :return:
-        Classe[index]:
-        Vida: 0
-        Defesa: 0
-        Mana: 0
-        Velocidade: 0
-        -------------------
-        Classe[index+1]:
-        Vida: 0
-        Defesa: 0
-        Mana: 0
-        Velocidade: 0
-        """
-        estatisticas = [classe.nome + "[" + str(index) + "]: \nVida: " + str(classe.vida) +
-                        "\nDefesa: " + str(classe.defesa) +
-                        "\nMana: " + str(classe.mana) +
-                        "\nVelocidade: " + str(classe.velocidade)
-                        for index, classe in enumerate(classes)]
-        return "\n-------------------\n".join(estatisticas)
-
-    def nomes(self, classes: list[Classe]):
-        """
-        Retorna uma string formatada com os nomes dos classes
-        :param classes:
-        :return: list[classe.nome]
-        """
-        if not all(isinstance(classe, Classe) for classe in classes):
-            return TypeError("A lista deve conter personagens")
-
-        return [classe.nome for classe in classes]
-
-    def estatisticas(self, classe_name):
-        classe = self.get_classe(classe_name)
-
-        if not classe:
-            raise exceptions.NaoEncontradoException("Poder não encontrado")
-
-        layout = f"Nome: {str(classe.nome)}\n"
-        layout += f"Vida: {str(classe.vida)}\n"
-        layout += f"Defesa: {str(classe.defesa)}\n"
-        layout += f"Mana: {str(classe.mana)}\n"
-        layout += f"Velocidade: {str(classe.velocidade)}"
-
-        return layout

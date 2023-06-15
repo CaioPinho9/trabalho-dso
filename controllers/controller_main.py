@@ -45,6 +45,7 @@ class ControllerMain:
         self.__controller_classe.cadastrar_classe("Boss", 120, -4, 14, 30, 5)
 
     def __criar_poderes(self):
+        self.__controller_poder.cadastrar_poder("Soco", acerto=0, dano=1, mana_gasta=0, alvos=1, ataque=True, nivel=0)
         # Gerar poderes
         # Curas, gasto de mana médio,
         self.__controller_poder.cadastrar_poder("Cura Inferior", acerto=10, dano=10, mana_gasta=5, alvos=1,
@@ -95,8 +96,8 @@ class ControllerMain:
         self.__controller_npc.cadastrar("Kobold", self.__controller_classe.get_classe("Ladino Aprendiz"),
                                         [self.__controller_poder.get_poder("Adaga de Aço")]
                                         )
-        npcs_combate1 = [self.__controller_npc.get_by_name("Kobold"),
-                         self.__controller_npc.get_by_name("Hobgoblin")]
+        npcs_combate1 = [self.__controller_npc.get_com_nome("Kobold"),
+                         self.__controller_npc.get_com_nome("Hobgoblin")]
         self.__controller_combate.cadastrar_combate(npcs_combate1)
 
         # Combate 2
@@ -115,9 +116,9 @@ class ControllerMain:
                                              self.__controller_poder.get_poder("Espada de Adamantio")
                                              ]
                                             ),
-            self.__controller_npc.get_by_name("Gnomo1"),
-            self.__controller_npc.get_by_name("Gnomo2"),
-            self.__controller_npc.get_by_name("Gnomo3")]
+            self.__controller_npc.get_com_nome("Gnomo1"),
+            self.__controller_npc.get_com_nome("Gnomo2"),
+            self.__controller_npc.get_com_nome("Gnomo3")]
         self.__controller_combate.cadastrar_combate(npcs_combate3)
 
     def __criar_personagens(self):

@@ -31,9 +31,10 @@ class ControllerJogador(ControllerPersonagem):
         :param poderes: Habilidades que o Jogador pode utilizar
         :return: o Jogador cadastrado
         """
+        poderes.insert(0, self.__controller_poder.get_poder("Soco"))
         jogador = Jogador(nome, classe, poderes)
 
-        if super().get_by_name(nome):
+        if super().get_com_nome(nome):
             raise DuplicadoException('Não foi possivel criar o jogador pois ja existe um com o mesmo nome')
 
         super().personagens.append(jogador)
@@ -49,7 +50,7 @@ class ControllerJogador(ControllerPersonagem):
         if combates_vencidos > 2:
             combates_vencidos = 2
         classes = self.__controller_classe.get_classes_por_nivel(combates_vencidos + 1)
-        poderes = self.__controller_poder.get_poderes_ate_nivel(1)
+        poderes = self.__controller_poder.get_poderes_por_nivel(1)
 
         nomes_classes = self.__controller_classe.nomes(classes)
         nomes_poderes = self.__controller_poder.nomes(poderes)
@@ -72,6 +73,9 @@ class ControllerJogador(ControllerPersonagem):
             jogador = Jogador(nome, classe)
             super().personagens.pop(0)
             super().personagens.append(jogador)
+
+            poder = self.__controller_poder.get_poder("Soco")
+            jogador.adicionar_poder(poder)
 
             for nome in poderes_nome:
                 poder = self.__controller_poder.get_poder(nome)
@@ -114,7 +118,7 @@ class ControllerJogador(ControllerPersonagem):
         else:
             poderes_disponiveis = self.__controller_poder.get_poderes_por_nivel(jogador.classe.nivel)
 
-        poderes_estatisticas = self.__controller_poder.poderes_estatisticas(poderes_disponiveis)
+        poderes_estatisticas = self.__controller_poder.estatisticas_dict(poderes_disponiveis)
         self.__view_jogador.aviso_escolher_poderes(jogador.nome, quantidade_escolha, poderes_estatisticas)
 
         quantidade_poderes = 0

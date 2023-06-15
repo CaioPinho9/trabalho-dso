@@ -82,39 +82,21 @@ class ControllerPoder:
                 poderes.append(poder)
         return poderes
 
-    def poderes_estatisticas(self, poderes: list[Poder]):
+    def estatisticas_dict(self, poderes: list[Poder]):
         """
-        Retorna uma string formatada com os atributos dos poderes
+        Retorna um dicionário formatado com os atributos dos poderes
         :param poderes: list[Poder]
-        :return:
-        Poder[index]:
-        [Ataque]
-        Acerto: +acerto
-        Dano: dano
-        Mana Gasta: mana_gasta
-        Alvos: alvos
-        -------------------
-        Poder[index + 1]:
-        [Ataque]
-        Acerto: +acerto
-        Dano: dano
-        Mana Gasta: mana_gasta
-        Alvos: alvos
+        :return: {"nome": poder.nome, "ataque": poder.ataque, "acerto": str(poder.acerto),
+                  "dano": str(poder.dano), "mana_gasta": str(poder.mana_gasta), "alvos": str(poder.alvos)}
         """
-        poderes_estatisticas = []
-        for index, poder in enumerate(poderes):
-            estatisticas = poder.nome + "[" + str(index) + "]: "
-            estatisticas += "\n[Ataque]" if poder.ataque else "\n[Cura]"
-            estatisticas += "\nAcerto: +" + str(poder.acerto) if poder.acerto > 0 else "\nAcerto: " + str(poder.acerto)
-            estatisticas += "\nDano: " + str(poder.dano) if poder.ataque else "\nCura: " + str(poder.dano)
-            estatisticas += "\nMana Gasta: " + str(poder.mana_gasta)
-            estatisticas += "\nAlvos: " + str(poder.alvos)
+        poderes_dict = []
+        for poder in poderes:
+            estatisticas = {"nome": poder.nome, "ataque": poder.ataque, "acerto": str(poder.acerto),
+                            "dano": str(poder.dano), "mana_gasta": str(poder.mana_gasta), "alvos": str(poder.alvos)}
 
-            poderes_estatisticas.append(
-                estatisticas
-            )
+            poderes_dict.append(estatisticas)
 
-        return "\n-------------------\n".join(poderes_estatisticas)
+        return poderes_dict
 
     def nomes(self, poderes: list[Poder]):
         """

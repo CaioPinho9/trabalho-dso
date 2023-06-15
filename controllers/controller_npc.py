@@ -16,7 +16,7 @@ class ControllerNpc(ControllerPersonagem):
         """
         npc = Npc(nome, classe, poderes)
 
-        if super().get_by_name(nome):
+        if super().get_com_nome(nome):
             raise DuplicadoException('Não foi possivel criar o npc pois ja existe um com o mesmo nome')
 
         super().personagens.append(npc)

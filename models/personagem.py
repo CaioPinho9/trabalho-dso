@@ -17,7 +17,7 @@ class Personagem(ABC):
 
         self.__nome = nome
         self.__classe = classe
-        self.__poderes = [Poder("Soco", 0, 1, 0, 1, True, 0), *poderes]
+        self.__poderes = poderes
         self.__vida_atual = classe.vida
         self.__mana_atual = classe.mana
 
@@ -121,3 +121,15 @@ class Personagem(ABC):
             raise ManaInsuficienteException("O Personagem não possui mana suficiente para esse poder")
 
         self.__mana_atual -= valor
+
+    @property
+    def poderes_disponiveis(self):
+        """
+        Retorna uma lista com os poderes até certo gasto de mana
+        :return: lista de poderes com mana suficiente
+        """
+        poderes = []
+        for poder in self.__poderes:
+            if poder.mana_gasta <= self.__mana_atual:
+                poderes.append(poder)
+        return poderes

@@ -54,7 +54,7 @@ class ControllerPersonagem(ABC):
             raise TypeError("personagens deve ser do tipo list[Personagem]")
         self.__personagens = personagens
 
-    def get_by_name(self, nome: str):
+    def get_com_nome(self, nome: str):
         """
         Obtém um personagem da lista de personagens.
 

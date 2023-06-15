@@ -22,21 +22,24 @@ class ViewJogador:
 
     def criacao_jogador(self, index, classes_nomes, poderes_nome, quantidade):
         layout = [
-            [sg.Text(f"Escolha o nome do {index}º personagem:"), sg.InputText(key=MenuCriacao.NOME, size=(30, 1))],
+            [sg.Text(f"Escolha o nome do {index}º personagem:"),
+             sg.InputText(key=MenuCriacao.NOME, size=(26, 2))],
             [sg.Text("Escolha uma classe para o personagem:"),
              sg.Combo(classes_nomes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=classes_nomes[0],
                       enable_events=True, readonly=True)],
-            [sg.Text(self._controller_classe.estatisticas(classes_nomes[0]), key=MenuCriacao.ESTATISTICAS_CLASSE)],
+            [sg.Text(self._controller_classe.estatisticas_string(classes_nomes[0]),
+                     key=MenuCriacao.ESTATISTICAS_CLASSE)],
             [sg.Text(f"Escolha {quantidade} poderes:")],
-            [sg.Listbox(values=poderes_nome, size=(15, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
+            [sg.Listbox(values=poderes_nome, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=poderes_nome[0]),
              sg.Text(self._controller_poder.estatisticas(poderes_nome[0]), key=MenuCriacao.ESTATISTICAS_PODER,
-                     size=(21, 5)),
-             sg.Listbox(values=[], size=(15, 3), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
-             sg.Button("Remover", key=MenuCriacao.REMOVER_PODER)
+                     size=(20, 5)),
+             sg.Listbox(values=[], size=(26, 3), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
+             sg.Button("Remover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))
              ],
-            [sg.Button("Escolher", key=MenuCriacao.ESCOLHER_PODER)],
-            [sg.Button("Voltar", key=MenuCriacao.SAIR), sg.Button("Criar Jogador", key=MenuCriacao.CRIAR)]
+            [sg.Button("Escolher", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
+            [sg.Button("Voltar", key=MenuCriacao.SAIR, size=(13, 2)),
+             sg.Button("Criar Jogador", key=MenuCriacao.CRIAR, size=(13, 2))]
         ]
 
         self._window = sg.Window("CRIAÇÃO DO GRUPO", layout)
@@ -55,27 +58,19 @@ class ViewJogador:
 
                 if event == MenuCriacao.SELECIONAR_CLASSE:
                     classe_selecionada = valores[MenuCriacao.SELECIONAR_CLASSE]
-                    for index_classe, classe in enumerate(classes_nomes):
-                        if classe == classe_selecionada:
-                            index = index_classe
-                            break
                     self._window.Element(MenuCriacao.ESTATISTICAS_CLASSE).update(
-                        self._controller_classe.estatisticas(classes_nomes[index])
+                        self._controller_classe.estatisticas_string(classe_selecionada)
                     )
 
                 if event == MenuCriacao.SELECIONAR_PODERES or event == MenuCriacao.ESCOLHIDOS_PODERES:
-                    poder_selecionado = valores[event]
+                    poder_selecionado = valores[event][0]
 
                     if poder_selecionado:
-                        for index_poder, poder in enumerate(poderes_nome):
-                            if poder == poder_selecionado[0]:
-                                index = index_poder
-                                break
                         self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
-                            self._controller_poder.estatisticas(poderes_nome[index])
+                            self._controller_poder.estatisticas(poder_selecionado)
                         )
 
-                if event == MenuCriacao.ESCOLHER_PODER:
+                if event == MenuCriacao.SELECIONAR_PODER:
                     poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]
                     poderes_selecionados = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 

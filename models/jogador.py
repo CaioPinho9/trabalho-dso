@@ -1,4 +1,4 @@
-from models.estatiticas import Estatisticas
+from models.estatisticas import Estatisticas
 from models.personagem import Personagem
 from models.classe import Classe
 from models.poder import Poder
