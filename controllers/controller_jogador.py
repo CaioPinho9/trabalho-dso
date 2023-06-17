@@ -61,9 +61,6 @@ class ControllerJogador(ControllerPersonagem):
             # Cadastro
             jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes, 3)
 
-            if not jogador_dict:
-                return False
-
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]

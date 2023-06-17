@@ -90,14 +90,17 @@ class ViewMenu:
         layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
 
         self.window = sg.Window("GRUPO", layout)
+        try:
+            while True:
+                event, valores = self.window.read()
 
-        while True:
-            event, valores = self.window.read()
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
 
-            if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
-                break
-
-        self.window.close()
+                if event == MenuInicial.SAIR:
+                    raise exceptions.VoltarMenu("Voltar")
+        finally:
+            self.window.close()
 
     def desistir(self):
         print(f"--------------------------------------------------------------------------")

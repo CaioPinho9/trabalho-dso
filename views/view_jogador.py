@@ -48,8 +48,11 @@ class ViewJogador:
             while True:
                 event, valores = self._window.read()
 
-                if event == sg.WINDOW_CLOSED or event == MenuCriacao.SAIR:
-                    break
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuCriacao.SAIR:
+                    raise exceptions.VoltarMenu("Voltar")
 
                 if event == MenuCriacao.CRIAR:
                     jogador_dict = self.criar_personagem(valores, quantidade)
@@ -125,7 +128,10 @@ class ViewJogador:
             while True:
                 event, valores = self._window.read()
 
-                if event == sg.WINDOW_CLOSED or event == MenuCriacao.SAIR:
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuCriacao.SAIR:
                     raise exceptions.VoltarMenu("Voltar para o menu")
 
                 if event == MenuCriacao.CONTINUAR:

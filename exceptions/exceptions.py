@@ -20,3 +20,11 @@ class VoltarMenu(Exception):
 
 class FecharPrograma(Exception):
     pass
+
+
+class VoltarMenuEscolherTurno(Exception):
+    pass
+
+
+class VoltarMenuEscolherPoder(Exception):
+    pass

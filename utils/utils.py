@@ -25,3 +25,10 @@ class Utils:
             adjetivos = ["incrível aventureiro", "herói", "excelente aventureiro", "grande aventureiro", "ousado",
                          "intrépido"]
         return random.choice(adjetivos)
+
+    @staticmethod
+    def list_to_string(list):
+        if len(list) <= 1:
+            return ''.join(list)
+        else:
+            return ', '.join(list[:-1]) + ' e ' + list[-1]

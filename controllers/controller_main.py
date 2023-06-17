@@ -155,8 +155,6 @@ class ControllerMain:
                     index = 1
                     while index != 3:
                         jogador = self.__controller_jogador.criar_personagem(index, combates_vencidos)
-                        if jogador is False:
-                            break
 
                         if jogador is not None:
                             index += 1
@@ -181,7 +179,7 @@ class ControllerMain:
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
                     if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
-                        self.__controller_jogador.aumentar_nivel()
+                        # self.__controller_jogador.aumentar_nivel()
                 else:
                     raise Exception("Opção Inexistente")
             except exceptions.VoltarMenu as e:
