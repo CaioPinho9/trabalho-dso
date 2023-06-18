@@ -74,9 +74,11 @@ class ControllerPersonagem(ABC):
         Retorna uma lista de dicionarios contendo nome, vida e mana atual, vida e mana máxima
         :param personagens: list[Personagem]
         :return:
-        list["nome": personagem.nome,
-             "vida_atual": str(personagem.vida_atual), "vida_maxima": str(personagem.classe.vida),
-             "mana_atual": str(personagem.mana_atual), "mana_maxima": str(personagem.classe.mana)]
+        list[{"nome": personagem.nome,
+             "vida_atual": str(personagem.vida_atual),
+             "vida_maxima": str(personagem.classe.vida),
+             "mana_atual": str(personagem.mana_atual),
+             "mana_maxima": str(personagem.classe.mana)}]
         """
         estatisticas = []
         for personagem in personagens:

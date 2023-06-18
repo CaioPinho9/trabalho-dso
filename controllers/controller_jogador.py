@@ -4,7 +4,7 @@ import time
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_personagem import ControllerPersonagem
 from controllers.controller_poder import ControllerPoder
-from exceptions.exceptions import DuplicadoException, ManaInsuficienteException
+from exceptions import exceptions
 from models.classe import Classe
 from models.jogador import Jogador
 from models.poder import Poder
@@ -35,7 +35,7 @@ class ControllerJogador(ControllerPersonagem):
         jogador = Jogador(nome, classe, poderes)
 
         if super().get_com_nome(nome):
-            raise DuplicadoException('Não foi possivel criar o jogador pois ja existe um com o mesmo nome')
+            raise exceptions.DuplicadoException('Não foi possivel criar o jogador pois ja existe um com o mesmo nome')
 
         super().personagens.append(jogador)
 
@@ -55,31 +55,34 @@ class ControllerJogador(ControllerPersonagem):
         nomes_classes = self.__controller_classe.nomes(classes)
         nomes_poderes = self.__controller_poder.nomes(poderes)
 
-        created = False
         jogador = None
-        while not created:
+        while True:
             # Cadastro
-            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes, 3)
-
+            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes, 3,
+                                                               self.get_com_nome)
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]
 
-            classe = self.__controller_classe.get_classe(classe_nome)
-            # Cria personagem
-            jogador = Jogador(nome, classe)
-            super().personagens.pop(0)
-            super().personagens.append(jogador)
+            try:
+                classe = self.__controller_classe.get_classe(classe_nome)
+                # Cria personagem
+                jogador = Jogador(nome, classe)
+                super().personagens.pop(0)
+                super().personagens.append(jogador)
 
-            poder = self.__controller_poder.get_poder("Soco")
-            jogador.adicionar_poder(poder)
-
-            for nome in poderes_nome:
-                poder = self.__controller_poder.get_poder(nome)
+                poder = self.__controller_poder.get_poder("Soco")
                 jogador.adicionar_poder(poder)
 
-            # Aviso de criaçao do personagem
-            created = self.__view_jogador.aviso_criado(jogador_dict)
+                for nome in poderes_nome:
+                    poder = self.__controller_poder.get_poder(nome)
+                    jogador.adicionar_poder(poder)
+
+                # Aviso de criaçao do personagem
+                self.__view_jogador.aviso_criado(jogador_dict)
+                break
+            except exceptions.VoltarMenu as e:
+                pass
 
         return jogador
 
@@ -130,13 +133,13 @@ class ControllerJogador(ControllerPersonagem):
 
                 # Nao pode escolher um poder que não possui mana para usar
                 if poder.mana_gasta > jogador.classe.mana:
-                    raise ManaInsuficienteException()
+                    raise exceptions.ManaInsuficienteException()
 
                 super().adicionar_poder_personagem(jogador.nome, poder)
                 quantidade_poderes += 1
-            except DuplicadoException:
+            except exceptions.DuplicadoException:
                 self.__view_erro.poder_repetido(jogador.nome, poder.nome)
-            except ManaInsuficienteException:
+            except exceptions.ManaInsuficienteException:
                 self.__view_erro.mana_insuficiente()
             except TypeError:
                 self.__view_erro.apenas_inteiros()

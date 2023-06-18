@@ -77,7 +77,9 @@ class Personagem(ABC):
             raise TypeError("poder deve ser um Poder")
 
         if self.get_poder(poder.nome):
-            raise DuplicadoException('Não foi possivel criar a classe pois ja existe uma com o mesmo nome')
+            raise DuplicadoException(
+                f'Não foi possivel criar o personagem pois ele já possui o mesmo poder {poder.nome}'
+            )
 
         self.__poderes.append(poder)
         return True

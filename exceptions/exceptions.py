@@ -10,21 +10,13 @@ class ManaInsuficienteException(Exception):
     pass
 
 
-class CombateAcabouException(Exception):
-    pass
-
-
 class VoltarMenu(Exception):
     pass
 
 
+class Desistir(Exception):
+    pass
+
+
 class FecharPrograma(Exception):
-    pass
-
-
-class VoltarMenuEscolherTurno(Exception):
-    pass
-
-
-class VoltarMenuEscolherPoder(Exception):
     pass

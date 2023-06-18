@@ -20,19 +20,19 @@ class ViewJogador:
         self._controller_poder = controller_poder
         sg.ChangeLookAndFeel('DarkBlue14')
 
-    def criacao_jogador(self, index, classes_nomes, poderes_nome, quantidade):
+    def criacao_jogador(self, index, nomes_classes, nome_poderes, quantidade, get_personagem):
         layout = [
             [sg.Text(f"Escolha o nome do {index}º personagem:"),
              sg.InputText(key=MenuCriacao.NOME, size=(26, 2))],
             [sg.Text("Escolha uma classe para o personagem:"),
-             sg.Combo(classes_nomes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=classes_nomes[0],
+             sg.Combo(nomes_classes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=nomes_classes[0],
                       enable_events=True, readonly=True)],
-            [sg.Text(self._controller_classe.estatisticas_string(classes_nomes[0]),
+            [sg.Text(self._controller_classe.estatisticas_string(nomes_classes[0]),
                      key=MenuCriacao.ESTATISTICAS_CLASSE)],
             [sg.Text(f"Escolha {quantidade} poderes:")],
-            [sg.Listbox(values=poderes_nome, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
-                        default_values=poderes_nome[0]),
-             sg.Text(self._controller_poder.estatisticas(poderes_nome[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+            [sg.Listbox(values=nome_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
+                        default_values=nome_poderes[0]),
+             sg.Text(self._controller_poder.estatisticas(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5)),
              sg.Listbox(values=[], size=(26, 3), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
              sg.Button("Remover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))
@@ -55,7 +55,7 @@ class ViewJogador:
                     raise exceptions.VoltarMenu("Voltar")
 
                 if event == MenuCriacao.CRIAR:
-                    jogador_dict = self.criar_personagem(valores, quantidade)
+                    jogador_dict = self.criar_personagem(valores, quantidade, get_personagem)
                     if jogador_dict:
                         return jogador_dict
 
@@ -98,13 +98,15 @@ class ViewJogador:
         finally:
             self._window.close()
 
-    def criar_personagem(self, valores, quantidade):
+    def criar_personagem(self, valores, quantidade, get_personagem):
         nome = valores[MenuCriacao.NOME]
         classe = valores[MenuCriacao.SELECIONAR_CLASSE]
         poderes = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
         if not nome:
             sg.popup_error("Escolha um nome para o personagem.")
+        elif get_personagem(nome):
+            sg.popup_error("Esse nome já está sendo utilizado.")
         elif len(poderes) != quantidade:
             sg.popup_error(f"Escolha {quantidade} poderes.")
         else:
