@@ -83,7 +83,8 @@ class ControllerClasse:
             if classe.nivel == nivel and classe.tipo == tipo:
                 return classe
 
-    def nomes(self, classes: list[Classe]):
+    @staticmethod
+    def nomes(classes: list[Classe]):
         """
         Retorna uma string formatada com os nomes dos classes
         :param classes:

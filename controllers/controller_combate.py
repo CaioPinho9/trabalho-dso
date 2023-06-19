@@ -189,6 +189,9 @@ class ControllerCombate:
                     # Npcs escolhem aleatóriamente
                     personagens_alvos: list[Personagem] = self._escolher_alvos_aleatorios(poder)
 
+                # Reduz a mana do jogador
+                proximo_personagem.gastar_mana(poder.mana_gasta)
+
                 return poder, personagens_alvos
             except exceptions.VoltarMenu as e:
                 pass
@@ -256,13 +259,9 @@ class ControllerCombate:
             # Poder escolhido
             poder = self._controller_poder.get_poder(escolha_poder)
 
-            # Reduz a mana do jogador
-            personagem.gastar_mana(poder.mana_gasta)
-
         else:
             # Npcs escolhem aleatoriamente um poder que possuem mana suficiente
             poder = random.choice(personagem.poderes_disponiveis)
-            personagem.gastar_mana(poder.mana_gasta)
 
         return poder
 
