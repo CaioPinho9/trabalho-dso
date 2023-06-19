@@ -332,8 +332,10 @@ class ControllerCombate:
         # Seleciona se são aliados ou inimigos os alvos
         if poder.ataque:
             personagens_vivos = self.npcs_vivos()
+            vida_mana_alvos = self._controller_npc.vida_mana_estatisticas(personagens_vivos)
         else:
             personagens_vivos = self.jogadores_vivos()
+            vida_mana_alvos = self._controller_jogador.vida_mana_estatisticas(personagens_vivos)
 
         # Nomes dos personagens que podem ser alvos
         alvos_disponiveis = self._controller_jogador.nomes(personagens_vivos)
@@ -352,7 +354,9 @@ class ControllerCombate:
             turno=self._contador_turno,
             estatisticas_poder=estatisticas_poder,
             alvos_disponiveis=alvos_disponiveis,
-            alvos_maximos=alvos_maximos
+            alvos_maximos=alvos_maximos,
+            vida_mana_alvos=vida_mana_alvos,
+            is_jogador_alvo=not poder.ataque
         )
 
         # Encontra os Personagens pelo nome
