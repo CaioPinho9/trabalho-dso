@@ -100,6 +100,8 @@ class Personagem(ABC):
     def poderes(self, poderes: list[Poder]):
         if any(not isinstance(poder, Poder) for poder in poderes):
             raise TypeError("poderes deve ser uma list[Poder]")
+
+        poderes.sort(key=lambda obj: (-obj.nivel, obj.nome))
         self.__poderes = poderes
 
     def restaurar_personagem(self):
