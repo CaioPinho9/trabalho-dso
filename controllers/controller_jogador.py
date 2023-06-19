@@ -39,6 +39,9 @@ class ControllerJogador(ControllerPersonagem):
 
         super().personagens.append(jogador)
 
+        if len(super().personagens) > 3:
+            super().personagens.pop(0)
+
     def criar_personagem(self, index_personagem: int, combates_vencidos: int):
         """
         Apresenta escolhas para a criação de um personagem
@@ -66,25 +69,22 @@ class ControllerJogador(ControllerPersonagem):
 
             try:
                 classe = self.__controller_classe.get_classe(classe_nome)
-                # Cria personagem
-                jogador = Jogador(nome, classe)
-                super().personagens.pop(0)
-                super().personagens.append(jogador)
 
-                poder = self.__controller_poder.get_poder("Soco")
-                jogador.adicionar_poder(poder)
+                poderes = []
 
-                for nome in poderes_nome:
-                    poder = self.__controller_poder.get_poder(nome)
-                    jogador.adicionar_poder(poder)
+                for poder_nome in poderes_nome:
+                    poderes.append(self.__controller_poder.get_poder(poder_nome))
 
                 # Aviso de criaçao do personagem
                 self.__view_jogador.aviso_criado(jogador_dict)
+
+                # Salvar
+                self.cadastrar(nome, classe, poderes)
                 break
             except exceptions.VoltarMenu as e:
                 pass
 
-        return jogador
+        return True
 
     def aumentar_nivel(self):
         """

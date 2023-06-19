@@ -103,6 +103,20 @@ class ViewMenu:
             self.window.close()
 
     def desistir(self):
-        print(f"--------------------------------------------------------------------------")
-        print("O grupo fugiu da luta. GAME OVER.")
-        print(f"--------------------------------------------------------------------------")
+        layout = [
+            [sg.Text("O grupo fugiu da luta. GAME OVER.")],
+            [sg.Button("Continuar", key=MenuInicial.SAIR, size=(13, 2))]
+        ]
+
+        self.window = sg.Window("DESISTIR", layout)
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuInicial.SAIR:
+                    return True
+        finally:
+            self.window.close()

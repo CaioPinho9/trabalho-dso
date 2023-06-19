@@ -69,7 +69,8 @@ class ControllerPersonagem(ABC):
                 return personagem
         return None
 
-    def vida_mana_estatisticas(self, personagens: list[Personagem]):
+    @staticmethod
+    def vida_mana_estatisticas(personagens: list[Personagem]):
         """
         Retorna uma lista de dicionarios contendo nome, vida e mana atual, vida e mana máxima
         :param personagens: list[Personagem]
@@ -94,7 +95,8 @@ class ControllerPersonagem(ABC):
         for personagem in self.__personagens:
             personagem.restaurar_personagem()
 
-    def nomes(self, personagens: list[Personagem]):
+    @staticmethod
+    def nomes(personagens: list[Personagem]):
         """
         Retorna uma string formatada com os nomes dos personagens
         :param personagens:

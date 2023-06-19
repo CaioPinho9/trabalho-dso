@@ -153,11 +153,10 @@ class ControllerMain:
                     # Criar grupo de personagens
                     # Grupo possui 3 personagens
                     index = 1
-                    while index != 3:
+                    while index != 4:
                         jogador = self.__controller_jogador.criar_personagem(index, combates_vencidos)
 
-                        if jogador is not None:
-                            index += 1
+                        index += 1
 
                 elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
@@ -180,8 +179,6 @@ class ControllerMain:
                     if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
                         # self.__controller_jogador.aumentar_nivel()
-                else:
-                    raise Exception("Opção Inexistente")
             except exceptions.FecharPrograma as e:
                 break
             except exceptions.Desistir as e:

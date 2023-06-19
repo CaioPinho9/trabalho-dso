@@ -323,6 +323,11 @@ class ViewCombate:
             self._window.close()
 
     def estatistica_vida_mana_geral(self, vida_mana_jogadores: list[dict], vida_mana_npcs: list[dict]):
+        """
+        Tela que mostra o estado atual da batalha
+        :param vida_mana_jogadores: Lista de dicionários com o estado de cada jogador
+        :param vida_mana_npcs: Lista de dicionários com o estado de cada npc
+        """
         column_jogador = self._vida_mana_geral(vida_mana_jogadores, True)
         column_npc = self._vida_mana_geral(vida_mana_npcs, False)
 
@@ -348,14 +353,44 @@ class ViewCombate:
             self._window.close()
 
     def vitoria(self):
-        print(f"--------------------------------------------------------------------------")
-        print("Parabéns! Vocês venceram essa batalha")
-        print(f"--------------------------------------------------------------------------")
+        layout = [
+            [sg.Text("Parabéns! Vocês venceram essa batalha.")],
+            [sg.Button("Continuar", key=MenuCombate.SAIR, size=(13, 2))]
+        ]
+
+        self.window = sg.Window("VITÓRIA", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuCombate.SAIR:
+                    return True
+        finally:
+            self.window.close()
 
     def derrota(self):
-        print(f"--------------------------------------------------------------------------")
-        print("GAME OVER.")
-        print(f"--------------------------------------------------------------------------")
+        layout = [
+            [sg.Text("GAME OVER")],
+            [sg.Button("Continuar", key=MenuCombate.SAIR, size=(13, 2))]
+        ]
+
+        self.window = sg.Window("VITÓRIA", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuCombate.SAIR:
+                    return True
+        finally:
+            self.window.close()
 
     def estatistica_jogador(self, jogador_dict, classe_dict):
         """
@@ -385,7 +420,3 @@ class ViewCombate:
 
         finally:
             self._window.close()
-
-    def desmaiou(self, nome):
-        print(f"--------------------------------------------------------------------------")
-        print(f"{nome} desmaiou em combate")

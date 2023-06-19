@@ -178,19 +178,18 @@ class ControllerCombate:
 
     def _escolher_poder_alvos(self, proximo_personagem: Jogador | Npc):
         while True:
+            # Poder que será utilizado nesse turno
+            poder: Poder = self._escolher_poder(proximo_personagem)
             try:
-                # Poder que será utilizado nesse turno
-                poder: Poder = self._escolher_poder(proximo_personagem)
-                if poder:
-                    # Escolher quem será atingido pelo poder
-                    if isinstance(proximo_personagem, Jogador):
-                        # Jogadores possuem um menu para escolhar
-                        personagens_alvos: list[Personagem] = self._escolher_alvos(proximo_personagem, poder)
-                    else:
-                        # Npcs escolhem aleatóriamente
-                        personagens_alvos: list[Personagem] = self._escolher_alvos_aleatorios(poder)
+                # Escolher quem será atingido pelo poder
+                if isinstance(proximo_personagem, Jogador):
+                    # Jogadores possuem um menu para escolhar
+                    personagens_alvos: list[Personagem] = self._escolher_alvos(proximo_personagem, poder)
+                else:
+                    # Npcs escolhem aleatóriamente
+                    personagens_alvos: list[Personagem] = self._escolher_alvos_aleatorios(poder)
 
-                    return poder, personagens_alvos
+                return poder, personagens_alvos
             except exceptions.VoltarMenu as e:
                 pass
 
@@ -262,9 +261,8 @@ class ControllerCombate:
 
         else:
             # Npcs escolhem aleatoriamente um poder que possuem mana suficiente
-            while True:
-                poder = random.choice(personagem.poderes_disponiveis)
-                personagem.gastar_mana(poder.mana_gasta)
+            poder = random.choice(personagem.poderes_disponiveis)
+            personagem.gastar_mana(poder.mana_gasta)
 
         return poder
 
