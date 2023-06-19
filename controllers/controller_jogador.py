@@ -52,8 +52,11 @@ class ControllerJogador(ControllerPersonagem):
         # Nivel dos personagens criados = combates_vencidos + 1
         if combates_vencidos > 2:
             combates_vencidos = 2
-        classes = self.__controller_classe.get_classes_por_nivel(combates_vencidos + 1)
-        poderes = self.__controller_poder.get_poderes_por_nivel(1)
+        nivel = combates_vencidos + 1
+        classes = self.__controller_classe.get_classes_por_nivel(nivel)
+        poderes = self.__controller_poder.get_poderes_ate_nivel(nivel)
+
+        poderes.sort(key=lambda obj: (-obj.nivel, obj.nome))
 
         nomes_classes = self.__controller_classe.nomes(classes)
         nomes_poderes = self.__controller_poder.nomes(poderes)
@@ -62,7 +65,7 @@ class ControllerJogador(ControllerPersonagem):
         while True:
             # Cadastro
             jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes,
-                                                               self.get_com_nome, 3 * (combates_vencidos + 1))
+                                                               self.get_com_nome, 3 + (2 * (nivel - 1)))
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]
@@ -92,6 +95,8 @@ class ControllerJogador(ControllerPersonagem):
             # Poderes novos que podem ser escolhidos
             poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
             poderes_disponiveis = [poder for poder in poderes_disponiveis if poder not in jogador.poderes]
+            poderes_disponiveis.sort(key=lambda obj: (-obj.nivel, obj.nome))
+
             nomes_poderes = self.__controller_poder.nomes(poderes_disponiveis)
 
             # Poderes que o personagem já possui

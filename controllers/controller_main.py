@@ -152,11 +152,8 @@ class ControllerMain:
                 if escolha == MenuInicial.CRIAR_GRUPO:
                     # Criar grupo de personagens
                     # Grupo possui 3 personagens
-                    index = 1
-                    while index != 4:
-                        jogador = self.__controller_jogador.criar_personagem(index, combates_vencidos)
-
-                        index += 1
+                    for index in range(1, 4):
+                        self.__controller_jogador.criar_personagem(index, combates_vencidos)
 
                 elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
@@ -173,12 +170,13 @@ class ControllerMain:
                             break
 
                     # Iniciar um combate
-                    self.__controller_jogador.aumentar_nivel()
+
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
                     if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
+                        self.__controller_jogador.aumentar_nivel()
             except exceptions.FecharPrograma as e:
                 break
             except exceptions.Desistir as e:

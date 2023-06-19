@@ -78,7 +78,7 @@ class ControllerPoder:
         """
         poderes = []
         for poder in self.__poderes:
-            if poder.nivel <= nivel:
+            if 0 < poder.nivel <= nivel:
                 poderes.append(poder)
         return poderes
 

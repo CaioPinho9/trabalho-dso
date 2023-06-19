@@ -55,7 +55,7 @@ class ViewJogador:
                     raise exceptions.VoltarMenu("Voltar")
 
                 if event == MenuCriacao.CRIAR:
-                    jogador_dict = self.criar_personagem(valores, get_personagem)
+                    jogador_dict = self.criar_personagem(valores, get_personagem, tamanho_escolha)
                     if jogador_dict:
                         return jogador_dict
 
@@ -72,7 +72,7 @@ class ViewJogador:
         finally:
             self._window.close()
 
-    def criar_personagem(self, valores, get_personagem):
+    def criar_personagem(self, valores, get_personagem, tamanho_escolha):
         nome = valores[MenuCriacao.NOME]
         classe = valores[MenuCriacao.SELECIONAR_CLASSE]
         poderes = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
@@ -81,8 +81,8 @@ class ViewJogador:
             sg.popup_error("Escolha um nome para o personagem.")
         elif get_personagem(nome):
             sg.popup_error("Esse nome já está sendo utilizado.")
-        elif len(poderes) != 3:
-            sg.popup_error(f"Escolha 3 poderes.")
+        elif len(poderes) != tamanho_escolha:
+            sg.popup_error(f"Escolha {tamanho_escolha} poderes.")
         else:
             jogador_dict = {
                 "nome": nome,
@@ -102,7 +102,7 @@ class ViewJogador:
         :param nomes_poderes_antigos: nome dos poderes que o personagem já possui
         :return: lista com todos os poderes do personagem
         """
-        tamanho_escolha = len(nomes_poderes_antigos) + 3
+        tamanho_escolha = len(nomes_poderes_antigos) + 2
 
         aviso_aumentou_nivel = f"O {nome_classe_antiga} {nome_jogador}"
         aviso_aumentou_nivel += f" conseguiu experiencia nesse combate e agora é um {estatisticas_classes_nova['nome']}"
