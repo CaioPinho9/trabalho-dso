@@ -173,12 +173,12 @@ class ControllerMain:
                             break
 
                     # Iniciar um combate
+                    self.__controller_jogador.aumentar_nivel()
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
                     if vitoria and combates_vencidos != 2:
                         combates_vencidos += 1
-                        # self.__controller_jogador.aumentar_nivel()
             except exceptions.FecharPrograma as e:
                 break
             except exceptions.Desistir as e:
@@ -186,5 +186,5 @@ class ControllerMain:
             except exceptions.VoltarMenu as e:
                 pass
             except Exception as e:
-                self.__view_erro.erro_inexperado_menu()
+                pass
         self.__view_menu.sair()

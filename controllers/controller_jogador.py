@@ -61,28 +61,22 @@ class ControllerJogador(ControllerPersonagem):
         jogador = None
         while True:
             # Cadastro
-            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes, 3,
-                                                               self.get_com_nome)
+            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes,
+                                                               self.get_com_nome, 3 * (combates_vencidos + 1))
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]
 
-            try:
-                classe = self.__controller_classe.get_classe(classe_nome)
+            classe = self.__controller_classe.get_classe(classe_nome)
 
-                poderes = []
+            poderes = []
 
-                for poder_nome in poderes_nome:
-                    poderes.append(self.__controller_poder.get_poder(poder_nome))
+            for poder_nome in poderes_nome:
+                poderes.append(self.__controller_poder.get_poder(poder_nome))
 
-                # Aviso de criaçao do personagem
-                self.__view_jogador.aviso_criado(jogador_dict)
-
-                # Salvar
-                self.cadastrar(nome, classe, poderes)
-                break
-            except exceptions.VoltarMenu as e:
-                pass
+            # Salvar
+            self.cadastrar(nome, classe, poderes)
+            break
 
         return True
 
@@ -91,55 +85,40 @@ class ControllerJogador(ControllerPersonagem):
         Ao acabar um combate o jogador troca para uma classe de nivel acima e ganha um poder a mais
         """
         for jogador in super().personagens:
-            classe_nova = self.__controller_classe.get_classe_superior(jogador.classe.tipo,
-                                                                       jogador.classe.nivel + 1)
-            if classe_nova != jogador.classe:
-                self.__view_jogador.aviso_aumento_nivel(jogador.nome, jogador.classe.nome, classe_nova.nome)
-                jogador.classe = classe_nova
-                self.__escolher_poder(jogador, 2, True)
+            # Encontra a nova classe do personagem
+            classe_antiga = jogador.classe
+            jogador.classe = self.__controller_classe.get_classe_superior(jogador.classe.tipo, jogador.classe.nivel + 1)
 
-                # Aviso de upar do personagem
-                poderes_mensagem = [poder.nome for poder in jogador.poderes]
-                self.__view_jogador.aviso_criado(jogador.nome, jogador.classe.nome, poderes_mensagem,
-                                                 Utils.adjetivo(jogador.classe.nivel))
-                time.sleep(3)
-            os.system("cls")
-
-    def __escolher_poder(self, jogador, quantidade_escolha, aumentar_nivel=False):
-        """
-        Pede para o jogador escolher um dos poderes disponiveis
-        :param jogador: jogador que recebera o poder
-        :param quantidade_escolha: Quantos poderes ele pode escolher
-        :return:
-        """
-        # Mostra todos os poderes disponiveis, se for aumentar o nivel mostra apenas os poderes do nivel novo
-        if not aumentar_nivel:
+            # Poderes novos que podem ser escolhidos
             poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
-        else:
-            poderes_disponiveis = self.__controller_poder.get_poderes_por_nivel(jogador.classe.nivel)
+            poderes_disponiveis = [poder for poder in poderes_disponiveis if poder not in jogador.poderes]
+            nomes_poderes = self.__controller_poder.nomes(poderes_disponiveis)
 
-        poderes_estatisticas = self.__controller_poder.estatisticas_dict(poderes_disponiveis)
-        self.__view_jogador.aviso_escolher_poderes(jogador.nome, quantidade_escolha, poderes_estatisticas)
+            # Poderes que o personagem já possui
+            nomes_poderes_antigos = self.__controller_poder.nomes(jogador.poderes)
 
-        quantidade_poderes = 0
-        while quantidade_poderes != quantidade_escolha:
-            poder = None
+            # Soco é um poder obrigatório
+            nomes_poderes_antigos.remove("Soco")
 
-            index = self.__view_jogador.escolha_poderes(quantidade_poderes + 1)
+            # Atributos da classe nova
+            estatisticas_classes_nova = self.__controller_classe.estatisticas_dict(jogador.classe)
 
-            try:
-                Utils.check_inteiro_intervalo(index, [0, len(poderes_disponiveis) - 1])
-                poder = poderes_disponiveis[int(index)]
+            # Tela mostra que passou de nivel e escolhe os poderes
+            poderes_escolhidos = self.__view_jogador.aumentar_nivel(jogador.nome,
+                                                                    classe_antiga.nome,
+                                                                    estatisticas_classes_nova,
+                                                                    nomes_poderes,
+                                                                    nomes_poderes_antigos)
 
-                # Nao pode escolher um poder que não possui mana para usar
-                if poder.mana_gasta > jogador.classe.mana:
-                    raise exceptions.ManaInsuficienteException()
+            # Soco é obrigatório e encontra os poderes pelo nome
+            poderes_novos = [self.__controller_poder.get_poder("Soco")]
+            for nome in poderes_escolhidos:
+                poderes_novos.append(self.__controller_poder.get_poder(nome))
 
-                super().adicionar_poder_personagem(jogador.nome, poder)
-                quantidade_poderes += 1
-            except exceptions.DuplicadoException:
-                self.__view_erro.poder_repetido(jogador.nome, poder.nome)
-            except exceptions.ManaInsuficienteException:
-                self.__view_erro.mana_insuficiente()
-            except TypeError:
-                self.__view_erro.apenas_inteiros()
+            # Atualiza os poderes
+            jogador.poderes = poderes_novos
+
+        # Restaura a vida e mana ao maximo, pois o maximo aumentou
+        self.restaurar_vida_mana()
+
+        return True

@@ -96,6 +96,12 @@ class Personagem(ABC):
         else:
             return False
 
+    @poderes.setter
+    def poderes(self, poderes: list[Poder]):
+        if any(not isinstance(poder, Poder) for poder in poderes):
+            raise TypeError("poderes deve ser uma list[Poder]")
+        self.__poderes = poderes
+
     def restaurar_personagem(self):
         """O personagem volta com sua vida e mana inicial"""
         self.__vida_atual = self.classe.vida
