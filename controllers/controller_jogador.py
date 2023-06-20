@@ -127,3 +127,15 @@ class ControllerJogador(ControllerPersonagem):
         self.restaurar_vida_mana()
 
         return True
+
+    def estatisticas(self):
+        """
+        Retorna uma lista de dicionário com as estatisticas de dano e cura causados, além de recebidos
+        :return: lista de dicionários
+        """
+        estatisticas = []
+
+        for jogador in super().personagens:
+            estatisticas.append(jogador.estatisticas)
+
+        return estatisticas
