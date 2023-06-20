@@ -1,13 +1,17 @@
 import random
 from abc import ABC
 
-from exceptions.exceptions import ManaInsuficienteException, DuplicadoException
+from exceptions.exceptions import DuplicadoException
 from models.classe import Classe
 from models.poder import Poder
 
 
 class Personagem(ABC):
-    def __init__(self, nome: str, classe: Classe, poderes: list[Poder] = []):
+    CODIGO = 0
+
+    def __init__(self, nome: str, classe: Classe, poderes=None):
+        if poderes is None:
+            poderes = []
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
         if not isinstance(classe, Classe):
@@ -20,6 +24,8 @@ class Personagem(ABC):
         self.__poderes = poderes
         self.__vida_atual = classe.vida
         self.__mana_atual = classe.mana
+        self.__codigo = self.CODIGO
+        self.CODIGO += 1
 
     @property
     def nome(self):
@@ -45,6 +51,14 @@ class Personagem(ABC):
     def poderes(self):
         return self.__poderes
 
+    @poderes.setter
+    def poderes(self, poderes: list[Poder]):
+        if any(not isinstance(poder, Poder) for poder in poderes):
+            raise TypeError("poderes deve ser uma list[Poder]")
+
+        poderes.sort(key=lambda obj: (-obj.nivel, obj.nome))
+        self.__poderes = poderes
+
     @property
     def vida_atual(self):
         return self.__vida_atual
@@ -53,19 +67,9 @@ class Personagem(ABC):
     def mana_atual(self):
         return self.__mana_atual
 
-    def get_poder(self, nome: str):
-        """
-        Retorna o poder com um nome unico
-        :param nome: nome do poder buscado
-        :return: Poder, ou None caso não encontre
-        """
-        if not isinstance(nome, str):
-            raise TypeError("nome deve ser uma string")
-
-        for poder in self.__poderes:
-            if poder.nome == nome:
-                return poder
-        return None
+    @property
+    def codigo(self):
+        return self.__codigo
 
     def adicionar_poder(self, poder: Poder):
         """
@@ -76,7 +80,7 @@ class Personagem(ABC):
         if not isinstance(poder, Poder):
             raise TypeError("poder deve ser um Poder")
 
-        if self.get_poder(poder.nome):
+        if any([item.nome for item in self.__poderes]):
             raise DuplicadoException(
                 f'Não foi possivel criar o personagem pois ele já possui o mesmo poder {poder.nome}'
             )
@@ -95,14 +99,6 @@ class Personagem(ABC):
                 return True
         else:
             return False
-
-    @poderes.setter
-    def poderes(self, poderes: list[Poder]):
-        if any(not isinstance(poder, Poder) for poder in poderes):
-            raise TypeError("poderes deve ser uma list[Poder]")
-
-        poderes.sort(key=lambda obj: (-obj.nivel, obj.nome))
-        self.__poderes = poderes
 
     def restaurar_personagem(self):
         """O personagem volta com sua vida e mana inicial"""
@@ -128,8 +124,7 @@ class Personagem(ABC):
     def gastar_mana(self, valor):
         """Ao utilizar um poder a mana atual do personagem é gasta"""
         if self.__mana_atual - valor < 0:
-            raise ManaInsuficienteException("O Personagem não possui mana suficiente para esse poder")
-
+            raise ValueError("Mana Insuficiente")
         self.__mana_atual -= valor
 
     @property

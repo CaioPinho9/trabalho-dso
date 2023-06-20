@@ -6,10 +6,6 @@ class NaoEncontradoException(Exception):
     pass
 
 
-class ManaInsuficienteException(Exception):
-    pass
-
-
 class VoltarMenu(Exception):
     pass
 

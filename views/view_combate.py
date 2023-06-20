@@ -213,8 +213,7 @@ class ViewCombate:
 
                     if poder_selecionado:
                         self._window.Element(MenuCombate.ESTATISTICAS_PODER).update(
-                            self._controller_poder.estatisticas(poder_selecionado)
-                        )
+                            self._controller_poder.estatisticas(poder_selecionado))
 
                 if event == MenuCombate.CONTINUAR:
                     poder_selecionado = valores[MenuCombate.SELECIONAR_PODER][0]

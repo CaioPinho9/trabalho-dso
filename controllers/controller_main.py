@@ -9,21 +9,19 @@ from controllers.controller_poder import ControllerPoder
 from exceptions import exceptions
 from utils.opcoes_menus import MenuInicial
 from utils.utils import Utils
-from views.view_erro import ViewErro
 from views.view_menu import ViewMenu
 
 
 class ControllerMain:
 
     def __init__(self):
-        self.__view_erro = ViewErro()
         self.__view_menu = ViewMenu()
         self.__controller_classe = ControllerClasse()
         self.__controller_poder = ControllerPoder()
-        self.__controller_jogador = ControllerJogador(self.__view_erro, self.__controller_classe,
+        self.__controller_jogador = ControllerJogador(self.__controller_classe,
                                                       self.__controller_poder)
         self.__controller_npc = ControllerNpc()
-        self.__controller_combate = ControllerCombate(self.__view_erro, self.__controller_jogador,
+        self.__controller_combate = ControllerCombate(self.__controller_jogador,
                                                       self.__controller_npc,
                                                       self.__controller_poder, self.__controller_classe)
 
@@ -135,12 +133,15 @@ class ControllerMain:
                                              self.__controller_poder.get_poder("Adaga de Bronze"),
                                              self.__controller_poder.get_poder("Raio de Fogo")])
 
+
     def iniciar(self):
         self.__criar_classes()
         self.__criar_poderes()
-        self.__criar_combates()
+        if len(self.__controller_combate.get_all()) == 0:
+            self.__criar_combates()
         # Personagens iniciais caso não queiram criar
-        self.__criar_personagens()
+        if len(self.__controller_jogador.personagens) == 0:
+            self.__criar_personagens()
 
         combates_vencidos = 0
         while True:

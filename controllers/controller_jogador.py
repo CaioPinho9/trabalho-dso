@@ -1,29 +1,30 @@
 import os
+import random
 import time
 
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_personagem import ControllerPersonagem
 from controllers.controller_poder import ControllerPoder
+from dao.jogador_dao import JogadorDAO
 from exceptions import exceptions
 from models.classe import Classe
 from models.jogador import Jogador
 from models.poder import Poder
 from utils.utils import Utils
-from views.view_erro import ViewErro
 from views.view_jogador import ViewJogador
 
 
 class ControllerJogador(ControllerPersonagem):
-    def __init__(self, view_erro: ViewErro,
+    def __init__(self,
                  controller_classe: ControllerClasse,
                  controller_poder: ControllerPoder):
         super().__init__()
         self.__view_jogador = ViewJogador(controller_classe, controller_poder)
-        self.__view_erro = view_erro
         self.__controller_classe = controller_classe
         self.__controller_poder = controller_poder
+        self.__jogador_dao = JogadorDAO()
 
-    def cadastrar(self, nome: str, classe: Classe, poderes: list[Poder] = []):
+    def cadastrar(self, nome: str, classe: Classe, poderes=None):
         """
         Adiciona um Jogador na lista de personagens
         :param nome: identicador do Jogador
@@ -31,16 +32,22 @@ class ControllerJogador(ControllerPersonagem):
         :param poderes: Habilidades que o Jogador pode utilizar
         :return: o Jogador cadastrado
         """
+        if poderes is None:
+            poderes = []
         poderes.insert(0, self.__controller_poder.get_poder("Soco"))
         jogador = Jogador(nome, classe, poderes)
 
-        if super().get_com_nome(nome):
-            raise exceptions.DuplicadoException('Não foi possivel criar o jogador pois ja existe um com o mesmo nome')
+        self.__jogador_dao.add(jogador)
 
-        super().personagens.append(jogador)
+        if len(self.__jogador_dao.get_all()) > 3:
+            jogadores = self.__jogador_dao.get_all()
 
-        if len(super().personagens) > 3:
-            super().personagens.pop(0)
+            primeiro_criado = jogadores[0]
+            for jogador in jogadores:
+                if jogador.codigo < primeiro_criado.codigo:
+                    primeiro_criado = jogador
+
+            self.__jogador_dao.remove(primeiro_criado.nome)
 
     def criar_personagem(self, index_personagem: int, combates_vencidos: int):
         """
@@ -87,7 +94,7 @@ class ControllerJogador(ControllerPersonagem):
         """
         Ao acabar um combate o jogador troca para uma classe de nivel acima e ganha um poder a mais
         """
-        for jogador in super().personagens:
+        for jogador in self.__jogador_dao.get_all():
             # Encontra a nova classe do personagem
             classe_antiga = jogador.classe
             jogador.classe = self.__controller_classe.get_classe_superior(jogador.classe.tipo, jogador.classe.nivel + 1)
@@ -122,8 +129,61 @@ class ControllerJogador(ControllerPersonagem):
 
             # Atualiza os poderes
             jogador.poderes = poderes_novos
+            self.__jogador_dao.update(jogador)
 
         # Restaura a vida e mana ao maximo, pois o maximo aumentou
         self.restaurar_vida_mana()
 
         return True
+
+    def restaurar_vida_mana(self):
+        """Todos os jogadores voltam a ficar com a vida e a mana máxima"""
+        for jogador in self.__jogador_dao.get_all():
+            jogador.restaurar_personagem()
+            self.__jogador_dao.update(jogador)
+
+    def get_com_nome(self, nome: str):
+        """
+        Encontra um jogador pelo nome
+        :param nome: nome do jogador para encontrar
+        :return Jogador object
+        """
+        try:
+            return self.__jogador_dao.get(nome)
+        except exceptions.NaoEncontradoException:
+            return None
+
+    @property
+    def personagens(self):
+        """
+        Retorna todos os jogadores
+        :return: lista de todos os jogadores
+        """
+        return self.__jogador_dao.get_all()
+
+    @personagens.setter
+    def personagens(self, jogadores):
+        """
+        Atualiza todos os jogadores
+        :param jogadores: Lista dos jogadores que serão inseridos
+        """
+
+        if not all(isinstance(jogador, Jogador) for jogador in jogadores):
+            raise TypeError("jogadores deve ser do tipo list[Jogador]")
+
+        for jogador in self.__jogador_dao.get_all():
+            self.__jogador_dao.remove(jogador.nome)
+
+        for jogador in jogadores:
+            self.__jogador_dao.update(jogador)
+
+    def remover(self, nome: str):
+        """
+        Deleta um jogador por nome
+        :param nome: nome do jogador deletado
+        """
+
+        if not isinstance(nome, str):
+            raise TypeError("nome deve ser um uma string")
+
+        self.__jogador_dao.remove(nome)

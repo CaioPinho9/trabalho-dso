@@ -4,9 +4,9 @@ from models.personagem import Personagem
 
 
 class Combate:
-    def __init__(self, codigo: int, npcs: list[Npc]):
-        if not isinstance(codigo, int):
-            raise TypeError("Código do combate deve ser do tipo inteiro")
+    CODIGO = 0
+
+    def __init__(self, npcs: list[Npc]):
         if not isinstance(npcs, list):
             raise TypeError("Npcs do combate deve ser do tipo lista")
         if not all(isinstance(npc, Npc) for npc in npcs):
@@ -14,10 +14,12 @@ class Combate:
         if len(npcs) == 0:
             raise ValueError("Combate deve ter pelo menos um npc")
 
-        self.__codigo = codigo
+        self.__codigo = self.CODIGO
         self.__npcs = npcs
         self.__jogadores = []
         self.__ordem_de_batalha = []
+
+        self.CODIGO += 1
 
     @property
     def codigo(self):

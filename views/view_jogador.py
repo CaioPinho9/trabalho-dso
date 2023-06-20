@@ -62,8 +62,7 @@ class ViewJogador:
                 if event == MenuCriacao.SELECIONAR_CLASSE:
                     classe_selecionada = valores[MenuCriacao.SELECIONAR_CLASSE]
                     self._window.Element(MenuCriacao.ESTATISTICAS_CLASSE).update(
-                        self._controller_classe.estatisticas_string(classe_selecionada)
-                    )
+                        self._controller_classe.estatisticas_string(classe_selecionada))
 
                 poderes = self._escolha_poder(event, valores, tamanho_escolha)
                 if poderes:
@@ -163,8 +162,7 @@ class ViewJogador:
 
             if poder_selecionado:
                 self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
-                    self._controller_poder.estatisticas(poder_selecionado)
-                )
+                    self._controller_poder.estatisticas(poder_selecionado))
 
         if event == MenuCriacao.SELECIONAR_PODER:
             poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]

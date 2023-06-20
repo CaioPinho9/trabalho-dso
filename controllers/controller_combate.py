@@ -6,6 +6,7 @@ from controllers.controller_classe import ControllerClasse
 from controllers.controller_jogador import ControllerJogador
 from controllers.controller_npc import ControllerNpc
 from controllers.controller_poder import ControllerPoder
+from dao.combate_dao import CombateDAO
 from exceptions import exceptions
 from models.combate import Combate
 from models.jogador import Jogador
@@ -15,11 +16,10 @@ from models.poder import Poder
 from utils.opcoes_menus import MenuCombate
 from utils.utils import Utils
 from views.view_combate import ViewCombate
-from views.view_erro import ViewErro
 
 
 class ControllerCombate:
-    def __init__(self, view_erro: ViewErro, controller_jogador: ControllerJogador,
+    def __init__(self, controller_jogador: ControllerJogador,
                  controller_npc: ControllerNpc, controller_poder: ControllerPoder, controller_classe: ControllerClasse):
         self._combates = []
         self._controller_jogador = controller_jogador
@@ -27,37 +27,26 @@ class ControllerCombate:
         self._controller_poder = controller_poder
         self._controller_classe = controller_classe
         self._combate_atual = None
-        self._codigo = 0
-        self._view_erro = view_erro
         self._view_combate = ViewCombate(controller_poder)
         self._contador_turno = 1
+        self._combate_dao = CombateDAO()
 
     def cadastrar_combate(self, npcs: list[Npc]):
         """Cria um novo combate"""
-        combate = Combate(self._codigo, npcs)
+        combate = Combate(npcs)
 
-        self._codigo += 1
-
-        self._combates.append(combate)
+        self._combate_dao.add(combate)
 
     def get_combate(self, codigo: int):
         """Retorna um combate especifico"""
-        if not isinstance(codigo, int):
-            raise TypeError("codigo deve ser um numero inteiro")
-        try:
-            combate = self._combates[codigo]
-        except Exception:
-            raise exceptions.NaoEncontradoException()
-        return combate
+        return self._combate_dao.get(codigo)
+
+    def get_all(self):
+        return self._combate_dao.get_all()
 
     def remover_combate(self, codigo: int):
         """Retorna um combate especifico"""
-        if not isinstance(codigo, int):
-            raise TypeError("codigo deve ser um numero inteiro")
-        try:
-            self._combates.pop(codigo)
-        except Exception:
-            raise exceptions.NaoEncontradoException()
+        self._combate_dao.remove(codigo)
 
     def resetar_combate(self):
         self._controller_jogador.restaurar_vida_mana()
@@ -112,6 +101,7 @@ class ControllerCombate:
                 # Prepara o próximo turno
                 self._contador_turno += 1
                 proximo_personagem = self._combate_atual.proximo_da_batalha()
+                self._combate_dao.update(self._combate_atual)
 
             except exceptions.VoltarMenu as e:
                 pass
@@ -238,6 +228,7 @@ class ControllerCombate:
 
         # Armazena o resultado
         self._combate_atual.ordem_de_batalha = ordem_batalha
+        self._combate_dao.update(self._combate_atual)
 
         return True
 
