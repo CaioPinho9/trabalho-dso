@@ -187,3 +187,15 @@ class ControllerJogador(ControllerPersonagem):
             raise TypeError("nome deve ser um uma string")
 
         self.__jogador_dao.remove(nome)
+
+    def estatisticas(self):
+        """
+        Retorna uma lista de dicionário com as estatisticas de dano e cura causados, além de recebidos
+        :return: lista de dicionários
+        """
+        estatisticas = []
+
+        for jogador in self.__jogador_dao.get_all():
+            estatisticas.append(jogador.estatisticas)
+
+        return estatisticas

@@ -30,6 +30,8 @@ class ViewMenu:
             [sg.Button("Criar grupo de personagens", key=MenuInicial.CRIAR_GRUPO, size=(26, 2), enable_events=True)],
             [sg.Button("Mostrar grupo de personagens", key=MenuInicial.MOSTRAR_GRUPO, size=(26, 2),
                        enable_events=True)],
+            [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(26, 2),
+                       enable_events=True)],
             [self._combates(combates_vencidos)],
             [sg.Button("Sair", key=MenuInicial.SAIR, size=(13, 2))]
         ]
@@ -49,6 +51,9 @@ class ViewMenu:
                     return event
 
                 if event == MenuInicial.MOSTRAR_GRUPO:
+                    return event
+
+                if event == MenuInicial.MOSTRAR_ESTATISTICAS:
                     return event
 
                 if event == MenuInicial.PRIMEIRO_COMBATE:
@@ -118,5 +123,41 @@ class ViewMenu:
 
                 if event == MenuInicial.SAIR:
                     return True
+        finally:
+            self.window.close()
+
+    def estatisticas(self, estatisticas_jogadores):
+        layout = [
+            [sg.Text("O grupo possui as seguintes estátisticas:")],
+        ]
+
+        columns = []
+        for estatistica_jogador in estatisticas_jogadores:
+            column = [[sg.Text(f"{estatistica_jogador['nome']}", background_color=sg.theme_button_color()[1])],
+                      [sg.Text(f"Dano causado: {estatistica_jogador['dano_causado']}",
+                               background_color=sg.theme_button_color()[1])],
+                      [sg.Text(f"Cura causada: {estatistica_jogador['cura_causada']}",
+                               background_color=sg.theme_button_color()[1])],
+                      [sg.Text(f"Dano recebido: {estatistica_jogador['dano_recebido']}",
+                               background_color=sg.theme_button_color()[1])],
+                      [sg.Text(f"Cura recebida: {estatistica_jogador['cura_recebida']}",
+                               background_color=sg.theme_button_color()[1])]]
+            columns.append(sg.Column(column, background_color=sg.theme_button_color()[1]))
+
+        layout.append(columns)
+
+        layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
+
+        self.window = sg.Window("ESTATISTICAS", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuInicial.SAIR:
+                    raise exceptions.VoltarMenu("Voltar")
         finally:
             self.window.close()

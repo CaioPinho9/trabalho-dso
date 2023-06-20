@@ -20,3 +20,15 @@ class Jogador(Personagem):
 
     def causou_cura(self, cura):
         self.__estatisticas.causou_cura(cura)
+
+    @property
+    def estatisticas(self):
+        estatisticas = {
+            "nome": self.nome,
+            "dano_recebido": self.__estatisticas.dano_recebido,
+            "dano_causado": self.__estatisticas.dano_causado,
+            "cura_recebida": self.__estatisticas.cura_recebida,
+            "cura_causada": self.__estatisticas.cura_causada
+        }
+
+        return estatisticas

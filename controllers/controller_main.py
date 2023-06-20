@@ -163,6 +163,12 @@ class ControllerMain:
                         combates_vencidos + 1
                     )
 
+                elif escolha == MenuInicial.MOSTRAR_ESTATISTICAS:
+                    # Mostrar grupo atual
+                    self.__view_menu.estatisticas(
+                        self.__controller_jogador.estatisticas(),
+                    )
+
                 elif escolha.value in MenuInicial.COMBATES.value:
                     combate_numero = 0
                     for index, value in enumerate(MenuInicial.COMBATES.value):
