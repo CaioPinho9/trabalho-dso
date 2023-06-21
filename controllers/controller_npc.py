@@ -23,7 +23,7 @@ class ControllerNpc(ControllerPersonagem):
         if poderes is None:
             poderes = []
 
-        npc = Npc(nome, classe, poderes)
+        npc = Npc(nome, classe, self.__npc_dao.get_next_index(), poderes)
 
         self.__npc_dao.add(npc)
 
@@ -72,4 +72,7 @@ class ControllerNpc(ControllerPersonagem):
             self.__npc_dao.remove(npc.nome)
 
         for npc in npcs:
-            self.__npc_dao.update(npc)
+            self.__npc_dao.add(npc)
+
+    def remover_all(self):
+        self.__npc_dao.clear_file()

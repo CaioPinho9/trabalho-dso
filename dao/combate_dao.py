@@ -1,4 +1,6 @@
 from dao.dao import DAO
+from dao.jogador_dao import JogadorDAO
+from dao.npc_dao import NpcDAO
 from exceptions import exceptions
 from models.combate import Combate
 
@@ -6,6 +8,8 @@ from models.combate import Combate
 class CombateDAO(DAO):
     def __init__(self):
         super().__init__('data/combates.pkl')
+        self.__jogador_dao = JogadorDAO()
+        self.__npc_dao = NpcDAO()
 
     def add(self, combate: Combate, **kwargs):
         if not isinstance(combate, Combate):
@@ -30,6 +34,12 @@ class CombateDAO(DAO):
             raise TypeError("Key deve ser uma integer")
 
         super().update(combate.codigo, combate)
+
+        for jogador in combate.jogadores:
+            self.__jogador_dao.update(jogador)
+
+        for npc in combate.npcs:
+            self.__npc_dao.update(npc)
 
     def get(self, key: int):
         if not isinstance(key, int):

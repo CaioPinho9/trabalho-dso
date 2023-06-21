@@ -7,11 +7,12 @@ from models.poder import Poder
 
 
 class Personagem(ABC):
-    CODIGO = 0
 
-    def __init__(self, nome: str, classe: Classe, poderes=None):
+    def __init__(self, nome: str, classe: Classe, codigo: int, poderes=None):
         if poderes is None:
             poderes = []
+        if not isinstance(codigo, int):
+            raise TypeError("codigo deve ser um inteiro")
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
         if not isinstance(classe, Classe):
@@ -24,8 +25,7 @@ class Personagem(ABC):
         self.__poderes = poderes
         self.__vida_atual = classe.vida
         self.__mana_atual = classe.mana
-        self.__codigo = self.CODIGO
-        self.CODIGO += 1
+        self.__codigo = codigo
 
     @property
     def nome(self):

@@ -265,7 +265,7 @@ class ViewCombate:
             self._window.close()
 
     def resultado_turno(self, nome_jogador: str, turno: int, is_jogador: bool, nomes_alvos: list[str], nome_poder: str,
-                        resultados: dict, vida_mana_jogadores: list[dict], vida_mana_npcs: list[dict]):
+                        resultados: list[dict], vida_mana_jogadores: list[dict], vida_mana_npcs: list[dict]):
         """
         Tela que mostra a rolagem dos dados e o estado da batalha apos esse turno
         :param nome_jogador: Nome do jogador
@@ -273,7 +273,7 @@ class ViewCombate:
         :param is_jogador: True se é um Jogador, False se for um Npc
         :param nomes_alvos: Lista com o nome dos alvos
         :param nome_poder: Nome do poder escolhido
-        :param resultados: Dicionário com strings de resposta
+        :param resultados: Lista de dicionários com strings de resposta
         :param vida_mana_jogadores: Vida e mana dos jogadores
         :param vida_mana_npcs: Vida e mana dos npcs
         """

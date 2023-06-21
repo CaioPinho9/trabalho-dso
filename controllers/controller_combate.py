@@ -26,14 +26,13 @@ class ControllerCombate:
         self._controller_npc = controller_npc
         self._controller_poder = controller_poder
         self._controller_classe = controller_classe
-        self._combate_atual = None
         self._view_combate = ViewCombate(controller_poder)
-        self._contador_turno = 1
+        self._combate_atual = None
         self._combate_dao = CombateDAO()
 
     def cadastrar_combate(self, npcs: list[Npc]):
         """Cria um novo combate"""
-        combate = Combate(npcs)
+        combate = Combate(self._combate_dao.get_next_index(), npcs)
 
         self._combate_dao.add(combate)
 
@@ -51,7 +50,7 @@ class ControllerCombate:
     def resetar_combate(self):
         self._controller_jogador.restaurar_vida_mana()
         self._controller_npc.restaurar_vida_mana()
-        self._contador_turno = 1
+        self._combate_atual.contador_turno = 1
 
     def iniciar_combate(self, codigo: int):
         """
@@ -64,10 +63,7 @@ class ControllerCombate:
         :param codigo: Combate que será jogado
         :return: True se os jogadores vencerem
         """
-        try:
-            self._combate_atual = self.get_combate(codigo)
-        except Exception:
-            raise exceptions.NaoEncontradoException("Combate não encontrado")
+        self._combate_atual = self.get_combate(codigo)
 
         self._combate_atual.jogadores = self._controller_jogador.personagens
 
@@ -99,7 +95,7 @@ class ControllerCombate:
                     break
 
                 # Prepara o próximo turno
-                self._contador_turno += 1
+                self._combate_atual.contador_turno += 1
                 proximo_personagem = self._combate_atual.proximo_da_batalha()
                 self._combate_dao.update(self._combate_atual)
 
@@ -108,6 +104,7 @@ class ControllerCombate:
 
         # Garante que a vida e a mana estarão cheias no próximo combate
         self.resetar_combate()
+        self._combate_dao.update(self._combate_atual)
 
         if vitoria:
             self._view_combate.vitoria()
@@ -123,7 +120,7 @@ class ControllerCombate:
                 is_jogador = isinstance(proximo_personagem, Jogador)
                 if is_jogador:
                     # Jogador escolhe um dos itens do menu
-                    self._escolher_turno_jogador(proximo_personagem, self._contador_turno)
+                    self._escolher_turno_jogador(proximo_personagem, self._combate_atual.contador_turno)
 
                 # Personagem escolhe poder e alvos que serão usados nesse turno
                 poder, personagens_alvos = self._escolher_poder_alvos(proximo_personagem)
@@ -149,7 +146,7 @@ class ControllerCombate:
         # Mostra os resultados desse turno na tela
         self._view_combate.resultado_turno(
             nome_jogador=proximo_personagem.nome,
-            turno=self._contador_turno,
+            turno=self._combate_atual.contador_turno,
             is_jogador=is_jogador,
             nomes_alvos=nomes_alvos,
             nome_poder=poder.nome,
@@ -244,7 +241,8 @@ class ControllerCombate:
             nomes_poderes = self._controller_poder.nomes(personagem.poderes_disponiveis)
 
             # Jogador escolhe o ataque
-            escolha_poder = self._view_combate.escolher_poder(personagem.nome, self._contador_turno, nomes_poderes,
+            escolha_poder = self._view_combate.escolher_poder(personagem.nome, self._combate_atual.contador_turno,
+                                                              nomes_poderes,
                                                               personagem.mana_atual)
 
             # Poder escolhido
@@ -341,7 +339,7 @@ class ControllerCombate:
         # Escolher alvos
         nomes_personagens_alvos = self._view_combate.escolher_alvos(
             nome_jogador=proximo_personagem.nome,
-            turno=self._contador_turno,
+            turno=self._combate_atual.contador_turno,
             estatisticas_poder=estatisticas_poder,
             alvos_disponiveis=alvos_disponiveis,
             alvos_maximos=alvos_maximos,
@@ -481,3 +479,6 @@ class ControllerCombate:
             resultado['desmaiado'] = f"{nome_alvo} desmaiou em combate"
 
         return resultado
+
+    def remover_all(self):
+        self._combate_dao.clear_file()

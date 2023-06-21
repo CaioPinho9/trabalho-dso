@@ -35,19 +35,19 @@ class ControllerJogador(ControllerPersonagem):
         if poderes is None:
             poderes = []
         poderes.insert(0, self.__controller_poder.get_poder("Soco"))
-        jogador = Jogador(nome, classe, poderes)
+        jogador = Jogador(nome, classe, self.__jogador_dao.get_next_index(), poderes)
 
         self.__jogador_dao.add(jogador)
 
-        if len(self.__jogador_dao.get_all()) > 3:
-            jogadores = self.__jogador_dao.get_all()
+        jogadores = self.__jogador_dao.get_all()
 
+        if len(jogadores) > 3:
             primeiro_criado = jogadores[0]
             for jogador in jogadores:
                 if jogador.codigo < primeiro_criado.codigo:
                     primeiro_criado = jogador
 
-            self.__jogador_dao.remove(primeiro_criado.nome)
+            self.remover(primeiro_criado.nome)
 
     def criar_personagem(self, index_personagem: int, combates_vencidos: int):
         """
@@ -148,10 +148,7 @@ class ControllerJogador(ControllerPersonagem):
         :param nome: nome do jogador para encontrar
         :return Jogador object
         """
-        try:
-            return self.__jogador_dao.get(nome)
-        except exceptions.NaoEncontradoException:
-            return None
+        return self.__jogador_dao.get(nome)
 
     @property
     def personagens(self):
@@ -167,7 +164,6 @@ class ControllerJogador(ControllerPersonagem):
         Atualiza todos os jogadores
         :param jogadores: Lista dos jogadores que serão inseridos
         """
-
         if not all(isinstance(jogador, Jogador) for jogador in jogadores):
             raise TypeError("jogadores deve ser do tipo list[Jogador]")
 
@@ -175,7 +171,7 @@ class ControllerJogador(ControllerPersonagem):
             self.__jogador_dao.remove(jogador.nome)
 
         for jogador in jogadores:
-            self.__jogador_dao.update(jogador)
+            self.__jogador_dao.add(jogador)
 
     def remover(self, nome: str):
         """
@@ -199,3 +195,6 @@ class ControllerJogador(ControllerPersonagem):
             estatisticas.append(jogador.estatisticas)
 
         return estatisticas
+
+    def remover_all(self):
+        self.__jogador_dao.clear_file()

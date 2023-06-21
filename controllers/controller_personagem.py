@@ -53,8 +53,8 @@ class ControllerPersonagem(ABC):
         estatisticas = []
         for personagem in personagens:
             dictionario = {"nome": personagem.nome,
-                          "vida_atual": str(personagem.vida_atual), "vida_maxima": str(personagem.classe.vida),
-                          "mana_atual": str(personagem.mana_atual), "mana_maxima": str(personagem.classe.mana)}
+                           "vida_atual": str(personagem.vida_atual), "vida_maxima": str(personagem.classe.vida),
+                           "mana_atual": str(personagem.mana_atual), "mana_maxima": str(personagem.classe.mana)}
 
             estatisticas.append(dictionario)
         return estatisticas

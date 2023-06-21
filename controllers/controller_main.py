@@ -84,6 +84,8 @@ class ControllerMain:
                                                 ataque=True, nivel=4)
 
     def __criar_combates(self):
+        self.__controller_npc.remover_all()
+        self.__controller_combate.remover_all()
         # Combate 1
         self.__controller_npc.cadastrar("Hobgoblin", self.__controller_classe.get_classe("Guerreiro Novato"),
                                         [self.__controller_poder.get_poder("Espada de Aço"),
@@ -120,6 +122,7 @@ class ControllerMain:
         self.__controller_combate.cadastrar_combate(npcs_combate3)
 
     def __criar_personagens(self):
+        self.__controller_jogador.remover_all()
         self.__controller_jogador.cadastrar("Jorge", self.__controller_classe.get_classe("Mago Estudante"),
                                             [self.__controller_poder.get_poder("Raio de Fogo"),
                                              self.__controller_poder.get_poder("Adaga de Bronze"),
@@ -132,7 +135,6 @@ class ControllerMain:
                                             [self.__controller_poder.get_poder("Ataque Giratório"),
                                              self.__controller_poder.get_poder("Adaga de Bronze"),
                                              self.__controller_poder.get_poder("Raio de Fogo")])
-
 
     def iniciar(self):
         self.__criar_classes()
@@ -177,7 +179,6 @@ class ControllerMain:
                             break
 
                     # Iniciar um combate
-
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel

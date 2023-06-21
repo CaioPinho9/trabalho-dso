@@ -5,8 +5,8 @@ from models.poder import Poder
 
 
 class Jogador(Personagem):
-    def __init__(self, nome: str, classe: Classe, poderes: list[Poder] = []):
-        super().__init__(nome, classe, poderes)
+    def __init__(self, nome: str, classe: Classe, codigo: int, poderes=None):
+        super().__init__(nome, classe, codigo, poderes)
         self.__estatisticas = Estatisticas()
 
     def recebeu_dano(self, dano):
