@@ -121,13 +121,14 @@ class ViewCombate:
         :param nomes_ordem: Lista com o nome ordenado dos personagens
         """
         layout = [
-            [sg.Text(self._resultado_velocidade(jogadas_resultados))],
+            [sg.Text("Jogadas de dados:")],
+            [sg.Text(self._resultado_velocidade(jogadas_resultados), background_color=sg.theme_button_color()[1])],
             [sg.Text("A ordem de batalha será:")],
             [sg.Listbox(nomes_ordem, size=(None, len(nomes_ordem)), disabled=True, no_scrollbar=True, expand_x=True)],
             [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
