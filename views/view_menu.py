@@ -32,6 +32,8 @@ class ViewMenu:
                        enable_events=True)],
             [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(26, 2),
                        enable_events=True)],
+            [sg.Button("Resetar", key=MenuInicial.RESETAR_DATABASE, size=(26, 2),
+                       enable_events=True)],
             [self._combates(combates_vencidos)],
             [sg.Button("Sair", key=MenuInicial.SAIR, size=(13, 2))]
         ]
@@ -47,22 +49,7 @@ class ViewMenu:
                 if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                     raise exceptions.FecharPrograma("Fechar o app")
 
-                if event == MenuInicial.CRIAR_GRUPO:
-                    return event
-
-                if event == MenuInicial.MOSTRAR_GRUPO:
-                    return event
-
-                if event == MenuInicial.MOSTRAR_ESTATISTICAS:
-                    return event
-
-                if event == MenuInicial.PRIMEIRO_COMBATE:
-                    return event
-
-                if event == MenuInicial.SEGUNDO_COMBATE:
-                    return event
-
-                if event == MenuInicial.ULTIMO_COMBATE:
+                if event.value in MenuInicial.BOTOES_MENU_INICIAL.value:
                     return event
 
         finally:
@@ -159,5 +146,30 @@ class ViewMenu:
 
                 if event == MenuInicial.SAIR:
                     raise exceptions.VoltarMenu("Voltar")
+        finally:
+            self.window.close()
+
+    def resetar_database(self):
+        layout = [
+            [sg.Text("Deseja resetar mesmo? Você perderá todo o progresso!")],
+            [sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2)),
+             sg.Button("Confirmar", key=MenuInicial.RESETAR_DATABASE, size=(13, 2))]
+        ]
+
+        self.window = sg.Window("RESETAR", layout)
+
+        try:
+            while True:
+                event, valores = self.window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuInicial.SAIR:
+                    raise exceptions.VoltarMenu("Voltar")
+
+                if event == MenuInicial.RESETAR_DATABASE:
+                    return True
+
         finally:
             self.window.close()

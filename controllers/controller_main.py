@@ -138,7 +138,7 @@ class ControllerMain:
                                              self.__controller_poder.get_poder("Adaga de Bronze"),
                                              self.__controller_poder.get_poder("Raio de Fogo")])
 
-    def reset_database(self):
+    def resetar_database(self):
         self.__criar_classes()
         self.__criar_poderes()
         self.__criar_combates()
@@ -181,6 +181,11 @@ class ControllerMain:
                     self.__view_menu.estatisticas(
                         self.__controller_jogador.estatisticas(),
                     )
+
+                elif escolha == MenuInicial.RESETAR_DATABASE:
+                    # Mostrar grupo atual
+                    self.__view_menu.resetar_database()
+                    self.resetar_database()
 
                 elif escolha.value in MenuInicial.COMBATES.value:
                     combate_numero = 0
