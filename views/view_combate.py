@@ -32,7 +32,7 @@ class ViewCombate:
         return layout
 
     @staticmethod
-    def _vida_mana_geral(vida_mana_personagens: list[dict], is_jogador: bool):
+    def _vida_mana_geral(vida_mana_personagens: list[dict], is_jogador: bool, width: int = None, height: int = None):
         """
         Prepara uma coluna mostrandao a vida e mana de cada personagem da lista
         :param vida_mana_personagens: Lista de dicionários com o estado de cada personagem
@@ -43,53 +43,20 @@ class ViewCombate:
         if len(vida_mana_personagens) > 1:
             tipo += 'es' if is_jogador else 's'
 
-        column = [[sg.Text(f"{tipo}:", background_color=sg.theme_button_color()[1])]]
+        column = [
+            [sg.Text(f"{tipo}:", background_color=sg.theme_button_color()[1], size=(width, 1), justification="cente")]
+        ]
         for vida_mana_personagem in vida_mana_personagens:
             vida_mana = f"{vida_mana_personagem['nome']}: "
             vida_mana += f"HP[{vida_mana_personagem['vida_atual']}/{vida_mana_personagem['vida_maxima']}] "
             vida_mana += f"Mana:[{vida_mana_personagem['mana_atual']}/{vida_mana_personagem['mana_maxima']}]"
-            column.append([sg.Text(vida_mana, background_color=sg.theme_button_color()[1])])
+            column.append([sg.Text(vida_mana, background_color=sg.theme_button_color()[1], size=(width, 1))])
+
+        if height:
+            while len(column) != height:
+                column.append([sg.Text("", background_color=sg.theme_button_color()[1], size=(width, 1))])
 
         return column
-
-    def escolher_acao(self, nome_jogador: str, turno: int):
-        """
-        Jogador escolhe qual menu ele deseja visualizar nesse turno
-        :param nome_jogador: Nome do jogador desse turno
-        :param turno: Contador de turnos
-        :return:
-        """
-        layout = self._mostrar_turno(nome_jogador, turno, True, width=30)
-
-        layout += [
-            [sg.Button("Usar Poder", size=(26, 2), key=MenuCombate.USAR_PODER)],
-            [sg.Button("Status Batalha", size=(26, 2), key=MenuCombate.STATUS_BATALHA)],
-            [sg.Button("Atributos", size=(26, 2), key=MenuCombate.ATRIBUTOS)],
-            [sg.Button("Desistir", size=(13, 2), key=MenuCombate.SAIR)]
-        ]
-        self._window = sg.Window("COMBATE", layout)
-
-        try:
-            while True:
-                event, valores = self._window.read()
-
-                if event == sg.WINDOW_CLOSED:
-                    raise exceptions.FecharPrograma("Fechar")
-
-                if event == MenuCombate.SAIR:
-                    raise exceptions.Desistir("Voltar para o menu")
-
-                if event == MenuCombate.USAR_PODER:
-                    return event
-
-                if event == MenuCombate.STATUS_BATALHA:
-                    return event
-
-                if event == MenuCombate.ATRIBUTOS:
-                    return event
-
-        finally:
-            self._window.close()
 
     def iniciar_combate(self, nomes_jogadores: list[str], nomes_npcs: list[str]):
         """
@@ -98,16 +65,19 @@ class ViewCombate:
         :param nomes_npcs: Lista dos nomes dos npcs
         :return:
         """
+        tamanho_jogadores = len(nomes_jogadores)
+        tamanho_npcs = len(nomes_npcs)
+        tamanho = tamanho_jogadores if tamanho_jogadores >= tamanho_npcs else tamanho_npcs
         layout = [
             [sg.Text("Nesse combate os seguintes personagens se enfrentarão!")],
             [sg.Text("Quem será o vencedor dessa batalha sangrenta!?")],
-            [sg.Listbox(nomes_jogadores, size=(15, len(nomes_jogadores)), disabled=True, no_scrollbar=True),
+            [sg.Listbox(nomes_jogadores, size=(15, tamanho), disabled=True, no_scrollbar=True),
              sg.Text("vs"),
-             sg.Listbox(nomes_npcs, size=(15, len(nomes_npcs)), disabled=True, no_scrollbar=True)],
+             sg.Listbox(nomes_npcs, size=(15, tamanho), disabled=True, no_scrollbar=True)],
             [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
@@ -153,7 +123,7 @@ class ViewCombate:
         layout = [
             [sg.Text(self._resultado_velocidade(jogadas_resultados))],
             [sg.Text("A ordem de batalha será:")],
-            [sg.Listbox(nomes_ordem, size=(15, len(nomes_ordem)), disabled=True, no_scrollbar=True)],
+            [sg.Listbox(nomes_ordem, size=(None, len(nomes_ordem)), disabled=True, no_scrollbar=True, expand_x=True)],
             [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
@@ -171,6 +141,45 @@ class ViewCombate:
 
                 if event == MenuCombate.CONTINUAR:
                     return True
+
+        finally:
+            self._window.close()
+
+    def escolher_acao(self, nome_jogador: str, turno: int):
+        """
+        Jogador escolhe qual menu ele deseja visualizar nesse turno
+        :param nome_jogador: Nome do jogador desse turno
+        :param turno: Contador de turnos
+        :return:
+        """
+        layout = self._mostrar_turno(nome_jogador, turno, True, width=30)
+
+        layout += [
+            [sg.Button("Usar Poder", size=(26, 2), key=MenuCombate.USAR_PODER)],
+            [sg.Button("Status Batalha", size=(26, 2), key=MenuCombate.STATUS_BATALHA)],
+            [sg.Button("Atributos", size=(26, 2), key=MenuCombate.ATRIBUTOS)],
+            [sg.Button("Desistir", size=(13, 2), key=MenuCombate.SAIR)]
+        ]
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
+
+        try:
+            while True:
+                event, valores = self._window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    raise exceptions.FecharPrograma("Fechar")
+
+                if event == MenuCombate.SAIR:
+                    raise exceptions.Desistir("Voltar para o menu")
+
+                if event == MenuCombate.USAR_PODER:
+                    return event
+
+                if event == MenuCombate.STATUS_BATALHA:
+                    return event
+
+                if event == MenuCombate.ATRIBUTOS:
+                    return event
 
         finally:
             self._window.close()
@@ -227,23 +236,23 @@ class ViewCombate:
 
     def escolher_alvos(self, nome_jogador: str, turno: int, estatisticas_poder: dict, alvos_disponiveis: list[str],
                        alvos_maximos: int, vida_mana_alvos: list[dict], is_jogador_alvo: bool):
-        layout = self._mostrar_turno(nome_jogador, turno, True, 39)
+        layout = self._mostrar_turno(nome_jogador, turno, True, 52)
 
         efeito = "acertar" if estatisticas_poder['ataque'] else "curar"
         efeito += " até" if alvos_maximos > 0 else ""
 
         layout += [
             [sg.Text(f"O poder {estatisticas_poder['nome']} pode {efeito} {estatisticas_poder['alvos']} alvos")],
-            [sg.Listbox(alvos_disponiveis, size=(15, len(alvos_disponiveis)), no_scrollbar=True,
+            [sg.Listbox(alvos_disponiveis, size=(13, len(alvos_disponiveis)), no_scrollbar=True,
                         key=MenuCombate.SELECIONAR_ALVOS, enable_events=True,
                         select_mode=sg.LISTBOX_SELECT_MODE_MULTIPLE),
-             sg.Column(self._vida_mana_geral(vida_mana_alvos, is_jogador_alvo), key=MenuCombate.ESTATISTICAS_ALVO,
+             sg.Column(self._vida_mana_geral(vida_mana_alvos, is_jogador_alvo, 30), key=MenuCombate.ESTATISTICAS_ALVO,
                        background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
 
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
@@ -284,18 +293,16 @@ class ViewCombate:
         ]
 
         for index, resultado in enumerate(resultados):
-            column = [[sg.Text(f"Alvo {index + 1}: {nomes_alvos[index]}", background_color=sg.theme_button_color()[1])]]
-            row = []
+            column = [[sg.Text(f"Alvo {index + 1}: {nomes_alvos[index]}", background_color=sg.theme_button_color()[1],
+                               size=(55, 1))]]
             if resultado.get('dado'):
-                row.append(
-                    sg.Text(f"{resultado['dado']}", background_color=sg.theme_button_color()[1], size=(25, 1))
+                column.append(
+                    [sg.Text(f"{resultado['dado']}", background_color=sg.theme_button_color()[1], size=(25, 1))]
                 )
 
-            row.append(
-                sg.Text(f"{resultado['mensagem']}", background_color=sg.theme_button_color()[1])
+            column.append(
+                [sg.Text(f"{resultado['mensagem']}", background_color=sg.theme_button_color()[1])]
             )
-
-            column.append(row)
 
             if resultado.get('desmaiado'):
                 column.append(
@@ -303,15 +310,21 @@ class ViewCombate:
                 )
             layout += [[sg.Column(column, background_color=sg.theme_button_color()[1])]]
 
-        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True)
-        column_npc = self._vida_mana_geral(vida_mana_npcs, False)
+        tamanho_jogadores = len(vida_mana_jogadores)
+        tamanho_npcs = len(vida_mana_npcs)
+        tamanho = tamanho_jogadores if tamanho_jogadores >= tamanho_npcs else tamanho_npcs
+
+        tamanho += 1
+
+        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
+        column_npc = self._vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
         layout += [[sg.Column(column_jogador, background_color=sg.theme_button_color()[1]),
                     sg.Column(column_npc, background_color=sg.theme_button_color()[1])],
                    [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
                     sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
                    ]
 
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
@@ -335,8 +348,14 @@ class ViewCombate:
         :param vida_mana_jogadores: Lista de dicionários com o estado de cada jogador
         :param vida_mana_npcs: Lista de dicionários com o estado de cada npc
         """
-        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True)
-        column_npc = self._vida_mana_geral(vida_mana_npcs, False)
+        tamanho_jogadores = len(vida_mana_jogadores)
+        tamanho_npcs = len(vida_mana_npcs)
+        tamanho = tamanho_jogadores if tamanho_jogadores >= tamanho_npcs else tamanho_npcs
+
+        tamanho += 1
+
+        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
+        column_npc = self._vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
 
         layout = [
             [sg.Text("STATUS BATALHA")],
@@ -344,7 +363,7 @@ class ViewCombate:
              sg.Column(column_npc, background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
@@ -366,7 +385,7 @@ class ViewCombate:
             [sg.Button("Continuar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
 
-        self.window = sg.Window("VITÓRIA", layout)
+        self.window = sg.Window("VITÓRIA", layout, element_justification='center')
 
         try:
             while True:
@@ -390,7 +409,7 @@ class ViewCombate:
             [sg.Button("Continuar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
 
-        self.window = sg.Window("VITÓRIA", layout)
+        self.window = sg.Window("VITÓRIA", layout, element_justification='center')
 
         try:
             while True:
@@ -412,7 +431,8 @@ class ViewCombate:
         """
         layout = [
             [sg.Column([
-                [sg.Text(f"Atributos de {jogador_dict['nome']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Atributos de {jogador_dict['nome']}", background_color=sg.theme_button_color()[1],
+                         size=(26, None), justification="center")],
                 [sg.Text(f"Vida: {jogador_dict['vida_atual']}/{classe_dict['vida']}",
                          background_color=sg.theme_button_color()[1])],
                 [sg.Text(f"Mana: {jogador_dict['mana_atual']}/{classe_dict['mana']}",
@@ -423,7 +443,7 @@ class ViewCombate:
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
 
-        self._window = sg.Window("COMBATE", layout)
+        self._window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:

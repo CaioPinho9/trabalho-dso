@@ -14,31 +14,31 @@ class ViewMenu:
         layout = []
         if combates_vencidos >= 0:
             layout.append(
-                [sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(26, 2), enable_events=True)])
+                [sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(52, 2), enable_events=True)])
         if combates_vencidos >= 1:
             layout.append(
-                [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(26, 2), enable_events=True)])
+                [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(52, 2), enable_events=True)])
         if combates_vencidos >= 2:
             layout.append(
-                [sg.Button("Combate FINAL", key=MenuInicial.ULTIMO_COMBATE, size=(26, 2), enable_events=True)])
+                [sg.Button("Combate FINAL", key=MenuInicial.ULTIMO_COMBATE, size=(52, 2), enable_events=True)])
         return layout
 
     def menu_inicial(self, combates_vencidos):
         layout = [
             [sg.Text("Bem vindo ao RPG (Real Programmed Game), você será um grande herói ou um grande fracassado?")],
             [sg.Text("Esse é um jogo que você precisará de muita habilidade (e sorte) para vencer os 3 combates")],
-            [sg.Button("Criar grupo de personagens", key=MenuInicial.CRIAR_GRUPO, size=(26, 2), enable_events=True)],
-            [sg.Button("Mostrar grupo de personagens", key=MenuInicial.MOSTRAR_GRUPO, size=(26, 2),
+            [sg.Button("Criar grupo de personagens", key=MenuInicial.CRIAR_GRUPO, size=(52, 2), enable_events=True)],
+            [sg.Button("Mostrar grupo de personagens", key=MenuInicial.MOSTRAR_GRUPO, size=(52, 2),
                        enable_events=True)],
-            [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(26, 2),
+            [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(52, 2),
                        enable_events=True)],
-            [self._combates(combates_vencidos)],
-            [sg.Button("Resetar", key=MenuInicial.RESETAR_DATABASE, size=(26, 2),
+            self._combates(combates_vencidos),
+            [sg.Button("Resetar", key=MenuInicial.RESETAR_DATABASE, size=(52, 2),
                        enable_events=True)],
-            [sg.Button("Sair", key=MenuInicial.SAIR, size=(13, 2))]
+            [sg.Button("Sair", key=MenuInicial.SAIR, size=(26, 2))]
         ]
 
-        self.__window = sg.Window("MENU INICIAL", layout)
+        self.__window = sg.Window("MENU INICIAL", layout, element_justification='center')
 
         escolha = None
 
@@ -108,7 +108,7 @@ class ViewMenu:
         layout.append(columns)
         layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
 
-        self.__window = sg.Window("GRUPO", layout)
+        self.__window = sg.Window("GRUPO", layout, element_justification='center')
         try:
             while True:
                 event, valores = self.__window.read()
@@ -127,7 +127,7 @@ class ViewMenu:
             [sg.Button("Continuar", key=MenuInicial.SAIR, size=(13, 2))]
         ]
 
-        self.__window = sg.Window("DESISTIR", layout)
+        self.__window = sg.Window("DESISTIR", layout, element_justification='center')
         try:
             while True:
                 event, valores = self.__window.read()
@@ -162,7 +162,7 @@ class ViewMenu:
 
         layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
 
-        self.__window = sg.Window("ESTATISTICAS", layout)
+        self.__window = sg.Window("ESTATISTICAS", layout, element_justification='center')
 
         try:
             while True:
@@ -183,7 +183,7 @@ class ViewMenu:
              sg.Button("Confirmar", key=MenuInicial.RESETAR_DATABASE, size=(13, 2))]
         ]
 
-        self.__window = sg.Window("RESETAR", layout)
+        self.__window = sg.Window("RESETAR", layout, element_justification='center')
 
         try:
             while True:

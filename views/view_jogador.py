@@ -28,16 +28,16 @@ class ViewJogador:
              sg.Combo(nomes_classes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=nomes_classes[0],
                       enable_events=True, readonly=True)],
             [sg.Text(self._controller_classe.estatisticas_string(nomes_classes[0]),
-                     key=MenuCriacao.ESTATISTICAS_CLASSE)],
+                     key=MenuCriacao.ESTATISTICAS_CLASSE, background_color=sg.theme_button_color()[1]),
+             sg.Text(self._controller_poder.estatisticas(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+                     size=(20, 5), background_color=sg.theme_button_color()[1])],
             [sg.Text(f"Escolha 3 poderes:")],
             [sg.Listbox(values=nome_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=nome_poderes[0]),
-             sg.Text(self._controller_poder.estatisticas(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
-                     size=(20, 5)),
+             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
+                        [sg.Button("<--\nRemover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))]]),
              sg.Listbox(values=[], size=(26, tamanho_escolha), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
-             sg.Button("Remover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))
              ],
-            [sg.Button("Escolher", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
             [sg.Button("Voltar", key=MenuCriacao.SAIR, size=(13, 2)),
              sg.Button("Criar Jogador", key=MenuCriacao.CRIAR, size=(13, 2))]
         ]
