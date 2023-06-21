@@ -76,9 +76,16 @@ class ViewJogador:
         classe = valores[MenuCriacao.SELECIONAR_CLASSE]
         poderes = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
+        # Testa se esse nome já está sendo utilizado
+        try:
+            get_personagem(nome)
+            existe = True
+        except exceptions.NaoEncontradoException:
+            existe = False
+
         if not nome:
             sg.popup_error("Escolha um nome para o personagem.")
-        elif get_personagem(nome):
+        elif existe:
             sg.popup_error("Esse nome já está sendo utilizado.")
         elif len(poderes) != tamanho_escolha:
             sg.popup_error(f"Escolha {tamanho_escolha} poderes.")
