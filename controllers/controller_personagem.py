@@ -26,7 +26,7 @@ class ControllerPersonagem(ABC):
         pass
 
     @abstractmethod
-    def get_com_nome(self, nome: str):
+    def get_personagem(self, nome: str):
         """
         Obtém um personagem da lista de personagens.
 
@@ -34,7 +34,7 @@ class ControllerPersonagem(ABC):
         nome (str): nome do Personagem a ser encontrado.
 
         Retorno:
-        Personagem: objeto Personagem com o mesmo nome, caso encontrado; ou None, caso não encontrado.
+        Personagem: objeto Personagem com o mesmo nome, caso encontrado;
         """
         pass
 

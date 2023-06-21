@@ -42,7 +42,7 @@ class ControllerNpc(ControllerPersonagem):
             npc.restaurar_personagem()
             self.__npc_dao.update(npc)
 
-    def get_com_nome(self, nome: str):
+    def get_personagem(self, nome: str):
         """
         Encontra um npc pelo nome
         :param nome: nome do npc para encontrar

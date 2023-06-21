@@ -1,10 +1,11 @@
+from dao.poder_dao import PoderDAO
 from exceptions import exceptions
 from models.poder import Poder
 
 
 class ControllerPoder:
     def __init__(self):
-        self.__poderes = []
+        self.__poder_dao = PoderDAO()
 
     def cadastrar_poder(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool, nivel: int):
         """
@@ -21,10 +22,7 @@ class ControllerPoder:
         """
         poder = Poder(nome, acerto, dano, mana_gasta, alvos, ataque, nivel)
 
-        if self.get_poder(poder.nome):
-            raise exceptions.DuplicadoException('Não foi possivel criar o poder pois ja existe um com o mesmo nome')
-
-        self.__poderes.append(poder)
+        self.__poder_dao.add(poder)
 
         return poder
 
@@ -35,11 +33,8 @@ class ControllerPoder:
         :raise NaoEncontradoException: caso não exista um objeto Poder com o nome passado na lista de poderes.
         :return: True
         """
-        poder = self.get_poder(nome)
-        if not poder:
-            raise exceptions.NaoEncontradoException("O poder não foi encontrado.")
 
-        self.__poderes.remove(poder)
+        self.__poder_dao.remove(nome)
 
         return True
 
@@ -49,14 +44,11 @@ class ControllerPoder:
         :param nome: (str) nome do objeto Poder a ser encontrado.
         :return: Poder: objeto Poder com o mesmo nome, caso encontrado; ou None, caso não encontrado.
         """
-        for poder in self.__poderes:
-            if poder.nome == nome:
-                return poder
-        return None
+        return self.__poder_dao.get(nome)
 
     @property
     def poderes(self):
-        return self.__poderes
+        return self.__poder_dao.get_all()
 
     def get_poderes_por_nivel(self, nivel):
         """
@@ -65,7 +57,7 @@ class ControllerPoder:
         :return: lista de poderes do nivel pedido
         """
         poderes = []
-        for poder in self.__poderes:
+        for poder in self.__poder_dao.get_all():
             if poder.nivel == nivel:
                 poderes.append(poder)
         return poderes
@@ -77,7 +69,7 @@ class ControllerPoder:
         :return: lista de poderes do nivel pedido
         """
         poderes = []
-        for poder in self.__poderes:
+        for poder in self.__poder_dao.get_all():
             if 0 < poder.nivel <= nivel:
                 poderes.append(poder)
         return poderes
@@ -121,3 +113,6 @@ class ControllerPoder:
         layout += f"Mana: {poder.mana_gasta}\n"
         layout += f"Acerta {poder.alvos} {'alvo' if poder.alvos == 1 else 'alvos'}"
         return layout
+
+    def remover_all(self):
+        self.__poder_dao.clear_file()

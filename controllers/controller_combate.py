@@ -19,38 +19,38 @@ from views.view_combate import ViewCombate
 
 
 class ControllerCombate:
-    def __init__(self, controller_jogador: ControllerJogador,
-                 controller_npc: ControllerNpc, controller_poder: ControllerPoder, controller_classe: ControllerClasse):
-        self._combates = []
-        self._controller_jogador = controller_jogador
-        self._controller_npc = controller_npc
-        self._controller_poder = controller_poder
-        self._controller_classe = controller_classe
-        self._view_combate = ViewCombate(controller_poder)
-        self._combate_atual = None
-        self._combate_dao = CombateDAO()
+    def __init__(self, controller_jogador: ControllerJogador, controller_npc: ControllerNpc,
+                 controller_poder: ControllerPoder, controller_classe: ControllerClasse):
+        self.__controller_jogador = controller_jogador
+        self.__controller_npc = controller_npc
+        self.__controller_poder = controller_poder
+        self.__controller_classe = controller_classe
+        self.__view_combate = ViewCombate(controller_poder)
+        self.__combate_atual = None
+        self.__combate_dao = CombateDAO()
 
     def cadastrar_combate(self, npcs: list[Npc]):
         """Cria um novo combate"""
-        combate = Combate(self._combate_dao.get_next_index(), npcs)
+        combate = Combate(self.__combate_dao.get_next_index(), npcs)
 
-        self._combate_dao.add(combate)
+        self.__combate_dao.add(combate)
 
     def get_combate(self, codigo: int):
         """Retorna um combate especifico"""
-        return self._combate_dao.get(codigo)
+        return self.__combate_dao.get(codigo)
 
-    def get_all(self):
-        return self._combate_dao.get_all()
+    @property
+    def combates(self):
+        return self.__combate_dao.get_all()
 
     def remover_combate(self, codigo: int):
         """Retorna um combate especifico"""
-        self._combate_dao.remove(codigo)
+        self.__combate_dao.remove(codigo)
 
     def resetar_combate(self):
-        self._controller_jogador.restaurar_vida_mana()
-        self._controller_npc.restaurar_vida_mana()
-        self._combate_atual.contador_turno = 1
+        self.__controller_jogador.restaurar_vida_mana()
+        self.__controller_npc.restaurar_vida_mana()
+        self.__combate_atual.contador_turno = 1
 
     def iniciar_combate(self, codigo: int):
         """
@@ -63,76 +63,76 @@ class ControllerCombate:
         :param codigo: Combate que será jogado
         :return: True se os jogadores vencerem
         """
-        self._combate_atual = self.get_combate(codigo)
+        self.__combate_atual = self.get_combate(codigo)
 
-        self._combate_atual.jogadores = self._controller_jogador.personagens
+        self.__combate_atual.jogadores = self.__controller_jogador.personagens
 
-        jogadores = self._combate_atual.jogadores
-        npcs = self._combate_atual.npcs
+        jogadores = self.__combate_atual.jogadores
+        npcs = self.__combate_atual.npcs
 
         # Recebe os nomes de todos os jogadores e npcs separadamente
-        nomes_jogadores = self._controller_jogador.nomes(jogadores)
-        nomes_npcs = self._controller_npc.nomes(npcs)
+        nomes_jogadores = self.__controller_jogador.nomes(jogadores)
+        nomes_npcs = self.__controller_npc.nomes(npcs)
 
         # Introduz ao jogador quem está participando
-        self._view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
+        self.__view_combate.iniciar_combate(nomes_jogadores, nomes_npcs)
 
         # Decide qual a ordem de ação de acordo com um fator aleatório somado com o atributo do personagem
         # Mostra a tela com a ordem
-        self._ordernar_batalha()
+        self.__ordernar_batalha()
 
         # Proximo da lista de batalha
-        proximo_personagem = self._combate_atual.proximo_da_batalha()
+        proximo_personagem = self.__combate_atual.proximo_da_batalha()
 
         while True:
             try:
                 # Método principal de cada turno, telas de escolhas e calculo da combate em geral
-                self._turno(proximo_personagem)
+                self.__turno(proximo_personagem)
 
                 # Testa se a batalha já acabou
-                continuar, vitoria = self._testar_personagens_vivos()
+                continuar, vitoria = self.__testar_personagens_vivos()
                 if not continuar:
                     break
 
                 # Prepara o próximo turno
-                self._combate_atual.contador_turno += 1
-                proximo_personagem = self._combate_atual.proximo_da_batalha()
-                self._combate_dao.update(self._combate_atual)
+                self.__combate_atual.contador_turno += 1
+                proximo_personagem = self.__combate_atual.proximo_da_batalha()
+                self.__combate_dao.update(self.__combate_atual)
 
             except exceptions.VoltarMenu as e:
                 pass
 
         # Garante que a vida e a mana estarão cheias no próximo combate
         self.resetar_combate()
-        self._combate_dao.update(self._combate_atual)
+        self.__combate_dao.update(self.__combate_atual)
 
         if vitoria:
-            self._view_combate.vitoria()
+            self.__view_combate.vitoria()
         else:
-            self._view_combate.derrota()
+            self.__view_combate.derrota()
 
         return vitoria
 
-    def _turno(self, proximo_personagem: Jogador | Npc):
+    def __turno(self, proximo_personagem: Jogador | Npc):
         # Inicia sendo escolhido a ação do jogador
         while True:
             try:
                 is_jogador = isinstance(proximo_personagem, Jogador)
                 if is_jogador:
                     # Jogador escolhe um dos itens do menu
-                    self._escolher_turno_jogador(proximo_personagem, self._combate_atual.contador_turno)
+                    self.__escolher_turno_jogador(proximo_personagem, self.__combate_atual.contador_turno)
 
                 # Personagem escolhe poder e alvos que serão usados nesse turno
-                poder, personagens_alvos = self._escolher_poder_alvos(proximo_personagem)
+                poder, personagens_alvos = self.__escolher_poder_alvos(proximo_personagem)
 
                 is_ataque = poder.ataque
 
                 # Jogadores são alvos se um npc estiver atacando ou um Jogador estiver curando
                 # Npcs são alvos se um jogador estiver atacando ou um Npc estiver curando
                 if (is_jogador and is_ataque) or (not is_jogador and not is_ataque):
-                    nomes_alvos = self._controller_npc.nomes(personagens_alvos)
+                    nomes_alvos = self.__controller_npc.nomes(personagens_alvos)
                 else:
-                    nomes_alvos = self._controller_jogador.nomes(personagens_alvos)
+                    nomes_alvos = self.__controller_jogador.nomes(personagens_alvos)
 
                 break
             except exceptions.Desistir as e:
@@ -141,18 +141,18 @@ class ControllerCombate:
                 pass
 
         # Quando ele escolher um poder o resultado será calculado
-        dano_total, resultados = self._calcular_poder(personagens_alvos, poder)
+        dano_total, resultados = self.__calcular_poder(personagens_alvos, poder)
 
         # Mostra os resultados desse turno na tela
-        self._view_combate.resultado_turno(
+        self.__view_combate.resultado_turno(
             nome_jogador=proximo_personagem.nome,
-            turno=self._combate_atual.contador_turno,
+            turno=self.__combate_atual.contador_turno,
             is_jogador=is_jogador,
             nomes_alvos=nomes_alvos,
             nome_poder=poder.nome,
             resultados=resultados,
-            vida_mana_jogadores=self._controller_jogador.vida_mana_estatisticas(self._combate_atual.jogadores),
-            vida_mana_npcs=self._controller_npc.vida_mana_estatisticas(self._combate_atual.npcs),
+            vida_mana_jogadores=self.__controller_jogador.vida_mana_estatisticas(self.__combate_atual.jogadores),
+            vida_mana_npcs=self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs),
         )
 
         # Armazena os dados de dano ou cura causados pelo jogador nesse turno
@@ -163,18 +163,18 @@ class ControllerCombate:
                 proximo_personagem.causou_cura(abs(dano_total))
         return True
 
-    def _escolher_poder_alvos(self, proximo_personagem: Jogador | Npc):
+    def __escolher_poder_alvos(self, proximo_personagem: Jogador | Npc):
         while True:
             # Poder que será utilizado nesse turno
-            poder: Poder = self._escolher_poder(proximo_personagem)
+            poder: Poder = self.__escolher_poder(proximo_personagem)
             try:
                 # Escolher quem será atingido pelo poder
                 if isinstance(proximo_personagem, Jogador):
                     # Jogadores possuem um menu para escolhar
-                    personagens_alvos: list[Personagem] = self._escolher_alvos(proximo_personagem, poder)
+                    personagens_alvos: list[Personagem] = self.__escolher_alvos(proximo_personagem, poder)
                 else:
                     # Npcs escolhem aleatóriamente
-                    personagens_alvos: list[Personagem] = self._escolher_alvos_aleatorios(poder)
+                    personagens_alvos: list[Personagem] = self.__escolher_alvos_aleatorios(poder)
 
                 # Reduz a mana do jogador
                 proximo_personagem.gastar_mana(poder.mana_gasta)
@@ -183,13 +183,13 @@ class ControllerCombate:
             except exceptions.VoltarMenu as e:
                 pass
 
-    def _ordernar_batalha(self):
+    def __ordernar_batalha(self):
         """
         Cada personagem joga um dado e soma com sua velocidade para decidir quem começa o turno
         Mostra uma tela mostrando os resultados
         """
-        jogadores = self._combate_atual.jogadores
-        npcs = self._combate_atual.npcs
+        jogadores = self.__combate_atual.jogadores
+        npcs = self.__combate_atual.npcs
 
         personagens = [*jogadores, *npcs]
         # Ordem para ordenar os personagens pelo resultado
@@ -220,16 +220,16 @@ class ControllerCombate:
         ordem_batalha = [x[0] for x in ordem_batalha]
 
         # Mostra o resultado final
-        self._view_combate.resultado_ordem_de_batalha(jogadas_resultados,
-                                                      self._controller_jogador.nomes(ordem_batalha))
+        self.__view_combate.resultado_ordem_de_batalha(jogadas_resultados,
+                                                       self.__controller_jogador.nomes(ordem_batalha))
 
         # Armazena o resultado
-        self._combate_atual.ordem_de_batalha = ordem_batalha
-        self._combate_dao.update(self._combate_atual)
+        self.__combate_atual.ordem_de_batalha = ordem_batalha
+        self.__combate_dao.update(self.__combate_atual)
 
         return True
 
-    def _escolher_poder(self, personagem: Jogador | Npc):
+    def __escolher_poder(self, personagem: Jogador | Npc):
         """
         Jogadores podem escolher qual poder usar
         :param personagem: Personagem que fará a acao
@@ -238,15 +238,15 @@ class ControllerCombate:
         if isinstance(personagem, Jogador):
             # Personagem escolhe um dos poderes do menu
             # Mostra ao usuario os poderes de seu personagem
-            nomes_poderes = self._controller_poder.nomes(personagem.poderes_disponiveis)
+            nomes_poderes = self.__controller_poder.nomes(personagem.poderes_disponiveis)
 
             # Jogador escolhe o ataque
-            escolha_poder = self._view_combate.escolher_poder(personagem.nome, self._combate_atual.contador_turno,
-                                                              nomes_poderes,
-                                                              personagem.mana_atual)
+            escolha_poder = self.__view_combate.escolher_poder(personagem.nome, self.__combate_atual.contador_turno,
+                                                               nomes_poderes,
+                                                               personagem.mana_atual)
 
             # Poder escolhido
-            poder = self._controller_poder.get_poder(escolha_poder)
+            poder = self.__controller_poder.get_poder(escolha_poder)
 
         else:
             # Npcs escolhem aleatoriamente um poder que possuem mana suficiente
@@ -254,7 +254,7 @@ class ControllerCombate:
 
         return poder
 
-    def _escolher_turno_jogador(self, jogador: Jogador, turno: int):
+    def __escolher_turno_jogador(self, jogador: Jogador, turno: int):
         """
         Jogadores podem escolher usar um Poder ou ver estatistica de seus personagens
         :param jogador: Jogador que fará a acao
@@ -263,7 +263,7 @@ class ControllerCombate:
 
         # Jogador escolhe entre usar poder ou receber um relatório
         while True:
-            escolha = self._view_combate.escolher_acao(jogador.nome, turno)
+            escolha = self.__view_combate.escolher_acao(jogador.nome, turno)
 
             if escolha == MenuCombate.USAR_PODER:
                 # Usar Poder: continua o fluxo principal
@@ -271,18 +271,18 @@ class ControllerCombate:
 
             elif escolha == MenuCombate.STATUS_BATALHA:
                 # Status Batalha: mostra a vida e mana dos personagens do combate
-                vida_mana_jogadores = self._controller_jogador.vida_mana_estatisticas(
-                    self._combate_atual.jogadores
+                vida_mana_jogadores = self.__controller_jogador.vida_mana_estatisticas(
+                    self.__combate_atual.jogadores
                 )
-                vida_mana_npcs = self._controller_npc.vida_mana_estatisticas(self._combate_atual.npcs)
-                self._view_combate.estatistica_vida_mana_geral(vida_mana_jogadores, vida_mana_npcs)
+                vida_mana_npcs = self.__controller_npc.vida_mana_estatisticas(self.__combate_atual.npcs)
+                self.__view_combate.estatistica_vida_mana_geral(vida_mana_jogadores, vida_mana_npcs)
             elif escolha == MenuCombate.ATRIBUTOS:
                 # Atributos: Mostra a vida e mana de um personagem além de seus atributos de classe
-                vida_mana_jogador = self._controller_jogador.vida_mana_estatisticas([jogador])[0]
-                atributos_classes = self._controller_classe.estatisticas_dict(jogador.classe)
-                self._view_combate.estatistica_jogador(vida_mana_jogador, atributos_classes)
+                vida_mana_jogador = self.__controller_jogador.vida_mana_estatisticas([jogador])[0]
+                atributos_classes = self.__controller_classe.estatisticas_dict(jogador.classe)
+                self.__view_combate.estatistica_jogador(vida_mana_jogador, atributos_classes)
 
-    def _escolher_alvos_aleatorios(self, poder: Poder):
+    def __escolher_alvos_aleatorios(self, poder: Poder):
         """
         Npc escolhem alvos aleatóriamente
         :param poder: Poder que será utilizado contra o jogador alvo
@@ -309,7 +309,7 @@ class ControllerCombate:
 
         return personagens_alvos
 
-    def _escolher_alvos(self, proximo_personagem: Jogador | Npc, poder: Poder):
+    def __escolher_alvos(self, proximo_personagem: Jogador | Npc, poder: Poder):
         """
         Se for um ataque o personaem escolher um numero de inimigos de acordo com a quantidade de alvos do poder
         Sendo cura, pode escolher aliados como alvos
@@ -320,13 +320,13 @@ class ControllerCombate:
         # Seleciona se são aliados ou inimigos os alvos
         if poder.ataque:
             personagens_vivos = self.npcs_vivos()
-            vida_mana_alvos = self._controller_npc.vida_mana_estatisticas(personagens_vivos)
+            vida_mana_alvos = self.__controller_npc.vida_mana_estatisticas(personagens_vivos)
         else:
             personagens_vivos = self.jogadores_vivos()
-            vida_mana_alvos = self._controller_jogador.vida_mana_estatisticas(personagens_vivos)
+            vida_mana_alvos = self.__controller_jogador.vida_mana_estatisticas(personagens_vivos)
 
         # Nomes dos personagens que podem ser alvos
-        alvos_disponiveis = self._controller_jogador.nomes(personagens_vivos)
+        alvos_disponiveis = self.__controller_jogador.nomes(personagens_vivos)
 
         # Numero maximo que o poder podera escolher
         alvos_maximos = poder.alvos
@@ -334,12 +334,12 @@ class ControllerCombate:
             alvos_maximos = len(personagens_vivos)
 
         # Atributos do poder
-        estatisticas_poder = self._controller_poder.estatisticas_dict([poder])[0]
+        estatisticas_poder = self.__controller_poder.estatisticas_dict([poder])[0]
 
         # Escolher alvos
-        nomes_personagens_alvos = self._view_combate.escolher_alvos(
+        nomes_personagens_alvos = self.__view_combate.escolher_alvos(
             nome_jogador=proximo_personagem.nome,
-            turno=self._combate_atual.contador_turno,
+            turno=self.__combate_atual.contador_turno,
             estatisticas_poder=estatisticas_poder,
             alvos_disponiveis=alvos_disponiveis,
             alvos_maximos=alvos_maximos,
@@ -351,14 +351,14 @@ class ControllerCombate:
         personagens_alvos = []
         for nome in nomes_personagens_alvos:
             if poder.ataque:
-                personagem = self._controller_npc.get_com_nome(nome)
+                personagem = self.__controller_npc.get_personagem(nome)
             else:
-                personagem = self._controller_jogador.get_com_nome(nome)
+                personagem = self.__controller_jogador.get_personagem(nome)
             personagens_alvos.append(personagem)
 
         return personagens_alvos
 
-    def _calcular_poder(self, personagens_alvos, poder):
+    def __calcular_poder(self, personagens_alvos, poder):
         """
         Calcula quanto de vida será alterado em cada personagem alvo
         :param personagens_alvos: alvos que serão atingidos
@@ -387,7 +387,7 @@ class ControllerCombate:
 
             # Salva os valores para mostrar na tela
             resultados.append(
-                self._resultado_turno(
+                self.__resultado_turno(
                     nome_poder=poder.nome,
                     ataque=poder.ataque,
                     acerto=poder.acerto,
@@ -411,13 +411,13 @@ class ControllerCombate:
 
         return dano_total, resultados
 
-    def _testar_personagens_vivos(self):
+    def __testar_personagens_vivos(self):
         """
         Testa se ainda tem personagens vivos nos dois grupos
         :return: (continuar os turnos, vitoria ou derrota)
         """
-        jogadores = self._combate_atual.jogadores
-        npcs = self._combate_atual.npcs
+        jogadores = self.__combate_atual.jogadores
+        npcs = self.__combate_atual.npcs
 
         # return Continuar, Vitoria,
         if sum(npc.vida_atual for npc in npcs) == 0:
@@ -433,17 +433,17 @@ class ControllerCombate:
         Npcs que possuem a vida atual acima de 0 ainda estão vivos
         :return: Npcs com vida atual acima de 0
         """
-        return [npc for npc in self._combate_atual.npcs if npc.vida_atual > 0]
+        return [npc for npc in self.__combate_atual.npcs if npc.vida_atual > 0]
 
     def jogadores_vivos(self):
         """
         Jogadores que possuem a vida atual acima de 0 ainda estão vivos
         :return: Jogadores com vida atual acima de 0
         """
-        return [jogador for jogador in self._combate_atual.jogadores if jogador.vida_atual > 0]
+        return [jogador for jogador in self.__combate_atual.jogadores if jogador.vida_atual > 0]
 
     @staticmethod
-    def _resultado_turno(nome_poder, ataque, acerto, dado, valor_final, dano, nome_alvo, defesa_alvo, vida_alvo):
+    def __resultado_turno(nome_poder, ataque, acerto, dado, valor_final, dano, nome_alvo, defesa_alvo, vida_alvo):
         """
         Cria um dicionário com strings de resposta para a tela
         :param nome_poder: Nome do poder utilizado
@@ -481,4 +481,4 @@ class ControllerCombate:
         return resultado
 
     def remover_all(self):
-        self._combate_dao.clear_file()
+        self.__combate_dao.clear_file()

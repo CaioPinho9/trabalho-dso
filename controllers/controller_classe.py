@@ -1,25 +1,23 @@
+from dao.classe_dao import ClasseDAO
 from exceptions import exceptions
 from models.classe import Classe
 
 
 class ControllerClasse:
     def __init__(self):
-        self.__classes = []
+        self.__classe_dao = ClasseDAO()
 
     def cadastrar_classe(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int, nivel: int,
                          tipo: str = None):
         classe = Classe(nome, vida, velocidade, defesa, mana, nivel, tipo)
 
-        if self.get_classe(classe.nome):
-            raise exceptions.DuplicadoException('Não foi possivel criar a classe pois ja existe uma com o mesmo nome')
-
-        self.__classes.append(classe)
+        self.__classe_dao.add(classe)
 
         return True
 
     @property
     def classes(self):
-        return self.__classes
+        return self.__classe_dao.get_all()
 
     def remover_classe(self, nome: str):
         """
@@ -32,7 +30,7 @@ class ControllerClasse:
         if not classe:
             raise exceptions.NaoEncontradoException("A classe não foi encontrada")
 
-        self.__classes.remove(classe)
+        self.__classe_dao.remove(classe)
 
         return True
 
@@ -40,15 +38,12 @@ class ControllerClasse:
         """
         Obtém uma classe da lista de classes.
         :param nome: nome da Classe a ser encontrado.
-        :return: objeto Classe com o mesmo nome, caso encontrado; ou None, caso não encontrado.
+        :return: objeto Classe com o mesmo nome, caso encontrado;
         """
         if not isinstance(nome, str):
             raise TypeError("nome deve ser uma string")
 
-        for classe in self.__classes:
-            if classe.nome == nome:
-                return classe
-        return None
+        return self.__classe_dao.get(nome)
 
     def get_classes_por_nivel(self, nivel: int):
         """
@@ -59,7 +54,7 @@ class ControllerClasse:
         if not isinstance(nivel, int):
             raise TypeError("nivel deve ser um interiro")
         classes = []
-        for classe in self.__classes:
+        for classe in self.__classe_dao.get_all():
             if classe.nivel == nivel:
                 classes.append(classe)
         return classes
@@ -79,7 +74,7 @@ class ControllerClasse:
         if nivel > 3:
             nivel = 3
 
-        for classe in self.__classes:
+        for classe in self.__classe_dao.get_all():
             if classe.nivel == nivel and classe.tipo == tipo:
                 return classe
 
@@ -120,3 +115,6 @@ class ControllerClasse:
         estatisticas = {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
                         "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         return estatisticas
+
+    def remover_all(self):
+        self.__classe_dao.clear_file()

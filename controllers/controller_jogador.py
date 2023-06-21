@@ -72,7 +72,7 @@ class ControllerJogador(ControllerPersonagem):
         while True:
             # Cadastro
             jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes,
-                                                               self.get_com_nome, 3 + (2 * (nivel - 1)))
+                                                               self.get_personagem, 3 + (2 * (nivel - 1)))
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]
@@ -142,7 +142,7 @@ class ControllerJogador(ControllerPersonagem):
             jogador.restaurar_personagem()
             self.__jogador_dao.update(jogador)
 
-    def get_com_nome(self, nome: str):
+    def get_personagem(self, nome: str):
         """
         Encontra um jogador pelo nome
         :param nome: nome do jogador para encontrar
