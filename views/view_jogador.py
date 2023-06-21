@@ -31,7 +31,7 @@ class ViewJogador:
                      key=MenuCriacao.ESTATISTICAS_CLASSE, background_color=sg.theme_button_color()[1]),
              sg.Text(self._controller_poder.estatisticas(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5), background_color=sg.theme_button_color()[1])],
-            [sg.Text(f"Escolha 3 poderes:")],
+            [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nome_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=nome_poderes[0]),
              sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
@@ -97,7 +97,7 @@ class ViewJogador:
             }
             return jogador_dict
 
-    def aumentar_nivel(self, nome_jogador: str, nome_classe_antiga: str, estatisticas_classes_nova: dict,
+    def aumentar_nivel(self, nome_jogador: str, nome_classe_antiga: str, nome_classe_nova: str,
                        nomes_poderes: list[str], nomes_poderes_antigos: list[str]):
         """
         Tela usada para informar que o jogador aumentou de nivel e escolher seus novos poderes
@@ -111,29 +111,22 @@ class ViewJogador:
         tamanho_escolha = len(nomes_poderes_antigos) + 2
 
         aviso_aumentou_nivel = f"O {nome_classe_antiga} {nome_jogador}"
-        aviso_aumentou_nivel += f" conseguiu experiencia nesse combate e agora é um {estatisticas_classes_nova['nome']}"
-
-        estatisticas_column = [
-            [sg.Text(f"Atributos de {nome_jogador}", background_color=sg.theme_button_color()[1])],
-            [sg.Text(f"Vida: {estatisticas_classes_nova['vida']}", background_color=sg.theme_button_color()[1])],
-            [sg.Text(f"Mana: {estatisticas_classes_nova['mana']}", background_color=sg.theme_button_color()[1])],
-            [sg.Text(f"Defesa: {estatisticas_classes_nova['defesa']}", background_color=sg.theme_button_color()[1])],
-            [sg.Text(f"Velocidade: {estatisticas_classes_nova['velocidade']}",
-                     background_color=sg.theme_button_color()[1])],
-        ]
+        aviso_aumentou_nivel += f" conseguiu experiencia nesse combate e agora é um {nome_classe_nova}"
 
         layout = [
             [sg.Text(aviso_aumentou_nivel)],
-            [sg.Column(estatisticas_column, background_color=sg.theme_button_color()[1])],
+            [sg.Text(self._controller_classe.estatisticas_string(nome_classe_nova),
+                     background_color=sg.theme_button_color()[1]),
+             sg.Text(self._controller_poder.estatisticas(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+                     size=(20, 5), background_color=sg.theme_button_color()[1])],
+            [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=nomes_poderes[0]),
-             sg.Text(self._controller_poder.estatisticas(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
-                     size=(20, 5)),
+             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
+                        [sg.Button("<--\nRemover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))]]),
              sg.Listbox(values=nomes_poderes_antigos, size=(26, tamanho_escolha), enable_events=True,
                         key=MenuCriacao.ESCOLHIDOS_PODERES),
-             sg.Button("Remover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))
              ],
-            [sg.Button("Escolher", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
             [sg.Button("Voltar", key=MenuCriacao.SAIR, size=(13, 2)),
              sg.Button("OK", key=MenuCriacao.CONTINUAR, size=(13, 2))]
         ]

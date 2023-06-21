@@ -112,13 +112,10 @@ class ControllerJogador(ControllerPersonagem):
             # Soco é um poder obrigatório
             nomes_poderes_antigos.remove("Soco")
 
-            # Atributos da classe nova
-            estatisticas_classes_nova = self.__controller_classe.estatisticas_dict(jogador.classe)
-
             # Tela mostra que passou de nivel e escolhe os poderes
             poderes_escolhidos = self.__view_jogador.aumentar_nivel(jogador.nome,
                                                                     classe_antiga.nome,
-                                                                    estatisticas_classes_nova,
+                                                                    jogador.classe.nome,
                                                                     nomes_poderes,
                                                                     nomes_poderes_antigos)
 
