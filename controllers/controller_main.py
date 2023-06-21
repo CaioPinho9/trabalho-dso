@@ -171,8 +171,16 @@ class ControllerMain:
 
                 elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
+                    estatisticas_classes = []
+                    nomes_poderes_personagens = []
+                    for jogador in self.__controller_jogador.personagens:
+                        estatisticas_classes.append(self.__controller_classe.estatisticas_dict(jogador.classe))
+                        nomes_poderes_personagens.append(self.__controller_poder.nomes(jogador.poderes))
+
                     self.__view_menu.grupo(
                         self.__controller_jogador.nomes(self.__controller_jogador.personagens),
+                        estatisticas_classes,
+                        nomes_poderes_personagens,
                         combates_vencidos + 1
                     )
 

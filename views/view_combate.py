@@ -411,13 +411,18 @@ class ViewCombate:
         :param classe_dict: Atributos de classe do jogador
         """
         layout = [
-            [sg.Text(f"Atributos de {jogador_dict['nome']}")],
-            [sg.Text(f"Vida: {jogador_dict['vida_atual']}/{classe_dict['vida']}")],
-            [sg.Text(f"Mana: {jogador_dict['mana_atual']}/{classe_dict['mana']}")],
-            [sg.Text(f"Defesa: {classe_dict['defesa']}")],
-            [sg.Text(f"Velocidade: {classe_dict['velocidade']}")],
+            [sg.Column([
+                [sg.Text(f"Atributos de {jogador_dict['nome']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Vida: {jogador_dict['vida_atual']}/{classe_dict['vida']}",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Mana: {jogador_dict['mana_atual']}/{classe_dict['mana']}",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Defesa: {classe_dict['defesa']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Velocidade: {classe_dict['velocidade']}", background_color=sg.theme_button_color()[1])]
+            ], background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
+
         self._window = sg.Window("COMBATE", layout)
 
         try:

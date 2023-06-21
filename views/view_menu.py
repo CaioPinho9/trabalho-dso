@@ -7,7 +7,7 @@ from utils.utils import Utils
 
 class ViewMenu:
     def __init__(self):
-        self.window = None
+        self.__window = None
 
     @staticmethod
     def _combates(combates_vencidos):
@@ -32,19 +32,19 @@ class ViewMenu:
                        enable_events=True)],
             [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(26, 2),
                        enable_events=True)],
+            [self._combates(combates_vencidos)],
             [sg.Button("Resetar", key=MenuInicial.RESETAR_DATABASE, size=(26, 2),
                        enable_events=True)],
-            [self._combates(combates_vencidos)],
             [sg.Button("Sair", key=MenuInicial.SAIR, size=(13, 2))]
         ]
 
-        self.window = sg.Window("MENU INICIAL", layout)
+        self.__window = sg.Window("MENU INICIAL", layout)
 
         escolha = None
 
         try:
             while True:
-                event, valores = self.window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                     raise exceptions.FecharPrograma("Fechar o app")
@@ -53,7 +53,7 @@ class ViewMenu:
                     return event
 
         finally:
-            self.window.close()
+            self.__window.close()
 
     def sair(self):
         layout = [
@@ -61,30 +61,57 @@ class ViewMenu:
             [sg.Text("Trabalho Nota 10")]
         ]
 
-        self.window = sg.Window("", layout)
+        self.__window = sg.Window("", layout)
 
         while True:
-            event, valores = self.window.read()
+            event, valores = self.__window.read()
 
             if event == sg.WINDOW_CLOSED or event == MenuInicial.SAIR:
                 break
 
-        self.window.close()
+        self.__window.close()
 
-    def grupo(self, nomes_jogadores, nivel):
+    def grupo(self, nomes_personagens: list[str], estatisticas_classes: list[dict],
+              nomes_poderes_personagens: list[list[str]], nivel: int):
+        """
+        Mostra os Jogadores existentes e seus atributos e poderes
+        :param nomes_personagens: Lista com o nome dos jogadores
+        :param estatisticas_classes: Lista com os atributos de cada classe
+        :param nomes_poderes_personagens: Lista com o nome dos poderes de cada jogador
+        :param nivel: Nivel de todos os personagens
+        :return:
+        """
         layout = [
             [sg.Text("O grupo é formado por:")]
         ]
 
-        for nome in nomes_jogadores:
-            layout.append([sg.Text(f"{nome}, o {Utils.adjetivo(nivel)}")])
+        columns = []
+        for index, nome_personagem in enumerate(nomes_personagens):
+            estatisticas_classe = estatisticas_classes[index]
+            nomes_poderes = nomes_poderes_personagens[index]
+            column = [
+                [sg.Text(f"{nome_personagem}, o {Utils.adjetivo(nivel)}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"{estatisticas_classe['nome']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Vida: {estatisticas_classe['vida']}",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Mana: {estatisticas_classe['mana']}",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Defesa: {estatisticas_classe['defesa']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Velocidade: {estatisticas_classe['velocidade']}",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Text("Poderes:",
+                         background_color=sg.theme_button_color()[1])],
+                [sg.Listbox(nomes_poderes, disabled=True, no_scrollbar=True, size=(23, len(nomes_poderes)))]
+            ]
+            columns.append(sg.Column(column, background_color=sg.theme_button_color()[1]))
 
+        layout.append(columns)
         layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
 
-        self.window = sg.Window("GRUPO", layout)
+        self.__window = sg.Window("GRUPO", layout)
         try:
             while True:
-                event, valores = self.window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -92,7 +119,7 @@ class ViewMenu:
                 if event == MenuInicial.SAIR:
                     raise exceptions.VoltarMenu("Voltar")
         finally:
-            self.window.close()
+            self.__window.close()
 
     def desistir(self):
         layout = [
@@ -100,10 +127,10 @@ class ViewMenu:
             [sg.Button("Continuar", key=MenuInicial.SAIR, size=(13, 2))]
         ]
 
-        self.window = sg.Window("DESISTIR", layout)
+        self.__window = sg.Window("DESISTIR", layout)
         try:
             while True:
-                event, valores = self.window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -111,7 +138,7 @@ class ViewMenu:
                 if event == MenuInicial.SAIR:
                     return True
         finally:
-            self.window.close()
+            self.__window.close()
 
     def estatisticas(self, estatisticas_jogadores):
         layout = [
@@ -135,11 +162,11 @@ class ViewMenu:
 
         layout.append([sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2))])
 
-        self.window = sg.Window("ESTATISTICAS", layout)
+        self.__window = sg.Window("ESTATISTICAS", layout)
 
         try:
             while True:
-                event, valores = self.window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -147,7 +174,7 @@ class ViewMenu:
                 if event == MenuInicial.SAIR:
                     raise exceptions.VoltarMenu("Voltar")
         finally:
-            self.window.close()
+            self.__window.close()
 
     def resetar_database(self):
         layout = [
@@ -156,11 +183,11 @@ class ViewMenu:
              sg.Button("Confirmar", key=MenuInicial.RESETAR_DATABASE, size=(13, 2))]
         ]
 
-        self.window = sg.Window("RESETAR", layout)
+        self.__window = sg.Window("RESETAR", layout)
 
         try:
             while True:
-                event, valores = self.window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -172,4 +199,4 @@ class ViewMenu:
                     return True
 
         finally:
-            self.window.close()
+            self.__window.close()
