@@ -121,25 +121,6 @@ class ViewMenu:
         finally:
             self.__window.close()
 
-    def desistir(self):
-        layout = [
-            [sg.Text("O grupo fugiu da luta. GAME OVER.")],
-            [sg.Button("Continuar", key=MenuInicial.SAIR, size=(13, 2))]
-        ]
-
-        self.__window = sg.Window("DESISTIR", layout, element_justification='center')
-        try:
-            while True:
-                event, valores = self.__window.read()
-
-                if event == sg.WINDOW_CLOSED:
-                    raise exceptions.FecharPrograma("Fechar")
-
-                if event == MenuInicial.SAIR:
-                    return True
-        finally:
-            self.__window.close()
-
     def estatisticas(self, estatisticas_jogadores):
         layout = [
             [sg.Text("O grupo possui as seguintes estátisticas:")],

@@ -135,7 +135,7 @@ class ControllerCombate:
                     nomes_alvos = self.__controller_jogador.nomes(personagens_alvos)
 
                 break
-            except exceptions.Desistir as e:
+            except exceptions.SairCombate as e:
                 raise e
             except exceptions.VoltarMenu as e:
                 pass

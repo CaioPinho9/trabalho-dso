@@ -211,8 +211,8 @@ class ControllerMain:
                         self.__controller_jogador.aumentar_nivel()
             except exceptions.FecharPrograma as e:
                 break
-            except exceptions.Desistir as e:
-                self.__view_menu.desistir()
+            except exceptions.SairCombate as e:
+                pass
             except exceptions.VoltarMenu as e:
                 pass
             except Exception as e:

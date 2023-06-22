@@ -74,7 +74,7 @@ class ViewCombate:
             [sg.Listbox(nomes_jogadores, size=(15, tamanho), disabled=True, no_scrollbar=True),
              sg.Text("vs"),
              sg.Listbox(nomes_npcs, size=(15, tamanho), disabled=True, no_scrollbar=True)],
-            [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
+            [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
         self._window = sg.Window("COMBATE", layout, element_justification='center')
@@ -87,7 +87,7 @@ class ViewCombate:
                     exceptions.FecharPrograma("Fechar")
 
                 if event == MenuCombate.SAIR:
-                    raise exceptions.Desistir("Voltar para o menu")
+                    raise exceptions.SairCombate("Voltar para o menu")
 
                 if event == MenuCombate.CONTINUAR:
                     return True
@@ -125,7 +125,7 @@ class ViewCombate:
             [sg.Text(self._resultado_velocidade(jogadas_resultados), background_color=sg.theme_button_color()[1])],
             [sg.Text("A ordem de batalha será:")],
             [sg.Listbox(nomes_ordem, size=(None, len(nomes_ordem)), disabled=True, no_scrollbar=True, expand_x=True)],
-            [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
+            [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
         self._window = sg.Window("COMBATE", layout, element_justification='center')
@@ -138,7 +138,7 @@ class ViewCombate:
                     raise exceptions.FecharPrograma("Fechar")
 
                 if event == MenuCombate.SAIR:
-                    raise exceptions.Desistir("Volte para o menu")
+                    raise exceptions.SairCombate("Volte para o menu")
 
                 if event == MenuCombate.CONTINUAR:
                     return True
@@ -159,7 +159,7 @@ class ViewCombate:
             [sg.Button("Usar Poder", size=(26, 2), key=MenuCombate.USAR_PODER)],
             [sg.Button("Status Batalha", size=(26, 2), key=MenuCombate.STATUS_BATALHA)],
             [sg.Button("Atributos", size=(26, 2), key=MenuCombate.ATRIBUTOS)],
-            [sg.Button("Desistir", size=(13, 2), key=MenuCombate.SAIR)]
+            [sg.Button("Sair", size=(13, 2), key=MenuCombate.SAIR)]
         ]
         self._window = sg.Window("COMBATE", layout, element_justification='center')
 
@@ -171,7 +171,7 @@ class ViewCombate:
                     raise exceptions.FecharPrograma("Fechar")
 
                 if event == MenuCombate.SAIR:
-                    raise exceptions.Desistir("Voltar para o menu")
+                    raise exceptions.SairCombate("Voltar para o menu")
 
                 if event == MenuCombate.USAR_PODER:
                     return event
@@ -201,7 +201,7 @@ class ViewCombate:
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCombate.SELECIONAR_PODER,
                         default_values=nomes_poderes[0]),
              sg.Text(self._controller_poder.estatisticas(nomes_poderes[0]), key=MenuCombate.ESTATISTICAS_PODER,
-                     size=(21, 5)),
+                     size=(21, 5), background_color=sg.theme_button_color()[1]),
              sg.Column([[sg.Button("Usar", key=MenuCombate.CONTINUAR, size=(13, 2))],
                         [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]])]
         ]
@@ -321,7 +321,7 @@ class ViewCombate:
         column_npc = self._vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
         layout += [[sg.Column(column_jogador, background_color=sg.theme_button_color()[1]),
                     sg.Column(column_npc, background_color=sg.theme_button_color()[1])],
-                   [sg.Button("Desistir", key=MenuCombate.SAIR, size=(13, 2)),
+                   [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
                     sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
                    ]
 
@@ -335,7 +335,7 @@ class ViewCombate:
                     raise exceptions.FecharPrograma("Fechar")
 
                 if event == MenuCombate.SAIR:
-                    raise exceptions.Desistir("Volte para o menu")
+                    raise exceptions.SairCombate("Volte para o menu")
 
                 if event == MenuCombate.CONTINUAR:
                     return True

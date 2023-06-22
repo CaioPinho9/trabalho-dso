@@ -10,7 +10,7 @@ class VoltarMenu(Exception):
     pass
 
 
-class Desistir(Exception):
+class SairCombate(Exception):
     pass
 
 
