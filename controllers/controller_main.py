@@ -156,8 +156,8 @@ class ControllerMain:
             self.__criar_personagens()
 
     def main(self):
-        nivel = self.__controller_jogador.personagens[0].classe.nivel
         while True:
+            nivel = self.__controller_jogador.personagens[0].classe.nivel
             try:
                 # Display menu
                 escolha = self.__view_menu.menu_inicial(nivel)
