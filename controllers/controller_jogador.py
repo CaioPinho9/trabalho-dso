@@ -1,16 +1,11 @@
-import os
-import random
-import time
-
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_personagem import ControllerPersonagem
 from controllers.controller_poder import ControllerPoder
 from dao.jogador_dao import JogadorDAO
-from exceptions import exceptions
 from models.classe import Classe
 from models.jogador import Jogador
 from models.poder import Poder
-from utils.utils import Utils
+
 from views.view_jogador import ViewJogador
 
 

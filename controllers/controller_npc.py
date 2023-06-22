@@ -1,10 +1,7 @@
 from controllers.controller_personagem import ControllerPersonagem
 from dao.npc_dao import NpcDAO
-from exceptions import exceptions
-from exceptions.exceptions import DuplicadoException
 from models.classe import Classe
 from models.npc import Npc
-from models.poder import Poder
 
 
 class ControllerNpc(ControllerPersonagem):

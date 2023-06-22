@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 
-from exceptions.exceptions import NaoEncontradoException
 from models.classe import Classe
 from models.personagem import Personagem
-from models.poder import Poder
 
 
 class ControllerPersonagem(ABC):

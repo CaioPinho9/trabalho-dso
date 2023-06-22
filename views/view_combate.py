@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 
 from exceptions import exceptions
 from utils.opcoes_menus import MenuCombate
-from utils.utils import Utils
+from utils.utils import list_to_string
 
 
 class ViewCombate:
@@ -290,7 +290,7 @@ class ViewCombate:
         layout = self._mostrar_turno(nome_jogador, turno, is_jogador)
 
         layout += [
-            [sg.Text(f"O Poder {nome_poder} será usado em {Utils.list_to_string(nomes_alvos)}")],
+            [sg.Text(f"O Poder {nome_poder} será usado em {list_to_string(nomes_alvos)}")],
         ]
 
         for index, resultado in enumerate(resultados):

@@ -1,6 +1,4 @@
-import os
 import random
-import time
 
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_jogador import ControllerJogador
@@ -14,7 +12,7 @@ from models.npc import Npc
 from models.personagem import Personagem
 from models.poder import Poder
 from utils.opcoes_menus import MenuCombate
-from utils.utils import Utils
+
 from views.view_combate import ViewCombate
 
 

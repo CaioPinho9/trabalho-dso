@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 
 from exceptions import exceptions
 from utils.opcoes_menus import MenuInicial
-from utils.utils import Utils
+from utils.utils import adjetivo
 
 
 class ViewMenu:
@@ -90,7 +90,7 @@ class ViewMenu:
             estatisticas_classe = estatisticas_classes[index]
             nomes_poderes = nomes_poderes_personagens[index]
             column = [
-                [sg.Text(f"{nome_personagem}, o {Utils.adjetivo(nivel)}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"{nome_personagem}, o {adjetivo(nivel)}", background_color=sg.theme_button_color()[1])],
                 [sg.Text(f"{estatisticas_classe['nome']}", background_color=sg.theme_button_color()[1])],
                 [sg.Text(f"Vida: {estatisticas_classe['vida']}",
                          background_color=sg.theme_button_color()[1])],

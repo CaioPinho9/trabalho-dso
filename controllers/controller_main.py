@@ -1,6 +1,3 @@
-import os
-import time
-
 from controllers.controller_classe import ControllerClasse
 from controllers.controller_combate import ControllerCombate
 from controllers.controller_jogador import ControllerJogador
@@ -9,7 +6,7 @@ from controllers.controller_poder import ControllerPoder
 from exceptions import exceptions
 from utils.opcoes_menus import MenuInicial
 from utils.setup import setup
-from utils.utils import Utils
+
 from views.view_menu import ViewMenu
 
 

@@ -1,6 +1,5 @@
 from models.personagem import Personagem
 from models.classe import Classe
-from models.poder import Poder
 
 
 class Npc(Personagem):
