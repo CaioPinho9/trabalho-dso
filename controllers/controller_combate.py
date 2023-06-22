@@ -238,7 +238,9 @@ class ControllerCombate:
         if isinstance(personagem, Jogador):
             # Personagem escolhe um dos poderes do menu
             # Mostra ao usuario os poderes de seu personagem
-            nomes_poderes = self.__controller_poder.nomes(personagem.poderes_disponiveis)
+            poderes_disponiveis = personagem.poderes_disponiveis
+            poderes_disponiveis.sort(key=lambda obj: (-obj.nivel, obj.nome))
+            nomes_poderes = self.__controller_poder.nomes(poderes_disponiveis)
 
             # Jogador escolhe o ataque
             escolha_poder = self.__view_combate.escolher_poder(personagem.nome, self.__combate_atual.contador_turno,

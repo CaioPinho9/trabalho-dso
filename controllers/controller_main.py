@@ -156,18 +156,18 @@ class ControllerMain:
             self.__criar_personagens()
 
     def main(self):
-        combates_vencidos = 0
+        nivel = self.__controller_jogador.personagens[0].classe.nivel
         while True:
             try:
                 # Display menu
-                escolha = self.__view_menu.menu_inicial(combates_vencidos)
+                escolha = self.__view_menu.menu_inicial(nivel)
 
                 # O grupo será composto por 3 personagens
                 if escolha == MenuInicial.CRIAR_GRUPO:
                     # Criar grupo de personagens
                     # Grupo possui 3 personagens
                     for index in range(1, 4):
-                        self.__controller_jogador.criar_personagem(index, combates_vencidos)
+                        self.__controller_jogador.criar_personagem(index, nivel)
 
                 elif escolha == MenuInicial.MOSTRAR_GRUPO:
                     # Mostrar grupo atual
@@ -181,7 +181,7 @@ class ControllerMain:
                         self.__controller_jogador.nomes(self.__controller_jogador.personagens),
                         estatisticas_classes,
                         nomes_poderes_personagens,
-                        combates_vencidos + 1
+                        nivel
                     )
 
                 elif escolha == MenuInicial.MOSTRAR_ESTATISTICAS:
@@ -206,8 +206,8 @@ class ControllerMain:
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
 
                     # Vencer o ultimo combate liberado faz o personagem aumentar de nivel
-                    if vitoria and combates_vencidos != 2:
-                        combates_vencidos += 1
+                    if vitoria and nivel != 3:
+                        nivel += 1
                         self.__controller_jogador.aumentar_nivel()
             except exceptions.FecharPrograma as e:
                 break

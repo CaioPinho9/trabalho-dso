@@ -49,17 +49,15 @@ class ControllerJogador(ControllerPersonagem):
 
             self.remover(primeiro_criado.nome)
 
-    def criar_personagem(self, index_personagem: int, combates_vencidos: int):
+    def criar_personagem(self, index_personagem: int, nivel: int):
         """
         Apresenta escolhas para a criação de um personagem
         :param index_personagem: Qual personagem está sendo criado
-        :param combates_vencidos: De acordo com as vitorias é possivel escolher classes mais altas
+        :param nivel: Nivel dos personagens criados
         :return: Jogador criado
         """
-        # Nivel dos personagens criados = combates_vencidos + 1
-        if combates_vencidos > 2:
-            combates_vencidos = 2
-        nivel = combates_vencidos + 1
+        if nivel > 3:
+            nivel = 3
         classes = self.__controller_classe.get_classes_por_nivel(nivel)
         poderes = self.__controller_poder.get_poderes_ate_nivel(nivel)
 
@@ -101,9 +99,11 @@ class ControllerJogador(ControllerPersonagem):
 
             # Poderes novos que podem ser escolhidos
             poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
-            poderes_disponiveis = [poder for poder in poderes_disponiveis if poder not in jogador.poderes]
+            poderes_disponiveis = [
+                poder for poder in poderes_disponiveis
+                if poder.nome not in self.__controller_poder.nomes(jogador.poderes)
+            ]
             poderes_disponiveis.sort(key=lambda obj: (-obj.nivel, obj.nome))
-
             nomes_poderes = self.__controller_poder.nomes(poderes_disponiveis)
 
             # Poderes que o personagem já possui

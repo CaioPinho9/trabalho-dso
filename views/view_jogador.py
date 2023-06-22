@@ -103,7 +103,7 @@ class ViewJogador:
         Tela usada para informar que o jogador aumentou de nivel e escolher seus novos poderes
         :param nome_jogador: nome do jogador
         :param nome_classe_antiga: nome da classe antiga do jogador
-        :param estatisticas_classes_nova: atributos da classe nova
+        :param nome_classe_nova: nome da classe nova do jogador
         :param nomes_poderes: nome dos poderes novos que podem ser selecionados
         :param nomes_poderes_antigos: nome dos poderes que o personagem já possui
         :return: lista com todos os poderes do personagem

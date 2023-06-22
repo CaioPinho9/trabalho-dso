@@ -12,13 +12,13 @@ class ViewMenu:
     @staticmethod
     def _combates(combates_vencidos):
         layout = []
-        if combates_vencidos >= 0:
-            layout.append(
-                [sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(52, 2), enable_events=True)])
         if combates_vencidos >= 1:
             layout.append(
-                [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(52, 2), enable_events=True)])
+                [sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(52, 2), enable_events=True)])
         if combates_vencidos >= 2:
+            layout.append(
+                [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(52, 2), enable_events=True)])
+        if combates_vencidos >= 3:
             layout.append(
                 [sg.Button("Combate FINAL", key=MenuInicial.ULTIMO_COMBATE, size=(52, 2), enable_events=True)])
         return layout
