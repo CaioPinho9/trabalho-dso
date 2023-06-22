@@ -3,15 +3,6 @@ import random
 
 class Utils:
     @staticmethod
-    def check_inteiro_intervalo(valor: int, intervalo: list[int, int]):
-        try:
-            if not intervalo[0] <= int(valor) <= intervalo[1]:
-                raise TypeError("Deve ser um dos números da lista")
-            return True
-        except ValueError:
-            raise TypeError("Precisa ser um inteiro")
-
-    @staticmethod
     def adjetivo(nivel: int):
         if not isinstance(nivel, int):
             raise TypeError("nivel deve ser um inteiro")
@@ -27,7 +18,7 @@ class Utils:
         return random.choice(adjetivos)
 
     @staticmethod
-    def list_to_string(list):
+    def list_to_string(list: list):
         if len(list) <= 1:
             return ''.join(list)
         else:
