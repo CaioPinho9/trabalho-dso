@@ -85,11 +85,7 @@ class ControllerMain:
                     self.recriar_objetos(True)
 
                 elif escolha.value in MenuInicial.COMBATES.value:
-                    combate_numero = 0
-                    for index, value in enumerate(MenuInicial.COMBATES.value):
-                        if escolha.value == value:
-                            combate_numero = index
-                            break
+                    combate_numero = escolha.value
 
                     # Iniciar um combate
                     vitoria = self.__controller_combate.iniciar_combate(combate_numero)
