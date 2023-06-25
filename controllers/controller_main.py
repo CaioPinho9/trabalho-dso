@@ -24,10 +24,10 @@ class ControllerMain:
                                                       self.__controller_poder, self.__controller_classe)
 
     def recriar_objetos(self, resetar=False):
-        inicializado = len(self.__controller_classe.classes) == 0
-        inicializado |= len(self.__controller_poder.poderes) == 0
-        inicializado |= len(self.__controller_combate.combates) == 0
-        inicializado |= len(self.__controller_jogador.personagens) == 0
+        inicializado = len(self.__controller_classe.get_all()) == 0
+        inicializado |= len(self.__controller_poder.get_all()) == 0
+        inicializado |= len(self.__controller_combate.get_all()) == 0
+        inicializado |= len(self.__controller_jogador.get_all()) == 0
 
         if not inicializado and not resetar:
             return
@@ -43,7 +43,7 @@ class ControllerMain:
     def main(self):
         self.recriar_objetos()
         while True:
-            nivel = self.__controller_jogador.personagens[0].classe.nivel
+            nivel = self.__controller_jogador.get_all()[0].classe.nivel
             try:
                 # Display menu
                 escolha = self.__view_menu.menu_inicial(nivel)
@@ -59,12 +59,12 @@ class ControllerMain:
                     # Mostrar grupo atual
                     estatisticas_classes = []
                     nomes_poderes_personagens = []
-                    for jogador in self.__controller_jogador.personagens:
-                        estatisticas_classes.append(self.__controller_classe.estatisticas_dict(jogador.classe))
+                    for jogador in self.__controller_jogador.get_all():
+                        estatisticas_classes.append(self.__controller_classe.estatisticas_dict(jogador.classe.nome))
                         nomes_poderes_personagens.append(self.__controller_poder.nomes(jogador.poderes))
 
                     self.__view_menu.grupo(
-                        self.__controller_jogador.nomes(self.__controller_jogador.personagens),
+                        self.__controller_jogador.nomes(self.__controller_jogador.get_all()),
                         estatisticas_classes,
                         nomes_poderes_personagens,
                         nivel

@@ -4,7 +4,6 @@ from controllers.controller_poder import ControllerPoder
 from dao.jogador_dao import JogadorDAO
 from models.classe import Classe
 from models.jogador import Jogador
-from models.poder import Poder
 
 from views.view_jogador import ViewJogador
 
@@ -29,7 +28,7 @@ class ControllerJogador(ControllerPersonagem):
         """
         if poderes is None:
             poderes = []
-        poderes.insert(0, self.__controller_poder.get_poder("Soco"))
+        poderes.insert(0, self.__controller_poder.get("Soco"))
         jogador = Jogador(nome, classe, self.__jogador_dao.get_next_index(), poderes)
 
         self.__jogador_dao.add(jogador)
@@ -53,8 +52,8 @@ class ControllerJogador(ControllerPersonagem):
         """
         if nivel > 3:
             nivel = 3
-        classes = self.__controller_classe.get_classes_por_nivel(nivel)
-        poderes = self.__controller_poder.get_poderes_ate_nivel(nivel)
+        classes = self.__controller_classe.get_por_nivel(nivel)
+        poderes = self.__controller_poder.get_ate_nivel(nivel)
 
         poderes.sort(key=lambda obj: (-obj.nivel, obj.nome))
 
@@ -64,18 +63,23 @@ class ControllerJogador(ControllerPersonagem):
         jogador = None
         while True:
             # Cadastro
-            jogador_dict = self.__view_jogador.criacao_jogador(index_personagem, nomes_classes, nomes_poderes,
-                                                               self.get_personagem, 3 + (2 * (nivel - 1)))
+            jogador_dict = self.__view_jogador.criacao_jogador(
+                index_personagem,
+                nomes_classes,
+                nomes_poderes,
+                self.get,
+                3 + (2 * (nivel - 1))
+            )
             nome = jogador_dict["nome"]
             classe_nome = jogador_dict["classe"]
             poderes_nome = jogador_dict["poderes"]
 
-            classe = self.__controller_classe.get_classe(classe_nome)
+            classe = self.__controller_classe.get(classe_nome)
 
             poderes = []
 
             for poder_nome in poderes_nome:
-                poderes.append(self.__controller_poder.get_poder(poder_nome))
+                poderes.append(self.__controller_poder.get(poder_nome))
 
             # Salvar
             self.cadastrar(nome, classe, poderes)
@@ -93,7 +97,7 @@ class ControllerJogador(ControllerPersonagem):
             jogador.classe = self.__controller_classe.get_classe_superior(jogador.classe.tipo, jogador.classe.nivel + 1)
 
             # Poderes novos que podem ser escolhidos
-            poderes_disponiveis = self.__controller_poder.get_poderes_ate_nivel(jogador.classe.nivel)
+            poderes_disponiveis = self.__controller_poder.get_ate_nivel(jogador.classe.nivel)
             poderes_disponiveis = [
                 poder for poder in poderes_disponiveis
                 if poder.nome not in self.__controller_poder.nomes(jogador.poderes)
@@ -108,16 +112,18 @@ class ControllerJogador(ControllerPersonagem):
             nomes_poderes_antigos.remove("Soco")
 
             # Tela mostra que passou de nivel e escolhe os poderes
-            poderes_escolhidos = self.__view_jogador.aumentar_nivel(jogador.nome,
-                                                                    classe_antiga.nome,
-                                                                    jogador.classe.nome,
-                                                                    nomes_poderes,
-                                                                    nomes_poderes_antigos)
+            poderes_escolhidos = self.__view_jogador.aumentar_nivel(
+                jogador.nome,
+                classe_antiga.nome,
+                jogador.classe.nome,
+                nomes_poderes,
+                nomes_poderes_antigos
+            )
 
             # Soco é obrigatório e encontra os poderes pelo nome
-            poderes_novos = [self.__controller_poder.get_poder("Soco")]
+            poderes_novos = [self.__controller_poder.get("Soco")]
             for nome in poderes_escolhidos:
-                poderes_novos.append(self.__controller_poder.get_poder(nome))
+                poderes_novos.append(self.__controller_poder.get(nome))
 
             # Atualiza os poderes
             jogador.poderes = poderes_novos
@@ -134,7 +140,7 @@ class ControllerJogador(ControllerPersonagem):
             jogador.restaurar_personagem()
             self.__jogador_dao.update(jogador)
 
-    def get_personagem(self, nome: str):
+    def get(self, nome: str):
         """
         Encontra um jogador pelo nome
         :param nome: nome do jogador para encontrar
@@ -142,28 +148,12 @@ class ControllerJogador(ControllerPersonagem):
         """
         return self.__jogador_dao.get(nome)
 
-    @property
-    def personagens(self):
+    def get_all(self):
         """
         Retorna todos os jogadores
         :return: lista de todos os jogadores
         """
         return self.__jogador_dao.get_all()
-
-    @personagens.setter
-    def personagens(self, jogadores):
-        """
-        Atualiza todos os jogadores
-        :param jogadores: Lista dos jogadores que serão inseridos
-        """
-        if not all(isinstance(jogador, Jogador) for jogador in jogadores):
-            raise TypeError("jogadores deve ser do tipo list[Jogador]")
-
-        for jogador in self.__jogador_dao.get_all():
-            self.__jogador_dao.remove(jogador.nome)
-
-        for jogador in jogadores:
-            self.__jogador_dao.add(jogador)
 
     def remover(self, nome: str):
         """
@@ -176,6 +166,13 @@ class ControllerJogador(ControllerPersonagem):
 
         self.__jogador_dao.remove(nome)
 
+    def remover_all(self):
+        """
+        Remover todos os jogadores da lista
+        """
+        self.__jogador_dao.clear_file()
+        return True
+
     def estatisticas(self):
         """
         Retorna uma lista de dicionário com as estatisticas de dano e cura causados, além de recebidos
@@ -187,6 +184,3 @@ class ControllerJogador(ControllerPersonagem):
             estatisticas.append(jogador.estatisticas)
 
         return estatisticas
-
-    def remover_all(self):
-        self.__jogador_dao.clear_file()

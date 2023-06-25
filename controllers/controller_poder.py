@@ -1,5 +1,4 @@
 from dao.poder_dao import PoderDAO
-from exceptions import exceptions
 from models.poder import Poder
 
 
@@ -7,9 +6,9 @@ class ControllerPoder:
     def __init__(self):
         self.__poder_dao = PoderDAO()
 
-    def cadastrar_poder(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool, nivel: int):
+    def cadastrar(self, nome: str, acerto: int, dano: int, mana_gasta: int, alvos: int, ataque: bool, nivel: int):
         """
-        Cadastrar um poder
+        Registrar um poder
         :param nome: nome do poder
         :param acerto: aumenta a chance de acerto
         :param dano: valor usado para alterar a vida
@@ -26,7 +25,7 @@ class ControllerPoder:
 
         return poder
 
-    def remover_poder(self, nome: str):
+    def remover(self, nome: str):
         """
         Remove um objeto Poder da lista de poderes.
         :param nome: nome do objeto Poder a ser removido.
@@ -38,31 +37,29 @@ class ControllerPoder:
 
         return True
 
-    def get_poder(self, nome: str):
+    def remover_all(self):
+        """
+        Remove todos os poderes da lista
+        """
+        self.__poder_dao.clear_file()
+        return True
+
+    def get(self, nome: str):
         """
         Obtém um objeto Poder da lista de poderes.
         :param nome: (str) nome do objeto Poder a ser encontrado.
-        :return: Poder: objeto Poder com o mesmo nome, caso encontrado; ou None, caso não encontrado.
+        :raise NaoEncontradoException: caso não exista um objeto Poder com o nome passado na lista de poderes.
+        :return: Poder: objeto Poder com o mesmo nome, caso encontrado.
         """
         return self.__poder_dao.get(nome)
 
-    @property
-    def poderes(self):
+    def get_all(self):
+        """
+        :return: Retorna uma lista com todos os poderes
+        """
         return self.__poder_dao.get_all()
 
-    def get_poderes_por_nivel(self, nivel):
-        """
-        Retorna uma lista com os poderes de certo nivel
-        :param nivel: numero que determina a força de um poder
-        :return: lista de poderes do nivel pedido
-        """
-        poderes = []
-        for poder in self.__poder_dao.get_all():
-            if poder.nivel == nivel:
-                poderes.append(poder)
-        return poderes
-
-    def get_poderes_ate_nivel(self, nivel):
+    def get_ate_nivel(self, nivel):
         """
         Retorna uma lista com os poderes até certo nivel
         :param nivel: numero que determina a força de um poder
@@ -74,7 +71,23 @@ class ControllerPoder:
                 poderes.append(poder)
         return poderes
 
-    def estatisticas_dict(self, poderes: list[Poder]):
+    def estatistica(self, nome: str):
+        """
+        Retorna uma string com os atributos de um poder especifico
+        :param nome: Nome do poder que será mostrado
+        :return: String formatada para visualizar
+        """
+        poder = self.get(nome)
+
+        layout = f"[{poder.nome} Nvl{poder.nivel}]\n"
+        layout += f"{'Dano' if poder.ataque else 'Cura'}: {poder.dano}\n"
+        layout += f"Acerto: {poder.acerto}\n"
+        layout += f"Mana: {poder.mana_gasta}\n"
+        layout += f"Acerta {poder.alvos} {'alvo' if poder.alvos == 1 else 'alvos'}"
+        return layout
+
+    @staticmethod
+    def estatisticas(poderes: list[Poder]):
         """
         Retorna um dicionário formatado com os atributos dos poderes
         :param poderes: list[Poder]
@@ -90,7 +103,8 @@ class ControllerPoder:
 
         return poderes_dict
 
-    def nomes(self, poderes: list[Poder]):
+    @staticmethod
+    def nomes(poderes: list[Poder]):
         """
         Retorna uma string formatada com os nomes dos poderes
         :param poderes:
@@ -100,19 +114,3 @@ class ControllerPoder:
             return TypeError("A lista deve conter personagens")
 
         return [poder.nome for poder in poderes]
-
-    def estatisticas(self, poder_name: str):
-        poder = self.get_poder(poder_name)
-
-        if not poder:
-            raise exceptions.NaoEncontradoException("Poder não encontrado")
-
-        layout = f"[{poder.nome} Nvl{poder.nivel}]\n"
-        layout += f"{'Dano' if poder.ataque else 'Cura'}: {poder.dano}\n"
-        layout += f"Acerto: {poder.acerto}\n"
-        layout += f"Mana: {poder.mana_gasta}\n"
-        layout += f"Acerta {poder.alvos} {'alvo' if poder.alvos == 1 else 'alvos'}"
-        return layout
-
-    def remover_all(self):
-        self.__poder_dao.clear_file()

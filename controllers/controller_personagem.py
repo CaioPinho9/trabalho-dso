@@ -7,24 +7,24 @@ from models.personagem import Personagem
 class ControllerPersonagem(ABC):
     @abstractmethod
     def cadastrar(self, nome: str, classe: Classe, poderes=None):
+        """
+        Cadastra um personagem
+        :param nome: Nome do personagem
+        :param classe: Classe escolhida
+        :param poderes: Poderes do personagem
+        """
         pass
 
     @abstractmethod
-    def remover(self, nome: str):
-        pass
-
-    @property
-    @abstractmethod
-    def personagens(self):
-        pass
-
-    @personagens.setter
-    @abstractmethod
-    def personagens(self, personagens):
+    def get_all(self):
+        """
+        Retorna todos os personagens
+        :return: lista de todos os personagens
+        """
         pass
 
     @abstractmethod
-    def get_personagem(self, nome: str):
+    def get(self, nome: str):
         """
         Obtém um personagem da lista de personagens.
 
@@ -34,6 +34,27 @@ class ControllerPersonagem(ABC):
         Retorno:
         Personagem: objeto Personagem com o mesmo nome, caso encontrado;
         """
+        pass
+
+    @abstractmethod
+    def remover(self, nome: str):
+        """
+        Remove um personagem por nome
+        :param nome: Nome do personagem que será removido
+        """
+        pass
+
+    @abstractmethod
+    def remover_all(self):
+        """
+        Remove todos os personagens da lista
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def restaurar_vida_mana(self):
+        """Todos os personagens voltam a ficar com a vida e a mana máxima"""
         pass
 
     @staticmethod
@@ -56,11 +77,6 @@ class ControllerPersonagem(ABC):
 
             estatisticas.append(dictionario)
         return estatisticas
-
-    @abstractmethod
-    def restaurar_vida_mana(self):
-        """Todos os personagens voltam a ficar com a vida e a mana máxima"""
-        pass
 
     @staticmethod
     def nomes(personagens: list[Personagem]):

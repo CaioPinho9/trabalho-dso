@@ -1,5 +1,4 @@
 from dao.classe_dao import ClasseDAO
-from exceptions import exceptions
 from models.classe import Classe
 
 
@@ -7,34 +6,46 @@ class ControllerClasse:
     def __init__(self):
         self.__classe_dao = ClasseDAO()
 
-    def cadastrar_classe(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int, nivel: int,
-                         tipo: str = None):
+    def cadastrar(self, nome: str, vida: int, velocidade: int, defesa: int, mana: int, nivel: int, tipo: str = None):
+        """
+        Registrar uma classe na lista
+        :param nome: Nome da classe
+        :param vida: Vida máxima
+        :param velocidade: Velocidade usada para ordem de combate
+        :param defesa: Dificuldade para acertar o personagem
+        :param mana: Mana máxima
+        :param nivel: Nivel que essa classe pertence
+        :param tipo: Qual grupo essa classe pertence, Mago, Guerreiro, Ladino
+        """
         classe = Classe(nome, vida, velocidade, defesa, mana, nivel, tipo)
 
         self.__classe_dao.add(classe)
 
         return True
 
-    @property
-    def classes(self):
+    def get_all(self):
+        """
+        :return: Retorna todas as classes
+        """
         return self.__classe_dao.get_all()
 
-    def remover_classe(self, nome: str):
+    def remover(self, nome: str):
         """
         Remove uma classe da lista de classes.
         :param nome: nome da classe a ser removido.
         :raise NaoEncontradoException: caso não exista uma Classe com o nome passado na lista de classes.
-        :return: True
         """
-        classe = self.get_classe(nome)
-        if not classe:
-            raise exceptions.NaoEncontradoException("A classe não foi encontrada")
+        classe = self.get(nome)
 
         self.__classe_dao.remove(classe)
 
         return True
 
-    def get_classe(self, nome: str):
+    def remover_all(self):
+        self.__classe_dao.clear_file()
+        return True
+
+    def get(self, nome: str):
         """
         Obtém uma classe da lista de classes.
         :param nome: nome da Classe a ser encontrado.
@@ -45,7 +56,7 @@ class ControllerClasse:
 
         return self.__classe_dao.get(nome)
 
-    def get_classes_por_nivel(self, nivel: int):
+    def get_por_nivel(self, nivel: int):
         """
         Retorna uma lista com as classes de certo nivel
         :param nivel: numero que determina a força de um classe
@@ -90,11 +101,13 @@ class ControllerClasse:
 
         return [classe.nome for classe in classes]
 
-    def estatisticas_string(self, classe_name):
-        classe = self.get_classe(classe_name)
-
-        if not classe:
-            raise exceptions.NaoEncontradoException("Classe não encontrado")
+    def estatisticas_string(self, nome: str):
+        """
+        Formata uma classe em uma string para ser mostrada na tela
+        :param nome: Nome da classe que será mostradas
+        :return: String formatada com os atributos da classe
+        """
+        classe = self.get(nome)
 
         layout = f"{str(classe.nome)}\n"
         layout += f"Vida: {str(classe.vida)}\n"
@@ -104,17 +117,15 @@ class ControllerClasse:
 
         return layout
 
-    @staticmethod
-    def estatisticas_dict(classe: Classe):
+    def estatisticas_dict(self, nome: str):
         """
         Retorna um dicionário formatado com os atributos de uma classe
-        :param classe: Classe
+        :param nome: Nome da classe que será mostradas
         :return: {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
                   "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         """
+        classe = self.get(nome)
+
         estatisticas = {"nome": classe.nome, "vida": str(classe.vida), "defesa": str(classe.defesa),
                         "mana": str(classe.mana), "velocidade": str(classe.velocidade)}
         return estatisticas
-
-    def remover_all(self):
-        self.__classe_dao.clear_file()

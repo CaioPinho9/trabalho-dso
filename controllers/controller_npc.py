@@ -26,20 +26,7 @@ class ControllerNpc(ControllerPersonagem):
 
         return npc
 
-    def remover(self, nome: str):
-        """
-        Deleta um npc por nome
-        :param nome: nome do npc deletado
-        """
-        self.__npc_dao.remove(nome)
-
-    def restaurar_vida_mana(self):
-        """Todos os npcs voltam a ficar com a vida e a mana máxima"""
-        for npc in self.__npc_dao.get_all():
-            npc.restaurar_personagem()
-            self.__npc_dao.update(npc)
-
-    def get_personagem(self, nome: str):
+    def get(self, nome: str):
         """
         Encontra um npc pelo nome
         :param nome: nome do npc para encontrar
@@ -47,29 +34,29 @@ class ControllerNpc(ControllerPersonagem):
         """
         return self.__npc_dao.get(nome)
 
-    @property
-    def personagens(self):
+    def get_all(self):
         """
         Retorna todos os npcs
         :return: lista de todos os npcs
         """
         return self.__npc_dao.get_all()
 
-    @personagens.setter
-    def personagens(self, npcs):
+    def remover(self, nome: str):
         """
-        Atualiza todos os npcs
-        :param npcs: Lista dos npcs que serão inseridos
+        Deleta um npc por nome
+        :param nome: nome do npc deletado
         """
-
-        if not all(isinstance(npc, Npc) for npc in npcs):
-            raise TypeError("npcs deve ser do tipo list[Npc]")
-
-        for npc in self.__npc_dao.get_all():
-            self.__npc_dao.remove(npc.nome)
-
-        for npc in npcs:
-            self.__npc_dao.add(npc)
+        self.__npc_dao.remove(nome)
 
     def remover_all(self):
+        """
+        Remove todos os npcs da lista
+        """
         self.__npc_dao.clear_file()
+        return True
+
+    def restaurar_vida_mana(self):
+        """Todos os npcs voltam a ficar com a vida e a mana máxima"""
+        for npc in self.__npc_dao.get_all():
+            npc.restaurar_personagem()
+            self.__npc_dao.update(npc)

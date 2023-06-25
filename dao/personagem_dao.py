@@ -1,9 +1,12 @@
+from abc import abstractmethod
+
 from dao.dao import DAO
 from exceptions import exceptions
 from models.personagem import Personagem
 
 
 class PersonagemDAO(DAO):
+    @abstractmethod
     def __init__(self, arquivo):
         super().__init__(arquivo)
 

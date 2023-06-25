@@ -344,7 +344,7 @@ def setup(controller_classe: ControllerClasse, controller_poder: ControllerPoder
     # Gerar classes
     controller_classe.remover_all()
     for classe in CLASSES:
-        controller_classe.cadastrar_classe(
+        controller_classe.cadastrar(
             nome=classe["nome"],
             vida=classe["vida"],
             velocidade=classe["velocidade"],
@@ -357,7 +357,7 @@ def setup(controller_classe: ControllerClasse, controller_poder: ControllerPoder
     # Gerar poderes
     controller_poder.remover_all()
     for poder in PODERES:
-        controller_poder.cadastrar_poder(
+        controller_poder.cadastrar(
             nome=poder["nome"],
             acerto=poder["acerto"],
             dano=poder["dano"],
@@ -372,8 +372,8 @@ def setup(controller_classe: ControllerClasse, controller_poder: ControllerPoder
     for jogador in JOGADORES:
         controller_jogador.cadastrar(
             nome=jogador["nome"],
-            classe=controller_classe.get_classe(jogador["classe"]),
-            poderes=[controller_poder.get_poder(nome) for nome in jogador["poderes"]]
+            classe=controller_classe.get(jogador["classe"]),
+            poderes=[controller_poder.get(nome) for nome in jogador["poderes"]]
         )
 
     # Gerar npcs
@@ -381,13 +381,13 @@ def setup(controller_classe: ControllerClasse, controller_poder: ControllerPoder
     for npc in NPCS:
         controller_npc.cadastrar(
             nome=npc["nome"],
-            classe=controller_classe.get_classe(npc["classe"]),
-            poderes=[controller_poder.get_poder(nome_poder) for nome_poder in npc["poderes"]]
+            classe=controller_classe.get(npc["classe"]),
+            poderes=[controller_poder.get(nome_poder) for nome_poder in npc["poderes"]]
         )
 
     # Gerar combates
     controller_combate.remover_all()
     for combate in COMBATES:
         controller_combate.cadastrar_combate(
-            npcs=[controller_npc.get_personagem(npc_nome) for npc_nome in combate["npcs"]],
+            npcs=[controller_npc.get(npc_nome) for npc_nome in combate["npcs"]],
         )

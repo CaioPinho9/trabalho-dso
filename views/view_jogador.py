@@ -19,6 +19,15 @@ class ViewJogador:
         sg.ChangeLookAndFeel('DarkBlue14')
 
     def criacao_jogador(self, index, nomes_classes, nome_poderes, get_personagem, tamanho_escolha):
+        """
+        Tela para criação do jogador
+        :param index: Qual jogar está sendo criado
+        :param nomes_classes: Opções de classe
+        :param nome_poderes: Opções de poderes
+        :param get_personagem: Metodo para testar se o usuario existe
+        :param tamanho_escolha: Quantos poderes podem ser escolhidos
+        :return:
+        """
         layout = [
             [sg.Text(f"Escolha o nome do {index}º personagem:"),
              sg.InputText(key=MenuCriacao.NOME, size=(26, 2))],
@@ -27,7 +36,7 @@ class ViewJogador:
                       enable_events=True, readonly=True)],
             [sg.Text(self._controller_classe.estatisticas_string(nomes_classes[0]),
                      key=MenuCriacao.ESTATISTICAS_CLASSE, background_color=sg.theme_button_color()[1]),
-             sg.Text(self._controller_poder.estatisticas(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+             sg.Text(self._controller_poder.estatistica(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5), background_color=sg.theme_button_color()[1])],
             [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nome_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
@@ -115,7 +124,7 @@ class ViewJogador:
             [sg.Text(aviso_aumentou_nivel)],
             [sg.Text(self._controller_classe.estatisticas_string(nome_classe_nova),
                      background_color=sg.theme_button_color()[1]),
-             sg.Text(self._controller_poder.estatisticas(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+             sg.Text(self._controller_poder.estatistica(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5), background_color=sg.theme_button_color()[1])],
             [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
@@ -160,7 +169,7 @@ class ViewJogador:
 
             if poder_selecionado:
                 self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
-                    self._controller_poder.estatisticas(poder_selecionado))
+                    self._controller_poder.estatistica(poder_selecionado))
 
         if event == MenuCriacao.SELECIONAR_PODER:
             poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]

@@ -200,7 +200,7 @@ class ViewCombate:
             [sg.Text(f"O personagem {nome_jogador} tem {mana_restante} de mana sobrando e pode usar esses poderes:")],
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCombate.SELECIONAR_PODER,
                         default_values=nomes_poderes[0]),
-             sg.Text(self._controller_poder.estatisticas(nomes_poderes[0]), key=MenuCombate.ESTATISTICAS_PODER,
+             sg.Text(self._controller_poder.estatistica(nomes_poderes[0]), key=MenuCombate.ESTATISTICAS_PODER,
                      size=(21, 5), background_color=sg.theme_button_color()[1]),
              sg.Column([[sg.Button("Usar", key=MenuCombate.CONTINUAR, size=(13, 2))],
                         [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]])]
@@ -223,7 +223,7 @@ class ViewCombate:
 
                     if poder_selecionado:
                         self._window.Element(MenuCombate.ESTATISTICAS_PODER).update(
-                            self._controller_poder.estatisticas(poder_selecionado))
+                            self._controller_poder.estatistica(poder_selecionado))
 
                 if event == MenuCombate.CONTINUAR:
                     poder_selecionado = valores[MenuCombate.SELECIONAR_PODER][0]

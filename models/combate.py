@@ -19,6 +19,7 @@ class Combate:
         self.__jogadores = []
         self.__ordem_de_batalha = []
         self.__contador_turno = 1
+        self.__iniciado = False
 
     @property
     def codigo(self):
@@ -33,8 +34,20 @@ class Combate:
         return self.__npcs
 
     @property
+    def personagens(self):
+        return [*self.__jogadores, *self.__npcs]
+
+    @property
     def ordem_de_batalha(self):
         return self.__ordem_de_batalha
+
+    @property
+    def contador_turno(self):
+        return self.__contador_turno
+
+    @property
+    def iniciado(self):
+        return self.__iniciado
 
     @jogadores.setter
     def jogadores(self, lista_de_jogadores):
@@ -64,6 +77,18 @@ class Combate:
             raise TypeError("Ordem de batalha deve ser do tipo list[Personagem]")
         self.__ordem_de_batalha = lista_de_batalha
 
+    @contador_turno.setter
+    def contador_turno(self, contador_turno):
+        if not isinstance(contador_turno, int):
+            raise TypeError("contador_turno deve ser do tipo int")
+        self.__contador_turno = contador_turno
+
+    @iniciado.setter
+    def iniciado(self, iniciado):
+        if not isinstance(iniciado, bool):
+            raise TypeError("iniciado deve ser do tipo bool")
+        self.__iniciado = iniciado
+
     def proximo_da_batalha(self):
         """
         Retorna o primeiro valor da lista e o coloca no final
@@ -81,13 +106,3 @@ class Combate:
                 break
 
         return proximo_da_batalha
-
-    @property
-    def contador_turno(self):
-        return self.__contador_turno
-
-    @contador_turno.setter
-    def contador_turno(self, contador_turno):
-        if not isinstance(contador_turno, int):
-            raise TypeError("contador_turno deve ser do tipo int")
-        self.__contador_turno = contador_turno
