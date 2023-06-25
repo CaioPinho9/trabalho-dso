@@ -8,17 +8,39 @@ class Jogador(Personagem):
         super().__init__(nome, classe, codigo, poderes)
         self.__estatisticas = Estatisticas()
 
-    def recebeu_dano(self, dano):
-        self.__estatisticas.recebeu_dano(dano)
+    def recebeu_dano(self, dano: int, ataque: bool):
+        """
+        Salva as estatisticas de dano e cura recebidos pelo personagem
+        :param dano: Valor de dano ou cura recebido
+        :param ataque: Se foi um ataque salva como dano, se não como cura
+        """
+        if not isinstance(dano, int):
+            raise TypeError("dano should be an integer")
 
-    def causou_dano(self, dano):
-        self.__estatisticas.causou_dano(dano)
+        if not isinstance(ataque, bool):
+            raise TypeError("ataque should be an boolean")
 
-    def recebeu_cura(self, cura):
-        self.__estatisticas.recebeu_cura(cura)
+        if ataque:
+            self.__estatisticas.recebeu_dano(abs(dano))
+        else:
+            self.__estatisticas.recebeu_cura(abs(dano))
 
-    def causou_cura(self, cura):
-        self.__estatisticas.causou_cura(cura)
+    def causou_dano(self, dano: int, ataque: bool):
+        """
+        Salva as estatisticas de dano e cura causados pelo personagem
+        :param dano: Valor de dano ou cura causado
+        :param ataque: Se foi um ataque salva como dano, se não como cura
+        """
+        if not isinstance(dano, int):
+            raise TypeError("dano should be an integer")
+
+        if not isinstance(ataque, bool):
+            raise TypeError("ataque should be an boolean")
+
+        if ataque:
+            self.__estatisticas.causou_dano(abs(dano))
+        else:
+            self.__estatisticas.causou_cura(abs(dano))
 
     @property
     def estatisticas(self):

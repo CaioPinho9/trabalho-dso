@@ -9,22 +9,22 @@ from utils.opcoes_menus import MenuCriacao
 class ViewJogador:
 
     def __init__(self, controller_classe: ControllerClasse, controller_poder: ControllerPoder):
-        self._window = None
+        self.__window = None
         if not isinstance(controller_classe, ControllerClasse):
             raise TypeError("Controller de classe não é do tipo certo")
         if not isinstance(controller_poder, ControllerPoder):
             raise TypeError("Controller de poderes não é do tipo certo")
-        self._controller_classe = controller_classe
-        self._controller_poder = controller_poder
+        self.__controller_classe = controller_classe
+        self.__controller_poder = controller_poder
         sg.ChangeLookAndFeel('DarkBlue14')
 
-    def criacao_jogador(self, index, nomes_classes, nome_poderes, get_personagem, tamanho_escolha):
+    def criacao_jogador(self, index, nomes_classes, nome_poderes, get_jogador, tamanho_escolha):
         """
         Tela para criação do jogador
         :param index: Qual jogar está sendo criado
         :param nomes_classes: Opções de classe
         :param nome_poderes: Opções de poderes
-        :param get_personagem: Metodo para testar se o usuario existe
+        :param get_jogador: Metodo para testar se o usuario existe
         :param tamanho_escolha: Quantos poderes podem ser escolhidos
         :return:
         """
@@ -34,14 +34,14 @@ class ViewJogador:
             [sg.Text("Escolha uma classe para o personagem:"),
              sg.Combo(nomes_classes, key=MenuCriacao.SELECIONAR_CLASSE, default_value=nomes_classes[0],
                       enable_events=True, readonly=True)],
-            [sg.Text(self._controller_classe.estatisticas_string(nomes_classes[0]),
+            [sg.Text(self.__controller_classe.estatisticas_string(nomes_classes[0]),
                      key=MenuCriacao.ESTATISTICAS_CLASSE, background_color=sg.theme_button_color()[1]),
-             sg.Text(self._controller_poder.estatistica(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+             sg.Text(self.__controller_poder.estatistica(nome_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5), background_color=sg.theme_button_color()[1])],
             [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nome_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=nome_poderes[0]),
-             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
+             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.ESCOLHER_PODER, size=(13, 2))],
                         [sg.Button("<--\nRemover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))]]),
              sg.Listbox(values=[], size=(26, tamanho_escolha), enable_events=True, key=MenuCriacao.ESCOLHIDOS_PODERES),
              ],
@@ -49,11 +49,11 @@ class ViewJogador:
              sg.Button("Criar Jogador", key=MenuCriacao.CRIAR, size=(13, 2))]
         ]
 
-        self._window = sg.Window("CRIAÇÃO DO GRUPO", layout)
+        self.__window = sg.Window("CRIAÇÃO DO GRUPO", layout)
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -62,30 +62,30 @@ class ViewJogador:
                     raise exceptions.VoltarMenu("Voltar")
 
                 if event == MenuCriacao.CRIAR:
-                    jogador_dict = self.criar_personagem(valores, get_personagem, tamanho_escolha)
+                    jogador_dict = self.__validar_jogador(valores, get_jogador, tamanho_escolha)
                     if jogador_dict:
                         return jogador_dict
 
                 if event == MenuCriacao.SELECIONAR_CLASSE:
                     classe_selecionada = valores[MenuCriacao.SELECIONAR_CLASSE]
-                    self._window.Element(MenuCriacao.ESTATISTICAS_CLASSE).update(
-                        self._controller_classe.estatisticas_string(classe_selecionada))
+                    self.__window.Element(MenuCriacao.ESTATISTICAS_CLASSE).update(
+                        self.__controller_classe.estatisticas_string(classe_selecionada))
 
-                poderes = self._escolha_poder(event, valores, tamanho_escolha)
+                poderes = self.__escolha_poder(event, valores, tamanho_escolha)
                 if poderes:
                     return poderes
 
         finally:
-            self._window.close()
+            self.__window.close()
 
-    def criar_personagem(self, valores, get_personagem, tamanho_escolha):
+    def __validar_jogador(self, valores, get_jogador, tamanho_escolha):
         nome = valores[MenuCriacao.NOME]
         classe = valores[MenuCriacao.SELECIONAR_CLASSE]
-        poderes = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
+        poderes = self.__window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
         # Testa se esse nome já está sendo utilizado
         try:
-            get_personagem(nome)
+            get_jogador(nome)
             existe = True
         except exceptions.NaoEncontradoException:
             existe = False
@@ -122,14 +122,14 @@ class ViewJogador:
 
         layout = [
             [sg.Text(aviso_aumentou_nivel)],
-            [sg.Text(self._controller_classe.estatisticas_string(nome_classe_nova),
+            [sg.Text(self.__controller_classe.estatisticas_string(nome_classe_nova),
                      background_color=sg.theme_button_color()[1]),
-             sg.Text(self._controller_poder.estatistica(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
+             sg.Text(self.__controller_poder.estatistica(nomes_poderes[0]), key=MenuCriacao.ESTATISTICAS_PODER,
                      size=(20, 5), background_color=sg.theme_button_color()[1])],
             [sg.Text(f"Escolha {tamanho_escolha} poderes:")],
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCriacao.SELECIONAR_PODERES,
                         default_values=nomes_poderes[0]),
-             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.SELECIONAR_PODER, size=(13, 2))],
+             sg.Column([[sg.Button("Escolher\n-->", key=MenuCriacao.ESCOLHER_PODER, size=(13, 2))],
                         [sg.Button("<--\nRemover", key=MenuCriacao.REMOVER_PODER, size=(13, 2))]]),
              sg.Listbox(values=nomes_poderes_antigos, size=(26, tamanho_escolha), enable_events=True,
                         key=MenuCriacao.ESCOLHIDOS_PODERES),
@@ -137,11 +137,11 @@ class ViewJogador:
             [sg.Button("Voltar", key=MenuCriacao.SAIR, size=(13, 2)),
              sg.Button("OK", key=MenuCriacao.CONTINUAR, size=(13, 2))]
         ]
-        self._window = sg.Window("LEVEL UP", layout)
+        self.__window = sg.Window("LEVEL UP", layout)
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -149,13 +149,13 @@ class ViewJogador:
                 if event == MenuCriacao.SAIR:
                     raise exceptions.VoltarMenu("Voltar para o menu")
 
-                poderes = self._escolha_poder(event, valores, tamanho_escolha)
+                poderes = self.__escolha_poder(event, valores, tamanho_escolha)
                 if poderes:
                     return poderes
         finally:
-            self._window.close()
+            self.__window.close()
 
-    def _escolha_poder(self, event, valores, tamanho_escolha):
+    def __escolha_poder(self, event, valores, tamanho_escolha):
         """
         Essa função realiza a troca entre a lista de escolha e de selecionados
         Tambem mostra as estatisticas do poder selecionado
@@ -168,34 +168,34 @@ class ViewJogador:
             poder_selecionado = valores[event][0]
 
             if poder_selecionado:
-                self._window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
-                    self._controller_poder.estatistica(poder_selecionado))
+                self.__window.Element(MenuCriacao.ESTATISTICAS_PODER).update(
+                    self.__controller_poder.estatistica(poder_selecionado))
 
-        if event == MenuCriacao.SELECIONAR_PODER:
+        if event == MenuCriacao.ESCOLHER_PODER:
             poder_selecionado = valores[MenuCriacao.SELECIONAR_PODERES]
-            poderes_selecionados = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
+            poderes_selecionados = self.__window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
             if poder_selecionado and len(poderes_selecionados) < tamanho_escolha and len(
                     poder_selecionado) == 1:
                 poderes_selecionados.append(poder_selecionado[0])
 
-                poderes_para_escolher = self._window[MenuCriacao.SELECIONAR_PODERES].Values
+                poderes_para_escolher = self.__window[MenuCriacao.SELECIONAR_PODERES].Values
                 poderes_para_escolher.remove(poder_selecionado[0])
-                self._window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
-                self._window[MenuCriacao.ESCOLHIDOS_PODERES].update(poderes_selecionados)
+                self.__window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
+                self.__window[MenuCriacao.ESCOLHIDOS_PODERES].update(poderes_selecionados)
 
         if event == MenuCriacao.REMOVER_PODER:
             poder_selecionado = valores[MenuCriacao.ESCOLHIDOS_PODERES]
             if len(poder_selecionado) == 1:
-                poderes_selecionados = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
+                poderes_selecionados = self.__window[MenuCriacao.ESCOLHIDOS_PODERES].Values
                 poderes_selecionados.remove(poder_selecionado[0])
-                poderes_para_escolher = self._window[MenuCriacao.SELECIONAR_PODERES].Values
+                poderes_para_escolher = self.__window[MenuCriacao.SELECIONAR_PODERES].Values
                 poderes_para_escolher.append(poder_selecionado[0])
-                self._window[MenuCriacao.ESCOLHIDOS_PODERES].update(poderes_selecionados)
-                self._window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
+                self.__window[MenuCriacao.ESCOLHIDOS_PODERES].update(poderes_selecionados)
+                self.__window[MenuCriacao.SELECIONAR_PODERES].update(poderes_para_escolher)
 
         if event == MenuCriacao.CONTINUAR:
-            poderes = self._window[MenuCriacao.ESCOLHIDOS_PODERES].Values
+            poderes = self.__window[MenuCriacao.ESCOLHIDOS_PODERES].Values
 
             if len(poderes) == tamanho_escolha:
                 return poderes

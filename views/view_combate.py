@@ -6,12 +6,13 @@ from utils.utils import list_to_string
 
 
 class ViewCombate:
+
     def __init__(self, controller_poder):
-        self._controller_poder = controller_poder
-        self._window = None
+        self.__controller_poder = controller_poder
+        self.__window = None
 
     @staticmethod
-    def _mostrar_turno(nome_personagem: str, turno: int, is_jogador: bool, width: int = None):
+    def __mostrar_turno(nome_personagem: str, turno: int, is_jogador: bool, width: int = None):
         """
         Cria um header para a tela mostrando o jogador desse turno e qual turno está
         :param nome_personagem: Nome do personagem
@@ -32,7 +33,7 @@ class ViewCombate:
         return layout
 
     @staticmethod
-    def _vida_mana_geral(vida_mana_personagens: list[dict], is_jogador: bool, width: int = None, height: int = None):
+    def __vida_mana_geral(vida_mana_personagens: list[dict], is_jogador: bool, width: int = None, height: int = None):
         """
         Prepara uma coluna mostrandao a vida e mana de cada personagem da lista
         :param vida_mana_personagens: Lista de dicionários com o estado de cada personagem
@@ -77,11 +78,11 @@ class ViewCombate:
             [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     exceptions.FecharPrograma("Fechar")
@@ -93,10 +94,10 @@ class ViewCombate:
                     return True
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     @staticmethod
-    def _resultado_velocidade(jogadas_resultados: list[dict]):
+    def __resultado_velocidade(jogadas_resultados: list[dict]):
         """
         Formata o dicionário com as informações de cada jogada em uma string
         :param jogadas_resultados: Lista de dicionários com os valores de cada jogada
@@ -122,17 +123,17 @@ class ViewCombate:
         """
         layout = [
             [sg.Text("Jogadas de dados:")],
-            [sg.Text(self._resultado_velocidade(jogadas_resultados), background_color=sg.theme_button_color()[1])],
+            [sg.Text(self.__resultado_velocidade(jogadas_resultados), background_color=sg.theme_button_color()[1])],
             [sg.Text("A ordem de batalha será:")],
             [sg.Listbox(nomes_ordem, size=(None, len(nomes_ordem)), disabled=True, no_scrollbar=True, expand_x=True)],
             [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -144,7 +145,7 @@ class ViewCombate:
                     return True
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def escolher_acao(self, nome_jogador: str, turno: int):
         """
@@ -153,7 +154,7 @@ class ViewCombate:
         :param turno: Contador de turnos
         :return:
         """
-        layout = self._mostrar_turno(nome_jogador, turno, True, width=30)
+        layout = self.__mostrar_turno(nome_jogador, turno, True, width=30)
 
         layout += [
             [sg.Button("Usar Poder", size=(26, 2), key=MenuCombate.USAR_PODER)],
@@ -161,11 +162,11 @@ class ViewCombate:
             [sg.Button("Atributos", size=(26, 2), key=MenuCombate.ATRIBUTOS)],
             [sg.Button("Sair", size=(13, 2), key=MenuCombate.SAIR)]
         ]
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -183,7 +184,7 @@ class ViewCombate:
                     return event
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def escolher_poder(self, nome_jogador: str, turno: int, nomes_poderes: list[str], mana_restante: int):
         """
@@ -194,23 +195,23 @@ class ViewCombate:
         :param mana_restante: Quanta mana o personagem ainda possui
         :return: Nome do poder escolhido
         """
-        layout = self._mostrar_turno(nome_jogador, turno, True, 72)
+        layout = self.__mostrar_turno(nome_jogador, turno, True, 72)
 
         layout += [
             [sg.Text(f"O personagem {nome_jogador} tem {mana_restante} de mana sobrando e pode usar esses poderes:")],
             [sg.Listbox(values=nomes_poderes, size=(26, 5), enable_events=True, key=MenuCombate.SELECIONAR_PODER,
                         default_values=nomes_poderes[0]),
-             sg.Text(self._controller_poder.estatistica(nomes_poderes[0]), key=MenuCombate.ESTATISTICAS_PODER,
+             sg.Text(self.__controller_poder.estatistica(nomes_poderes[0]), key=MenuCombate.ESTATISTICAS_PODER,
                      size=(21, 5), background_color=sg.theme_button_color()[1]),
              sg.Column([[sg.Button("Usar", key=MenuCombate.CONTINUAR, size=(13, 2))],
                         [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]])]
         ]
 
-        self._window = sg.Window("COMBATE", layout)
+        self.__window = sg.Window("COMBATE", layout)
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -222,8 +223,8 @@ class ViewCombate:
                     poder_selecionado = valores[event][0]
 
                     if poder_selecionado:
-                        self._window.Element(MenuCombate.ESTATISTICAS_PODER).update(
-                            self._controller_poder.estatistica(poder_selecionado))
+                        self.__window.Element(MenuCombate.ESTATISTICAS_PODER).update(
+                            self.__controller_poder.estatistica(poder_selecionado))
 
                 if event == MenuCombate.CONTINUAR:
                     poder_selecionado = valores[MenuCombate.SELECIONAR_PODER][0]
@@ -233,11 +234,11 @@ class ViewCombate:
                     sg.popup_error(f"Escolha um poder.")
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def escolher_alvos(self, nome_jogador: str, turno: int, estatisticas_poder: dict, alvos_disponiveis: list[str],
                        alvos_maximos: int, vida_mana_alvos: list[dict], is_jogador_alvo: bool):
-        layout = self._mostrar_turno(nome_jogador, turno, True, 52)
+        layout = self.__mostrar_turno(nome_jogador, turno, True, 52)
 
         efeito = "acertar" if estatisticas_poder['ataque'] else "curar"
         efeito += " até" if alvos_maximos > 0 else ""
@@ -247,17 +248,17 @@ class ViewCombate:
             [sg.Listbox(alvos_disponiveis, size=(13, len(alvos_disponiveis)), no_scrollbar=True,
                         key=MenuCombate.SELECIONAR_ALVOS, enable_events=True,
                         select_mode=sg.LISTBOX_SELECT_MODE_MULTIPLE),
-             sg.Column(self._vida_mana_geral(vida_mana_alvos, is_jogador_alvo, 30), key=MenuCombate.ESTATISTICAS_ALVO,
+             sg.Column(self.__vida_mana_geral(vida_mana_alvos, is_jogador_alvo, 30), key=MenuCombate.ESTATISTICAS_ALVO,
                        background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2)),
              sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
         ]
 
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -272,7 +273,7 @@ class ViewCombate:
                     sg.popup_error(f"Escolha {alvos_maximos} alvos.")
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def resultado_turno(self, nome_jogador: str, turno: int, is_jogador: bool, nomes_alvos: list[str], nome_poder: str,
                         resultados: list[dict], vida_mana_jogadores: list[dict], vida_mana_npcs: list[dict]):
@@ -287,7 +288,7 @@ class ViewCombate:
         :param vida_mana_jogadores: Vida e mana dos jogadores
         :param vida_mana_npcs: Vida e mana dos npcs
         """
-        layout = self._mostrar_turno(nome_jogador, turno, is_jogador)
+        layout = self.__mostrar_turno(nome_jogador, turno, is_jogador)
 
         layout += [
             [sg.Text(f"O Poder {nome_poder} será usado em {list_to_string(nomes_alvos)}")],
@@ -317,19 +318,19 @@ class ViewCombate:
 
         tamanho += 1
 
-        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
-        column_npc = self._vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
+        column_jogador = self.__vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
+        column_npc = self.__vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
         layout += [[sg.Column(column_jogador, background_color=sg.theme_button_color()[1]),
                     sg.Column(column_npc, background_color=sg.theme_button_color()[1])],
                    [sg.Button("Sair", key=MenuCombate.SAIR, size=(13, 2)),
                     sg.Button("Continuar", key=MenuCombate.CONTINUAR, size=(13, 2))]
                    ]
 
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -341,7 +342,7 @@ class ViewCombate:
                     return True
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def estatistica_vida_mana_geral(self, vida_mana_jogadores: list[dict], vida_mana_npcs: list[dict]):
         """
@@ -355,8 +356,8 @@ class ViewCombate:
 
         tamanho += 1
 
-        column_jogador = self._vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
-        column_npc = self._vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
+        column_jogador = self.__vida_mana_geral(vida_mana_jogadores, True, 26, tamanho)
+        column_npc = self.__vida_mana_geral(vida_mana_npcs, False, 26, tamanho)
 
         layout = [
             [sg.Text("STATUS BATALHA")],
@@ -364,11 +365,11 @@ class ViewCombate:
              sg.Column(column_npc, background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -377,7 +378,7 @@ class ViewCombate:
                     return True
 
         finally:
-            self._window.close()
+            self.__window.close()
 
     def vitoria(self):
         """Tela que avisa que o combate foi uma vitória"""
@@ -424,31 +425,31 @@ class ViewCombate:
         finally:
             self.window.close()
 
-    def estatistica_jogador(self, jogador_dict, classe_dict):
+    def estatistica_jogador(self, vida_mana_jogador, estatisticas_classe):
         """
         Mostra os atributos de um jogador e seu estado atual
-        :param jogador_dict: Dicionário com o nome, vida e mana de um jogador
-        :param classe_dict: Atributos de classe do jogador
+        :param vida_mana_jogador: Dicionário com o nome, vida e mana de um jogador
+        :param estatisticas_classe: Atributos de classe do jogador
         """
         layout = [
             [sg.Column([
-                [sg.Text(f"Atributos de {jogador_dict['nome']}", background_color=sg.theme_button_color()[1],
+                [sg.Text(f"Atributos de {vida_mana_jogador['nome']}", background_color=sg.theme_button_color()[1],
                          size=(26, None), justification="center")],
-                [sg.Text(f"Vida: {jogador_dict['vida_atual']}/{classe_dict['vida']}",
+                [sg.Text(f"Vida: {vida_mana_jogador['vida_atual']}/{estatisticas_classe['vida']}",
                          background_color=sg.theme_button_color()[1])],
-                [sg.Text(f"Mana: {jogador_dict['mana_atual']}/{classe_dict['mana']}",
+                [sg.Text(f"Mana: {vida_mana_jogador['mana_atual']}/{estatisticas_classe['mana']}",
                          background_color=sg.theme_button_color()[1])],
-                [sg.Text(f"Defesa: {classe_dict['defesa']}", background_color=sg.theme_button_color()[1])],
-                [sg.Text(f"Velocidade: {classe_dict['velocidade']}", background_color=sg.theme_button_color()[1])]
+                [sg.Text(f"Defesa: {estatisticas_classe['defesa']}", background_color=sg.theme_button_color()[1])],
+                [sg.Text(f"Velocidade: {estatisticas_classe['velocidade']}", background_color=sg.theme_button_color()[1])]
             ], background_color=sg.theme_button_color()[1])],
             [sg.Button("Voltar", key=MenuCombate.SAIR, size=(13, 2))]
         ]
 
-        self._window = sg.Window("COMBATE", layout, element_justification='center')
+        self.__window = sg.Window("COMBATE", layout, element_justification='center')
 
         try:
             while True:
-                event, valores = self._window.read()
+                event, valores = self.__window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     raise exceptions.FecharPrograma("Fechar")
@@ -457,4 +458,4 @@ class ViewCombate:
                     return True
 
         finally:
-            self._window.close()
+            self.__window.close()

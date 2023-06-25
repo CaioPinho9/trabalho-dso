@@ -10,20 +10,28 @@ class ViewMenu:
         self.__window = None
 
     @staticmethod
-    def _combates(combates_vencidos):
+    def _combates(nivel):
+        """
+        :param nivel: Nivel atual dos jogadores
+        :return: Retorna uma lista com os combates disponiveis nesse nivel
+        """
         layout = []
-        if combates_vencidos >= 1:
+        if nivel >= 1:
             layout.append(
                 [sg.Button("Combate Inicial", key=MenuInicial.PRIMEIRO_COMBATE, size=(52, 2), enable_events=True)])
-        if combates_vencidos >= 2:
+        if nivel >= 2:
             layout.append(
                 [sg.Button("Combate Intermediário", key=MenuInicial.SEGUNDO_COMBATE, size=(52, 2), enable_events=True)])
-        if combates_vencidos >= 3:
+        if nivel >= 3:
             layout.append(
                 [sg.Button("Combate FINAL", key=MenuInicial.ULTIMO_COMBATE, size=(52, 2), enable_events=True)])
         return layout
 
-    def menu_inicial(self, combates_vencidos):
+    def menu_inicial(self, nivel):
+        """
+        Tela inicial do jogo
+        :param nivel: Nivel atual dos personagens, define quais combates estão disponiveis
+        """
         layout = [
             [sg.Text("Bem vindo ao RPG (Real Programmed Game), você será um grande herói ou um grande fracassado?")],
             [sg.Text("Esse é um jogo que você precisará de muita habilidade (e sorte) para vencer os 3 combates")],
@@ -32,7 +40,7 @@ class ViewMenu:
                        enable_events=True)],
             [sg.Button("Mostrar estatisticas", key=MenuInicial.MOSTRAR_ESTATISTICAS, size=(52, 2),
                        enable_events=True)],
-            self._combates(combates_vencidos),
+            self._combates(nivel),
             [sg.Button("Resetar", key=MenuInicial.RESETAR_DATABASE, size=(52, 2),
                        enable_events=True)],
             [sg.Button("Sair", key=MenuInicial.SAIR, size=(26, 2))]
@@ -56,6 +64,10 @@ class ViewMenu:
             self.__window.close()
 
     def sair(self):
+        """
+        Tela final ao clicar para sair ou fechar o programa
+        Objetivo: Pedir nota por ser engraçado
+        """
         layout = [
             [sg.Text("Obrigado por Jogar!")],
             [sg.Text("Trabalho Nota 10")]
@@ -71,24 +83,23 @@ class ViewMenu:
 
         self.__window.close()
 
-    def grupo(self, nomes_personagens: list[str], estatisticas_classes: list[dict],
-              nomes_poderes_personagens: list[list[str]], nivel: int):
+    def grupo(self, nomes_jogadores: list[str], estatisticas_classes: list[dict],
+              nomes_poderes_jogadores: list[list[str]], nivel: int):
         """
         Mostra os Jogadores existentes e seus atributos e poderes
-        :param nomes_personagens: Lista com o nome dos jogadores
+        :param nomes_jogadores: Lista com o nome dos jogadores
         :param estatisticas_classes: Lista com os atributos de cada classe
-        :param nomes_poderes_personagens: Lista com o nome dos poderes de cada jogador
-        :param nivel: Nivel de todos os personagens
-        :return:
+        :param nomes_poderes_jogadores: Lista com o nome dos poderes de cada jogador
+        :param nivel: Nivel de todos os jogadores
         """
         layout = [
             [sg.Text("O grupo é formado por:")]
         ]
 
         columns = []
-        for index, nome_personagem in enumerate(nomes_personagens):
+        for index, nome_personagem in enumerate(nomes_jogadores):
             estatisticas_classe = estatisticas_classes[index]
-            nomes_poderes = nomes_poderes_personagens[index]
+            nomes_poderes = nomes_poderes_jogadores[index]
             column = [
                 [sg.Text(f"{nome_personagem}, o {adjetivo(nivel)}", background_color=sg.theme_button_color()[1])],
                 [sg.Text(f"{estatisticas_classe['nome']}", background_color=sg.theme_button_color()[1])],
@@ -122,6 +133,10 @@ class ViewMenu:
             self.__window.close()
 
     def estatisticas(self, estatisticas_jogadores):
+        """
+        Tela que mostra quais atributos e poderes cada jogador possui
+        :param estatisticas_jogadores:
+        """
         layout = [
             [sg.Text("O grupo possui as seguintes estátisticas:")],
         ]
@@ -158,6 +173,9 @@ class ViewMenu:
             self.__window.close()
 
     def resetar_database(self):
+        """
+        Tela para confirmar se deseja resetar o programa
+        """
         layout = [
             [sg.Text("Deseja resetar mesmo? Você perderá todo o progresso!")],
             [sg.Button("Voltar", key=MenuInicial.SAIR, size=(13, 2)),

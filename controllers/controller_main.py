@@ -16,12 +16,17 @@ class ControllerMain:
         self.__view_menu = ViewMenu()
         self.__controller_classe = ControllerClasse()
         self.__controller_poder = ControllerPoder()
-        self.__controller_jogador = ControllerJogador(self.__controller_classe,
-                                                      self.__controller_poder)
+        self.__controller_jogador = ControllerJogador(
+            self.__controller_classe,
+            self.__controller_poder
+        )
         self.__controller_npc = ControllerNpc()
-        self.__controller_combate = ControllerCombate(self.__controller_jogador,
-                                                      self.__controller_npc,
-                                                      self.__controller_poder, self.__controller_classe)
+        self.__controller_combate = ControllerCombate(
+            self.__controller_jogador,
+            self.__controller_npc,
+            self.__controller_poder,
+            self.__controller_classe
+        )
 
     def recriar_objetos(self, resetar=False):
         inicializado = len(self.__controller_classe.get_all()) == 0

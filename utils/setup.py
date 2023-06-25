@@ -388,6 +388,6 @@ def setup(controller_classe: ControllerClasse, controller_poder: ControllerPoder
     # Gerar combates
     controller_combate.remover_all()
     for combate in COMBATES:
-        controller_combate.cadastrar_combate(
+        controller_combate.cadastrar(
             npcs=[controller_npc.get(npc_nome) for npc_nome in combate["npcs"]],
         )
